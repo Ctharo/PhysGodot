@@ -1,4 +1,4 @@
-extends Resource
+extends Iterator
 class_name Tissues
 ## Iterable class that contains Tissue instances and helpful methods.
 
@@ -33,8 +33,10 @@ func get_concentration(gas: String) -> float:
 func get_capillaries() -> Vessels:
 	var capillaries:= Vessels.new() # If we make it type Vessels, we can use our methods on the vessels
 	for tissue in tissues:
-		capillaries.add(tissue.get_capillaries())
+		for capillary in tissue.get_capillaries():
+			capillaries.add(capillary)
 	return capillaries
 
 func _iter() -> Iterator:
 	return Iterator.new(tissues)
+

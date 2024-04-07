@@ -1,4 +1,4 @@
-extends Resource
+extends Iterator
 class_name Vessels
 ## Iterable collection of Vessel instances with helpful methods
 
@@ -10,15 +10,15 @@ func _init(vessels: Array[Vessel] = []):
 func add_vessel(vessel: Vessel) -> void:
 	vessels.append(vessel)
 
-## Returns first [Vessel] that it is found in [member vessels].
-func get_capillaries() -> Vessel:
-	var capillaries: Vessel
+## Returns [Vessels] of [Vessel] with [member Vessel.type] == [member Vessel.CAPILLIARIES].
+func get_capillaries() -> Vessels:
+	var capillaries := Vessels.new()
 	for vessel in vessels:
 		if vessel.type == Vessel.CAPILLARIES:
-			capillaries = vessel
-			break
+			capillaries.add(vessel)
 	return capillaries
 
 # Making the Vessels class iterable
 func _iter() -> Iterator:
 	return Iterator.new(vessels)
+

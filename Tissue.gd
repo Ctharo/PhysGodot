@@ -7,11 +7,9 @@ var mass: float = 1.0
 var volume: float = 1.0
 var metabolism_factor: float = 1.0
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	pass
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
@@ -35,5 +33,5 @@ func exchange_gas(gas: String, moles: float) -> void:
 		pass
 	push_error("exchange_gas method not yet implemented")
 
-func get_capillaries() -> Vessel:
+func get_capillaries() -> Vessels:
 	return vessels.get_capillaries()
