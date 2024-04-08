@@ -2,32 +2,41 @@ extends Node
 class_name Tissue
 
 var gases: Gases = Gases.new()
-var vessels: Vessels = Vessels.new()
+var vessels: Vessels
 var mass: float = 1.0
 var volume: float = 1.0
 var metabolism_factor: float = 1.0
 
 
-func _ready():
+func _init():
 	# Should create vessels upon instantiation
-	var capillaries := Vessel.new(Vessel.CAPILLARIES)
-	var vein := Vessel.new(Vessel.VEIN)
-	var artery := Vessel.new(Vessel.ARTERY)
-	
-	vessels.add_vessel(capillaries)
-	vessels.add_vessel(vein)
-	vessels.add_vessel(artery)
-	
-func get_concentration(gas: String) -> float:
+	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
+	capillaries.name = "Capillaries"
+	add_child(capillaries)
+
+	var vein := Vessel.new(GlobalTypes.Vessels.VEIN)
+	vein.name = "Vein"
+	add_child(vein)
+
+	var artery := Vessel.new(GlobalTypes.Vessels.ARTERY)
+	artery.name = "Artery"
+	add_child(artery)
+
+
+	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
+	#vessels.name = "Vessels"
+	#add_child(vessels)
+
+func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if mass == 0:
 		return 0.0
 	var moles: float = get_moles(gas)
 	return moles/mass
 
-func get_moles(gas: String) -> float:
+func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
 
-func exchange_gas(gas: String, moles: float) -> void:
+func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var total_moles: float = get_moles(gas) + moles
 	assert(total_moles >= 0, "Moles for %s cannot be negative." % gas)
 	if moles > 0:

@@ -1,15 +1,13 @@
 extends Node
 class_name Vessel
 
-const VEIN: String = "Vein"
-const CAPILLARIES: String = "Capillaries"
-const ARTERY: String = "Artery"
 var volume: float
-var type: String
+var type: GlobalTypes.Vessels
 
-func _init(vessel_type: String, volume: float = 1.0):
+func _init(vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
 	self.type = vessel_type
-	self.volume = volume
+	self.volume = _volume
 
-
+func get_string() -> String:
+	return GlobalTypes.Vessels.keys()[type]
 

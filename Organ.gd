@@ -1,14 +1,20 @@
 extends Node
 class_name Organ
 
-var _name: String
-var tissues: Tissues = Tissues.new()
+
+var tissues: Tissues
 
 func _init(organ_name: String):
-	_name = organ_name
 	var tissue: Tissue = Tissue.new()
-	tissues.add_tissue(tissue)
-	
+	name = organ_name
+	tissue.name = organ_name + " Tissue"
+	add_child(tissue)
+
+	tissues = Tissues.new([tissue] as Array[Tissue])
+	#tissues.name = "Tissues"
+	#add_child(tissues)
+
+
 func get_capillaries() -> Vessels:
 	return tissues.get_capillaries()
 
