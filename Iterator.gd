@@ -1,17 +1,21 @@
 extends Resource
 class_name Iterator
-var collection
+var collection = []
 var index = 0
 var start = 0
 var current
-var end
+var end: int : get = collection.size()
+
 var increment = 1
 
 func _init(_collection):
 	collection = _collection
+	current = start
+	end = collection.size()
 
-func _iter():
-	return self
+func add_to_collection(item: Object):
+	collection.add(item)
+	end = collection.size()
 
 func _next():
 	if index >= collection.size():
