@@ -11,23 +11,22 @@ func _init(new_name: String):
 func _ready():
 
 	# Create Brain
-	var brain := Organ.new("Brain")
+	var brain := Organ.new(GlobalTypes.Organs.BRAIN)
 	add_child(brain)
 
 	# Create Lungs
-	var lungs := Organ.new("Lungs")
+	var lungs := Organ.new(GlobalTypes.Organs.LUNGS)
 	add_child(lungs)
 
 	# Create Organs resource
-	var organ_list: Array[Organ] = [brain, lungs]
+	organs = Organs.new([brain, lungs] as Array[Organ])
 
-	organs = Organs.new(organ_list)
-	#organs.name = "Organs"
-	#add_child(organs)
 
 	# Debugging
-	for organ in organs:
-		print(organ)
+	var organ = organs.get_organ_by_type(GlobalTypes.Organs.BRAIN)
+	print(organ)
+	for vessel in organ.get_vessels_by_type(GlobalTypes.Vessels.VEIN):
+		print(vessel)
 
 func get_brain():
 	return organs.get_organ_by_name("Brain")

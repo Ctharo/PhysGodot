@@ -9,23 +9,20 @@ var metabolism_factor: float = 1.0
 
 
 func _init():
-	# Should create vessels upon instantiation
+	vessels = Vessels.new()
+	init_vessels()
+
+func init_vessels():
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
-	capillaries.name = "Capillaries"
 	add_child(capillaries)
 
 	var vein := Vessel.new(GlobalTypes.Vessels.VEIN)
-	vein.name = "Vein"
 	add_child(vein)
 
 	var artery := Vessel.new(GlobalTypes.Vessels.ARTERY)
-	artery.name = "Artery"
 	add_child(artery)
 
-
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
-	#vessels.name = "Vessels"
-	#add_child(vessels)
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if mass == 0:
@@ -48,4 +45,10 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	push_error("exchange_gas method not yet implemented")
 
 func get_capillaries() -> Vessels:
-	return vessels.get_capillaries()
+	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
+
+func get_all_vessels() -> Vessels:
+	return vessels
+
+func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
+	return vessels.get_vessels_by_type(vessel_type)

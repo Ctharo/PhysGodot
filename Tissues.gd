@@ -8,6 +8,9 @@ var tissues: Array[Tissue] :
 	get:
 		return _collection
 
+func _init(t: Array[Tissue] = []):
+	super._init(t)
+
 ## Returns float of sum of moles of provided [param gas]: [Gas]
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	var moles: float = 0.0
@@ -29,11 +32,21 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return get_moles(gas)/mass
 
 func get_capillaries() -> Vessels:
-	var capillaries:= Vessels.new() # If we make it type Vessels, we can use our methods on the vessels
+	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
+
+func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
+	var vessels := Vessels.new()
 	for tissue in tissues:
-		for capillary in tissue.get_capillaries():
-			capillaries.add(capillary)
-	return capillaries
+		for vessel in tissue.get_vessels_by_type(vessel_type):
+			vessels.add(vessel)
+	return vessels
+
+func get_all_vessels() -> Vessels:
+	var vessels := Vessels.new()
+	for tissue in tissues:
+		for vessel in tissue.get_all_vessels():
+			vessels.add(vessel)
+	return vessels
 
 func _iter() -> Iterator:
 	return Iterator.new(tissues)

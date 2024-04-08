@@ -8,13 +8,22 @@ var vessels: Array[Vessel] :
 	get:
 		return _collection
 
+func _init(v: Array[Vessel] = []):
+	super._init(v)
+
+func add(vessel: Vessel) -> void:
+	vessels.append(vessel)
+
+func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
+	var _vessels:= Vessels.new()
+	for vessel in vessels:
+		if vessel.type == vessel_type:
+			_vessels.add(vessel)
+	return _vessels
+
 ## Returns [Vessels] of [Vessel] with [member Vessel.type] == [member Vessel.CAPILLIARIES].
 func get_capillaries() -> Vessels:
-	var capillaries := Vessels.new()
-	for vessel in vessels:
-		if vessel.type == GlobalTypes.Vessels.CAPILLARIES:
-			capillaries.add(vessel)
-	return capillaries
+	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
 
 # Making the Vessels class iterable
 func _iter() -> Iterator:
