@@ -31,5 +31,12 @@ func get_organ_by_name(organ_name: String):
 			return organ
 	return null
 
+func connect_vessels_to_organs(to_vessel: Vessel, from_vessel: Vessel):
+	for organ in organs:
+		if !organ.connect_vessels_to_tissues(to_vessel, from_vessel):
+			printerr("Failed to connect %s with vessels" % organ.get_string())
+			return false
+	return true
+	
 static func get_string(organ: GlobalTypes.Organs) -> String:
 	return GlobalTypes.Organs.keys()[organ]

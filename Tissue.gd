@@ -1,6 +1,7 @@
 extends Node
 class_name Tissue
 
+## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases = Gases.new()
 var vessels: Vessels
 var mass: float = 1.0
@@ -11,6 +12,13 @@ var metabolism_factor: float = 1.0
 func _init():
 	vessels = Vessels.new()
 	init_vessels()
+	
+func _physics_process(delta):
+	# TODO: Should be responsible to run physiological processes 
+	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
+	pass
+	
+
 
 func init_vessels():
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
@@ -23,7 +31,28 @@ func init_vessels():
 	add_child(artery)
 
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
+	
+	# Connect capillaries
+	capillaries.receive_from = artery
+	capillaries.deliver_to = vein
+	
+	# TODO: Connect vein
+	vein.receive_from = capillaries
+	
+	# TODO: Connect arteryvein
+	artery.deliver_to = capillaries
 
+func connect_vessels_to_tissue(to_vessel: Vessel, from_vessel: Vessel):
+	if to_vessel.type != GlobalTypes.Vessels.VENA_CAVA or from_vessel.type != GlobalTypes.Vessels.AORTA:
+		printerr("Incorrect type to_vessel: %s from_vessel: %s" % [to_vessel, from_vessel])
+		return false
+	
+	# Connect tissue to vessel
+	for vein in get_vessels_by_type(GlobalTypes.Vessels.VEIN):
+		vein.deliver_to = to_vessel
+	for artery in get_vessels_by_type(GlobalTypes.Vessels.ARTERY):
+		artery.receive_from = from_vessel
+	return true
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if mass == 0:
 		return 0.0

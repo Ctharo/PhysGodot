@@ -1,13 +1,22 @@
 extends Node
 class_name Vessel
 
+@export var _name: String
 var volume: float
 var type: GlobalTypes.Vessels
+
+
+## The [Vessel] that this vessel delivers [Blood] to
+@export var deliver_to: Vessel
+
+## The [Vessel] that this vessel receives [Blood] from TODO: Do we need this?
+@export var receive_from: Vessel
 
 func _init(vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
 	self.type = vessel_type
 	self.volume = _volume
 	name = to_title_case(get_string())
+	_name = name
 
 func get_string() -> String:
 	return GlobalTypes.Vessels.keys()[type]

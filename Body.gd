@@ -1,8 +1,11 @@
 extends Node
 class_name Body
+## 
+##
+## TODO: Should handle Blood movement from aorta to tissues and from tissues to vena_cava
 
-
-var organs: Organs
+@export var organs: Organs
+@export var vessels: Vessels
 
 func _init(new_name: String):
 	name = new_name
@@ -20,13 +23,34 @@ func _ready():
 
 	# Create Organs resource
 	organs = Organs.new([brain, lungs] as Array[Organ])
+	
+	# Create Vessels resource
+	vessels = Vessels.new()
 
+	# Create Vessels
+	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
+	add_child(aorta)
+	vessels.add(aorta)
 
-	# Debugging
-	var organ = organs.get_organ_by_type(GlobalTypes.Organs.BRAIN)
-	print(organ)
-	for vessel in organ.get_vessels_by_type(GlobalTypes.Vessels.VEIN):
-		print(vessel)
+	var pulmonary_artery := Vessel.new(GlobalTypes.Vessels.PULMONARY_ARTERY)
+	add_child(pulmonary_artery)
+	vessels.add(pulmonary_artery)
+
+	var pulmonary_vein := Vessel.new(GlobalTypes.Vessels.PULMONARY_VEIN)
+	add_child(pulmonary_vein)
+	vessels.add(pulmonary_vein)
+
+	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
+	add_child(vena_cava)
+	vessels.add(vena_cava)
+	
+	# Connect all tissues to body vessels
+	if !organs.connect_vessels_to_organs(vena_cava, aorta):
+		printerr("Problem connecting vessels")
+	
+## TODO: Not sure what this should be used for yet
+func _physics_process(_delta):
+	pass
 
 func get_brain():
 	return organs.get_organ_by_name("Brain")
