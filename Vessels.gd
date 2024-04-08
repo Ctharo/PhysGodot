@@ -5,6 +5,7 @@ class_name Vessels
 var vessels: Array[Vessel]
 
 func _init(vessels: Array[Vessel] = []):
+	super._init(vessels)
 	self.vessels = vessels
 
 func add_vessel(vessel: Vessel) -> void:

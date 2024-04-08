@@ -5,6 +5,7 @@ class_name Tissues
 var tissues: Array[Tissue]
 
 func _init(tissues: Array[Tissue] = []):
+	super._init(tissues)
 	self.tissues = tissues
 
 func add_tissue(tissue: Tissue) -> void:

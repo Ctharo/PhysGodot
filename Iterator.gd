@@ -2,13 +2,13 @@ extends Resource
 class_name Iterator
 var collection
 var index = 0
-var start
+var start = 0
 var current
 var end
-var increment
+var increment = 1
 
-func _init(collection):
-	self.collection = collection
+func _init(_collection):
+	collection = _collection
 
 func _iter():
 	return self
@@ -23,13 +23,14 @@ func _next():
 func should_continue():
 	return (current < end)
 
-func _iter_init(arg):
+func _iter_init(_arg):
 	current = start
+	end = collection.size()
 	return should_continue()
 
-func _iter_next(arg):
+func _iter_next(_arg):
 	current += increment
 	return should_continue()
 
-func _iter_get(arg):
+func _iter_get(_arg):
 	return current

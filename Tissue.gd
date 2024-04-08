@@ -7,12 +7,17 @@ var mass: float = 1.0
 var volume: float = 1.0
 var metabolism_factor: float = 1.0
 
+
 func _ready():
-	pass
-
-func _process(delta):
-	pass
-
+	# Should create vessels upon instantiation
+	var capillaries := Vessel.new(Vessel.CAPILLARIES)
+	var vein := Vessel.new(Vessel.VEIN)
+	var artery := Vessel.new(Vessel.ARTERY)
+	
+	vessels.add_vessel(capillaries)
+	vessels.add_vessel(vein)
+	vessels.add_vessel(artery)
+	
 func get_concentration(gas: String) -> float:
 	if mass == 0:
 		return 0.0
