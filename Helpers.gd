@@ -2,7 +2,7 @@ class_name Helpers
 ## Class containing global helper functions 
 
 ## Converts a string to title case
-func to_title_case(s: String) -> String:
+static func to_title_case(s: String) -> String:
 	# Split the string into words based on spaces
 	var words = s.split(" ")
 

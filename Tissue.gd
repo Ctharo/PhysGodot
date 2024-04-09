@@ -18,7 +18,24 @@ func _physics_process(_delta):
 	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
 	pass
 	
+func exchange_gases(delta: float):
+	var capillaries: Vessels = get_capillaries()
+	var vessel_oxygen_concentration: float = capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
+	var vessel_carbon_dioxide_concentration: float = capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+	var tissue_oxygen_concentration: float = get_concentration(GlobalTypes.Gases.OXYGEN)
+	var tissue_carbon_dioxide_concentration: float = get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
 
+	# Calculate the difference in concentration between the tissue and the capillaries
+	var delta_oxygen_concentration: float = vessel_oxygen_concentration - tissue_oxygen_concentration
+	var delta_carbon_dioxide_concentration: float = vessel_carbon_dioxide_concentration - tissue_carbon_dioxide_concentration
+
+	# Calculate the amount of moles to exchange
+	var moles_oxygen: float = delta_oxygen_concentration * volume * metabolism_factor * delta
+	var moles_carbon_dioxide: float = delta_carbon_dioxide_concentration * volume * metabolism_factor * delta
+
+	# Exchange gases
+	exchange_gas(GlobalTypes.Gases.OXYGEN, moles_oxygen)
+	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, moles_carbon_dioxide)
 
 func init_vessels():
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
@@ -53,6 +70,7 @@ func connect_vessels_to_tissue(to_vessel: Vessel, from_vessel: Vessel):
 	for artery in get_vessels_by_type(GlobalTypes.Vessels.ARTERY):
 		artery.receive_from = from_vessel
 	return true
+
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if mass == 0:
 		return 0.0

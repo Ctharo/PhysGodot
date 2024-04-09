@@ -23,13 +23,31 @@ func fill_vessels_with_blood() -> void:
 			vessel.blood.append(blood)
 			current_volume += blood.volume
 
-
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var _vessels:= Vessels.new()
 	for vessel in vessels:
 		if vessel.type == vessel_type:
 			_vessels.add(vessel)
 	return _vessels
+
+func get_concentration(gas: GlobalTypes.Gases) -> float:
+	var total_volume: float = get_volume()
+	if total_volume == 0:
+		return 0.0
+	var total_moles: float = get_moles(gas)
+	return total_moles / total_volume
+
+func get_moles(gas: GlobalTypes.Gases) -> float:
+	var total_moles: float = 0.0
+	for vessel in vessels:
+		total_moles += vessel.get_moles(gas)
+	return total_moles
+
+func get_volume() -> float:
+	var total_volume: float = 0.0
+	for vessel in vessels:
+		total_volume += vessel.current_volume()
+	return total_volume
 
 ## Returns [Vessels] of [Vessel] with [member Vessel.type] == [member Vessel.CAPILLIARIES].
 func get_capillaries() -> Vessels:

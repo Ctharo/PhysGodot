@@ -7,17 +7,16 @@ var _collection :
 		_collection = value
 		end = _collection.size()
 
-var index: int = 0
-var start: int = 0
+const START: int = 0
 var current: int
 var end: int
 
-var increment = 1
+const INCREMENT = 1
 
 ## Initialize the Iterator with a collection
 func _init(collection = []):
 	_collection = collection
-	current = start
+	current = START
 
 ## Check if the iteration should continue
 func should_continue():
@@ -25,13 +24,13 @@ func should_continue():
 
 ## Initialize the iterator for iteration
 func _iter_init(_arg):
-	current = start
+	current = START
 	end = _collection.size()
 	return should_continue()
 
 ## Get the next item in the iteration
 func _iter_next(_arg):
-	current += increment
+	current += INCREMENT
 	return should_continue()
 
 ## Get the current item in the iteration

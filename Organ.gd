@@ -19,12 +19,14 @@ func init_tissues():
 
 	tissues = Tissues.new([tissue] as Array[Tissue])
 
-
-func _physics_process(delta):
+func _physics_process(_delta):
 	# TODO: Should be responsible to run organ system specific processes 
 	# (i.e., heart beat, respiration, intracellular exchanges, etc.)
 	pass
 
+func exchange_gases(delta: float):
+	for tissue in tissues:
+		tissue.exchange_gases(delta)
 
 func get_capillaries() -> Vessels:
 	return tissues.get_capillaries()

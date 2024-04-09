@@ -1,7 +1,6 @@
 extends Node
 class_name Vessel
 
-
 @export var _name: String
 
 ## Represents the volume of [Blood] that this vessel can hold
@@ -22,24 +21,31 @@ var blood: Array[Blood] = []
 func _init(vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
 	self.type = vessel_type
 	self.volume = _volume
-	name = to_title_case(get_string())
+	name = Helpers.to_title_case(Vessels.get_string(vessel_type))
 	_name = name
 
+## Returns the current volume of blood in this vessel
+func current_volume() -> float:
+	# Use Array sum method
+	var v: float = 0.0
+	for b in self.blood:
+		v += b.volume
+	return v
 
-## Returns String name representation of the [Vessel]
-func get_string() -> String:
-	return GlobalTypes.Vessels.keys()[type]
+##
+func send_blood_to_vessel(v: float) -> void:
+	if self.blood.size() == 0 or current_volume() < v:
+		return
+	
+func get_concentration(gas: GlobalTypes.Gases) -> float:
+	var total_volume: float = current_volume()
+	if total_volume == 0:
+		return 0.0
+	var total_moles: float = get_moles(gas)
+	return total_moles / total_volume
 
-## Helper function to convert a string to title case
-func to_title_case(s: String) -> String:
-	# Split the string into words based on spaces
-	var words = s.split(" ")
-
-	# Capitalize the first letter of each word
-	for i in range(words.size()):
-		words[i] = words[i].capitalize()
-
-	# Join the words back into a single string with spaces
-	return " ".join(words)
-
-
+func get_moles(gas: GlobalTypes.Gases) -> float:
+	var total_moles: float = 0.0
+	for b in self.blood:
+		total_moles += b.get_moles(gas)
+	return total_moles
