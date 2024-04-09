@@ -24,9 +24,7 @@ func _physics_process(_delta):
 	# (i.e., heart beat, respiration, intracellular exchanges, etc.)
 	pass
 
-func exchange_gases(delta: float):
-	for tissue in tissues:
-		tissue.exchange_gases(delta)
+
 
 func get_capillaries() -> Vessels:
 	return tissues.get_capillaries()

@@ -59,3 +59,14 @@ func _iter() -> Iterator:
 
 static func get_string(vessel: GlobalTypes.Vessels) -> String:
 	return GlobalTypes.Vessels.keys()[vessel]
+
+func exchange_gas(gas: GlobalTypes.Gases, moles: float):
+	var total_volume: float = get_volume()
+	if total_volume == 0:
+		printerr("Total volume of all vessels is zero")
+	var concentration = moles/total_volume
+	for vessel in vessels:
+		var moles_for_vessel: float = concentration * vessel.current_volume()
+		var final_moles_for_vessel: float = moles_for_vessel + vessel.get_moles(gas)
+		vessel.set_moles(gas, final_moles_for_vessel)
+		

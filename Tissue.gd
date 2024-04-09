@@ -13,10 +13,10 @@ func _init():
 	vessels = Vessels.new()
 	init_vessels()
 	
-func _physics_process(_delta):
+func _physics_process(delta):
 	# TODO: Should be responsible to run physiological processes 
 	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
-	pass
+	exchange_gases(delta)
 	
 func exchange_gases(delta: float):
 	var capillaries: Vessels = get_capillaries()
@@ -36,6 +36,8 @@ func exchange_gases(delta: float):
 	# Exchange gases
 	exchange_gas(GlobalTypes.Gases.OXYGEN, moles_oxygen)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, moles_carbon_dioxide)
+	capillaries.exchange_gas(GlobalTypes.Gases.OXYGEN, -moles_oxygen)
+	capillaries.exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, -moles_carbon_dioxide)
 
 func init_vessels():
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
@@ -83,13 +85,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var total_moles: float = get_moles(gas) + moles
 	assert(total_moles >= 0, "Moles for %s cannot be negative." % gas)
-	if moles > 0:
-		# We are adding moles
-		pass
-	if moles < 0:
-		# We are removing moles
-		pass
-	push_error("exchange_gas method not yet implemented")
+	gases.set_moles(gas, total_moles)
 
 func get_capillaries() -> Vessels:
 	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
