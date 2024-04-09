@@ -1,7 +1,13 @@
 class_name Blood
 extends Resource
 ## TODO: Blood should be a resource as its just data containers and don't need to be added to the scene tree
+##
+##
+
+## Stores info about the gases present in the blood
 var gases: Gases
+
+## The volume of the blood in liters
 var volume: float = 0.01
 
 func _init():

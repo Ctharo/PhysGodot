@@ -1,10 +1,17 @@
 extends Node
 class_name Vessel
 
+
 @export var _name: String
+
+## Represents the volume of [Blood] that this vessel can hold
 var volume: float
+
+## Represents the type of [Vessel] this vessel is
 var type: GlobalTypes.Vessels
 
+## Stores the [Blood] that this vessel is currently holding
+var blood: Array[Blood] = []
 
 ## The [Vessel] that this vessel delivers [Blood] to
 @export var deliver_to: Vessel
@@ -17,6 +24,7 @@ func _init(vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
 	self.volume = _volume
 	name = to_title_case(get_string())
 	_name = name
+
 
 ## Returns String name representation of the [Vessel]
 func get_string() -> String:
