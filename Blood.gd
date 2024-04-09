@@ -1,6 +1,6 @@
 class_name Blood
-extends Node
-
+extends Resource
+## TODO: Blood should be a resource as its just data containers and don't need to be added to the scene tree
 var gases: Gases
 var volume: float = 0.01
 
