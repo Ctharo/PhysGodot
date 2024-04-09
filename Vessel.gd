@@ -18,9 +18,11 @@ func _init(vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
 	name = to_title_case(get_string())
 	_name = name
 
+## Returns String name representation of the [Vessel]
 func get_string() -> String:
 	return GlobalTypes.Vessels.keys()[type]
 
+## Helper function to convert a string to title case
 func to_title_case(s: String) -> String:
 	# Split the string into words based on spaces
 	var words = s.split(" ")

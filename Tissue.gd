@@ -13,7 +13,7 @@ func _init():
 	vessels = Vessels.new()
 	init_vessels()
 	
-func _physics_process(delta):
+func _physics_process(_delta):
 	# TODO: Should be responsible to run physiological processes 
 	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
 	pass
