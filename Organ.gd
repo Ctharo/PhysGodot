@@ -4,10 +4,16 @@ extends Node
 ##
 ## Physiological processes depend on Organ
 
+@export var organ_type:String : 
+	get:
+		return to_title_case(get_string())
+
+@export var health: float = 1.0
+
 var tissues: Tissues
 var type: GlobalTypes.Organs
 
-@export var health: float = 1.0
+
 
 var debug: bool
 var timer: float = 0.0

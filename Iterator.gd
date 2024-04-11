@@ -2,7 +2,7 @@ class_name Iterator
 extends Resource
 ## Iterator base class for iterating over a collection
 
-var _collection :
+var _collection:
 	set(value):
 		_collection = value
 		end = _collection.size()
