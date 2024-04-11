@@ -20,7 +20,7 @@ func init_tissues():
 	tissues = Tissues.new([tissue] as Array[Tissue])
 
 func _physics_process(_delta):
-	# TODO: Should be responsible to run organ system specific processes 
+	# TODO: Should be responsible to run organ system specific processes
 	# (i.e., heart beat, respiration, intracellular exchanges, etc.)
 	pass
 
@@ -35,9 +35,10 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 func get_all_vessels() -> Vessels:
 	return tissues.get_all_vessels()
 
-func connect_vessels_to_tissues(to_vessel: Vessel, from_vessel: Vessel):
+## Connects all tissues to source and sink vessels
+func connect_vessels_to_tissues(source_vessel: Vessel, sink_vessel: Vessel):
 	for tissue in tissues:
-		if !tissue.connect_vessels_to_tissue(to_vessel, from_vessel):
+		if !tissue.connect_vessels_to_tissue(source_vessel, sink_vessel):
 			return false
 	return true
 

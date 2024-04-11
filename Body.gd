@@ -1,6 +1,6 @@
 extends Node
 class_name Body
-## 
+##
 ##
 ## TODO: Should handle Blood movement from aorta to tissues and from tissues to vena_cava
 
@@ -9,10 +9,10 @@ class_name Body
 
 func _init(new_name: String):
 	name = new_name
-	print("Body created with name: ", name)
+	# Print the name of the body in a formatted string
+	print("Body '%s' initialized" % name)
 
 func _ready():
-
 	# Create Brain
 	var brain := Organ.new(GlobalTypes.Organs.BRAIN)
 	add_child(brain)
@@ -23,7 +23,7 @@ func _ready():
 
 	# Create Organs resource
 	organs = Organs.new([brain, lungs] as Array[Organ])
-	
+
 	# Create Vessels resource
 	vessels = Vessels.new()
 
@@ -43,11 +43,13 @@ func _ready():
 	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
 	add_child(vena_cava)
 	vessels.add(vena_cava)
-	
+
 	# Connect all tissues to body vessels
 	if !organs.connect_vessels_to_organs(vena_cava, aorta):
 		printerr("Problem connecting vessels")
-	
+
+	print("%s has been created successfully" % name)
+
 ## TODO: Not sure what this should be used for yet
 func _physics_process(_delta):
 	pass

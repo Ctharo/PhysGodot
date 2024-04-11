@@ -69,4 +69,4 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float):
 		var moles_for_vessel: float = concentration * vessel.current_volume()
 		var final_moles_for_vessel: float = moles_for_vessel + vessel.get_moles(gas)
 		vessel.set_moles(gas, final_moles_for_vessel)
-		
+

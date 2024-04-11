@@ -36,7 +36,7 @@ func current_volume() -> float:
 func send_blood_to_vessel(v: float) -> void:
 	if self.blood.size() == 0 or current_volume() < v:
 		return
-	
+
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	var total_volume: float = current_volume()
 	if total_volume == 0:
@@ -49,7 +49,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 	for b in self.blood:
 		total_moles += b.get_moles(gas)
 	return total_moles
-	
+
 func set_moles(gas: GlobalTypes.Gases, moles: float):
 	var blood_volume: float = current_volume()
 	if blood_volume == 0:
