@@ -51,3 +51,6 @@ func get_all_vessels() -> Vessels:
 func _iter() -> Iterator:
 	return Iterator.new(tissues)
 
+func set_debug(value: bool):
+	for tissue in tissues:
+		tissue.debug = value

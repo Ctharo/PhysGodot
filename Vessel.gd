@@ -50,6 +50,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 		total_moles += b.get_moles(gas)
 	return total_moles
 
+## Sets total moles of a gas in the blood of this vessel
 func set_moles(gas: GlobalTypes.Gases, moles: float):
 	var blood_volume: float = current_volume()
 	if blood_volume == 0:
@@ -59,5 +60,5 @@ func set_moles(gas: GlobalTypes.Gases, moles: float):
 	for b in blood:
 		var moles_for_blood: float = concentration * b.volume
 		# First ensure we aren't trying to remove more moles than what is available.
-		assert(b.get_moles(gas) + moles_for_blood > 0, "Moles cannot be negative")
-		b.exchange_gas(gas, moles_for_blood)
+		assert(b.get_moles(gas) + moles_for_blood >= 0, "Moles cannot be negative")
+		b.set_moles(gas, moles_for_blood)

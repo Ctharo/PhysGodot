@@ -1,6 +1,6 @@
 class_name Blood
 extends Resource
-## TODO: Blood should be a resource as its just data containers and don't need to be added to the scene tree
+##
 ##
 ##
 
@@ -11,12 +11,15 @@ var gases: Gases
 var volume: float = 0.01
 
 func _init():
-	gases = Gases.new()
+	gases = Gases.new(0.2, 0.0)
 
-func exchange_gas(gas: GlobalTypes.Gases, amount: float):
+func exchange_gas(gas: GlobalTypes.Gases, moles: float):
 	var current_moles := gases.get_moles(gas)
-	assert(current_moles + amount > 0, "Moles cannot be less than zero")
-	gases.set_moles(gas, current_moles + amount)
+	assert(current_moles + moles > 0, "Moles cannot be less than zero")
+	set_moles(gas, current_moles + moles)
 
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
+
+func set_moles(gas: GlobalTypes.Gases, moles: float):
+	gases.set_moles(gas, moles)

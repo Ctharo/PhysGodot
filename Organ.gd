@@ -7,6 +7,12 @@ extends Node
 var tissues: Tissues
 var type: GlobalTypes.Organs
 
+@export var health: float = 1.0
+
+var debug: bool
+var timer: float = 0.0
+
+
 func _init(organ_type: GlobalTypes.Organs):
 	self.type = organ_type
 	name = to_title_case(get_string())
@@ -19,11 +25,20 @@ func init_tissues():
 
 	tissues = Tissues.new([tissue] as Array[Tissue])
 
-func _physics_process(_delta):
-	# TODO: Should be responsible to run organ system specific processes
-	# (i.e., heart beat, respiration, intracellular exchanges, etc.)
-	pass
-
+func _physics_process(delta):
+	timer += delta
+	if timer > 1:
+		for tissue in tissues:
+			if tissue.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.05:
+				if debug: print("Organ " + name + " is not getting enough oxygen")
+				health -= 0.01 * timer
+			if tissue.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.1:
+				if debug: print("Organ " + name + " is not removing enough CO2")
+				health -= 0.1 * timer
+	if health <= 0:
+		print("Organ " + name + " has died")
+		self.set_physics_process(false)
+	timer = 0
 
 
 func get_capillaries() -> Vessels:
@@ -55,3 +70,7 @@ func to_title_case(s: String) -> String:
 
 	# Join the words back into a single string with spaces
 	return " ".join(words)
+
+func set_debug(value: bool):
+	debug = value
+	tissues.set_debug(value)

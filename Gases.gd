@@ -5,9 +5,11 @@ class_name Gases
 
 var gases: Dictionary = {}
 
-func _init():
-	for gas in GlobalTypes.Gases.values():
-		set_moles(gas, 0.1)
+func _init(initial_o2: float = 0.1, initial_co2: float = 0.1):
+	#for gas in GlobalTypes.Gases.values():
+		#set_moles(gas, 0.1)
+	set_moles(GlobalTypes.Gases.OXYGEN, initial_o2)
+	set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, initial_co2)
 
 ## Sets the amount of a specified gas.
 func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:

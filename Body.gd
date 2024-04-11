@@ -45,19 +45,23 @@ func _ready():
 	vessels.add(vena_cava)
 
 	# Connect all tissues to body vessels
-	if !organs.connect_vessels_to_organs(vena_cava, aorta):
+	if !organs.connect_vessels_to_organs(aorta, vena_cava):
 		printerr("Problem connecting vessels")
 
 	print("%s has been created successfully" % name)
+
+	brain.set_debug(true)
 
 ## TODO: Not sure what this should be used for yet
 func _physics_process(_delta):
 	pass
 
 func get_brain():
-	return organs.get_organ_by_name("Brain")
+	return _get_organ(GlobalTypes.Organs.BRAIN)
 
 func get_lungs():
-	return organs.get_organ_by_name("Lungs")
+	return _get_organ(GlobalTypes.Organs.LUNGS)
 
+func _get_organ(organ_type: GlobalTypes.Organs) -> Organ:
+	return organs.get_organ_by_type(organ_type)
 
