@@ -10,10 +10,10 @@ var gases: Array[Gas] :
 	get:
 		return _collection
 
+# TODO: Change Gases initial moles to be an initial concentration
 func _init(g: Array[Gas] = []):
 	super._init(g)
-	set_moles(GlobalTypes.Gases.OXYGEN)
-	set_moles(GlobalTypes.Gases.CARBON_DIOXIDE)
+
 
 ## Sets the amount of a specified gas.
 func set_moles(gas_type: GlobalTypes.Gases, moles: float = 0.0) -> void:

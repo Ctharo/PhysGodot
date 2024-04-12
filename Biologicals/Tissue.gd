@@ -3,23 +3,23 @@ class_name Tissue
 
 @export_category("Tissue")
 ## Stores information required for managing gas diffusion between capillaries and stored gases
-var gases: Gases = Gases.new()
+var gases: Gases
 var vessels: Vessels
-var mass: float = randf_range(1, 3)
+var mass: float = randf_range(1, 3) #TODO: Tissue mass should cause increased rates of aerobic respiration, but also increased rates of gas exchange.
 var volume: float = 1.0
 var metabolism_factor: float = 0.001
 const GAS_EXCHANGE_FACTOR: float = 0.01
 
 @export_category("Meta")
 var timer: float = 0.0
-const TIMER_INTERVAL: float = 1.0
+const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
 func _init():
 	vessels = Vessels.new()
 	init_vessels()
-	gases.set_moles(GlobalTypes.Gases.OXYGEN, randf_range(0.01, 0.15))
-	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, randf_range(0.0, 0.045))
+	# TODO: Change Tissue initial moles to be an initial concentration
+	gases = Gases.new([Gas.new(GlobalTypes.Gases.OXYGEN, randf_range(0.08, 0.18) * mass), Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, randf_range(0.00, 0.05) * mass)] as Array[Gas])
 
 func _physics_process(delta):
 	# TODO: Should be responsible to run physiological processes
@@ -33,7 +33,7 @@ func _physics_process(delta):
 		timer = 0.0
 
 	## HACK: Ensures CO2 has a sink for debugging purposes
-	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.0499:
+	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.08:
 		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
 
 

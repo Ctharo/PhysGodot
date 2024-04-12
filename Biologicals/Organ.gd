@@ -27,18 +27,20 @@ func init_tissues():
 func _physics_process(delta):
 	timer += delta
 	if timer > 1:
-		for tissue: Tissue in tissues:
-			if tissue.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.05:
-				if debug: print("Organ " + name + " is not getting enough oxygen")
-				health -= 0.01 * timer
-			if tissue.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.1:
-				if debug: print("Organ " + name + " is not removing enough CO2")
-				health -= 0.1 * timer
+		if tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.07:
+			if debug: print("Organ " + name + " is not getting enough oxygen")
+			health -= 0.01 * timer
+		if tissues.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.1:
+			if debug: print("Organ " + name + " is not removing enough CO2")
+			health -= 0.1 * timer
+		timer = 0
 	if health <= 0:
 		print("Organ " + name + " has died")
 		self.set_physics_process(false)
-	timer = 0
 
+
+func get_concentration(gas: GlobalTypes.Gases) -> float:
+	return tissues.get_concentration(gas)
 
 func get_capillaries() -> Vessels:
 	return tissues.get_capillaries()
