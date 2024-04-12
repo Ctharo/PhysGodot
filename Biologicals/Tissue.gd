@@ -3,12 +3,12 @@ class_name Tissue
 
 @export_category("Tissue")
 ## Stores information required for managing gas diffusion between capillaries and stored gases
-var gases: Gases = Gases.new(0.18, 0.0)
+var gases: Gases = Gases.new()
 var vessels: Vessels
-var mass: float = 1.0
+var mass: float = randf_range(1, 3)
 var volume: float = 1.0
-const METABOLISM_FACTOR: float = 0.001
-const GAS_EXCHANGE_FACTOR: float = 0.5
+var metabolism_factor: float = 0.001
+const GAS_EXCHANGE_FACTOR: float = 0.01
 
 @export_category("Meta")
 var timer: float = 0.0
@@ -18,6 +18,8 @@ var debug: bool = false
 func _init():
 	vessels = Vessels.new()
 	init_vessels()
+	gases.set_moles(GlobalTypes.Gases.OXYGEN, randf_range(0.01, 0.15))
+	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, randf_range(0.0, 0.045))
 
 func _physics_process(delta):
 	# TODO: Should be responsible to run physiological processes
@@ -28,11 +30,12 @@ func _physics_process(delta):
 		exchange_gases(timer)
 		aerobic_respiration(timer)
 
-		## HACK: Ensures CO2 has a sink for debugging purposes
-		if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.045:
-			vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
-
 		timer = 0.0
+
+	## HACK: Ensures CO2 has a sink for debugging purposes
+	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.0499:
+		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
+
 
 func init_vessels():
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
@@ -95,7 +98,7 @@ func exchange_gases(delta: float) -> void:
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
 	var moles: float = delta_concentration * volume * GAS_EXCHANGE_FACTOR * delta
-	if debug: print("Exchanging %s: Delta concentration: %f, Moles exchanged: %f" % [Gases.get_string(gas), delta_concentration, moles])
+	if debug: print("Exchanging %s: Moles exchanged: %f" % [Gases.get_string(gas), moles])
 
 	exchange_gas(gas, moles)
 	capillaries.exchange_gas(gas, -moles)
@@ -105,7 +108,6 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var total_moles: float = get_moles(gas) + moles
 	assert(total_moles >= 0, "%s moles cannot be negative." % gas)
 	gases.set_moles(gas, total_moles)
-
 
 func get_capillaries() -> Vessels:
 	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
@@ -119,8 +121,8 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 func aerobic_respiration(delta: float):
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
-	var oxygen_needed: float = min(METABOLISM_FACTOR * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = METABOLISM_FACTOR * 2 * delta
+	var oxygen_needed: float = min(metabolism_factor * delta, oxygen_moles)
+	var carbon_dioxide_produced: float = metabolism_factor * 2 * delta
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)

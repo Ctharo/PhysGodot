@@ -1,0 +1,48 @@
+extends Node
+class_name Vessel
+
+@export var _name: String
+@export var vessel_type: String
+## Represents the current volume of [Blood] that this vessel is holding
+var volume: float = 0.0
+
+## Represents the max volume of [Blood] that this vessel can hold
+var max_volume: float = 1.0
+
+## Represents the type of [Vessel] this vessel is
+var type: GlobalTypes.Vessels
+
+## Stores the [Blood] that this vessel is currently holding
+var blood: Blood
+
+## The [Vessel] that this vessel delivers [Blood] to
+@export var deliver_to: Vessel
+
+## The [Vessel] that this vessel receives [Blood] from TODO: Do we need this?
+@export var receive_from: Vessel
+
+func _init(_vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
+	self.type = _vessel_type
+	self.volume = _volume
+	name = Helpers.to_title_case(Vessels.get_string(self.type))
+	_name = name
+
+
+##
+func send_blood_to_vessel() -> void:
+	pass
+
+func get_concentration(gas: GlobalTypes.Gases) -> float:
+	var blood_volume: float = blood.volume
+	if blood_volume == 0:
+		return 0.0
+	var total_moles: float = get_moles(gas)
+	return total_moles / blood_volume
+
+func get_moles(gas: GlobalTypes.Gases) -> float:
+	return self.blood.get_moles(gas)
+
+
+## Sets total moles of a gas in the blood of this vessel
+func set_moles(gas: GlobalTypes.Gases, moles: float):
+	self.blood.set_moles(gas, moles)

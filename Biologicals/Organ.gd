@@ -4,37 +4,30 @@ extends Node
 ##
 ## Physiological processes depend on Organ
 
-@export var organ_type:String : 
+@export var organ_type:String :
 	get:
-		return to_title_case(get_string())
-
+		return Helpers.to_title_case(Organs.get_string(type))
 @export var health: float = 1.0
-
 var tissues: Tissues
 var type: GlobalTypes.Organs
-
-
-
 var debug: bool
 var timer: float = 0.0
 
-
-func _init(organ_type: GlobalTypes.Organs):
-	self.type = organ_type
-	name = to_title_case(get_string())
+func _init(Organ_type: GlobalTypes.Organs):
+	self.type = Organ_type
+	name = Helpers.to_title_case(Organs.get_string(type))
 	init_tissues()
 
 func init_tissues():
 	var tissue: Tissue = Tissue.new()
 	tissue.name = self.name + " Tissue"
 	add_child(tissue)
-
 	tissues = Tissues.new([tissue] as Array[Tissue])
 
 func _physics_process(delta):
 	timer += delta
 	if timer > 1:
-		for tissue in tissues:
+		for tissue: Tissue in tissues:
 			if tissue.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.05:
 				if debug: print("Organ " + name + " is not getting enough oxygen")
 				health -= 0.01 * timer
@@ -58,25 +51,14 @@ func get_all_vessels() -> Vessels:
 
 ## Connects all tissues to source and sink vessels
 func connect_vessels_to_tissues(source_vessel: Vessel, sink_vessel: Vessel):
-	for tissue in tissues:
+	for tissue: Tissue in tissues:
 		if !tissue.connect_vessels_to_tissue(source_vessel, sink_vessel):
 			return false
 	return true
 
-func get_string() -> String:
-	return GlobalTypes.Organs.keys()[type]
-
-func to_title_case(s: String) -> String:
-	# Split the string into words based on spaces
-	var words = s.split(" ")
-
-	# Capitalize the first letter of each word
-	for i in range(words.size()):
-		words[i] = words[i].capitalize()
-
-	# Join the words back into a single string with spaces
-	return " ".join(words)
-
 func set_debug(value: bool):
 	debug = value
 	tissues.set_debug(value)
+
+func is_of_type(test_type: GlobalTypes.Organs) -> bool:
+	return type == test_type

@@ -13,27 +13,22 @@ func _iter() -> Iterator:
 
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
-	for organ in organs:
-		for tissue in organ.tissues:
-			for vessel in tissue.get_vessels_by_type(vessel_type):
+	for organ: Organ in organs:
+		for tissue: Tissue in organ.tissues:
+			for vessel: Vessel in tissue.get_vessels_by_type(vessel_type):
 				vessels.add(vessel)
 	return vessels
 
+## This assumes there is only going to be 1 organ for each type (reasonable?)
 func get_organ_by_type(organ_type: GlobalTypes.Organs) -> Organ:
-	for organ in organs:
-		if organ.type == organ_type:
+	for organ: Organ in organs:
+		if organ.is_of_type(organ_type):
 			return organ as Organ
-	return null
-
-func get_organ_by_name(organ_name: String):
-	for organ in organs:
-		if organ.name == organ_name:
-			return organ
 	return null
 
 ## Connects supplied source and sink vessels to organs
 func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel):
-	for organ in organs:
+	for organ: Organ in organs:
 		if !organ.connect_vessels_to_tissues(source_vessel, sink_vessel):
 			printerr("Failed to connect %s with vessels" % organ.get_string())
 			return false
@@ -41,3 +36,5 @@ func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel):
 
 static func get_string(organ: GlobalTypes.Organs) -> String:
 	return GlobalTypes.Organs.keys()[organ]
+
+

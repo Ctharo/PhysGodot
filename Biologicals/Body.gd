@@ -51,6 +51,7 @@ func _ready():
 	print("%s has been created successfully" % name)
 
 	brain.set_debug(true)
+	lungs.set_debug(true)
 
 ## TODO: Not sure what this should be used for yet
 func _physics_process(_delta):

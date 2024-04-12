@@ -2,16 +2,19 @@ class_name Blood
 extends Resource
 ##
 ##
-##
+## One [class Blood] is used to simulate the contents of a [class Vessel]
 
 ## Stores info about the gases present in the blood
 var gases: Gases
 
 ## The volume of the blood in liters
-var volume: float = 0.01
+var volume: float = 0.5
 
-func _init():
-	gases = Gases.new(0.2, 0.0)
+func _init(_volume: float = 0.5, oxygen_concentration: float = 0.2, carbon_dioxide_concentration: float = 0.0):
+	self.volume = _volume
+	gases = Gases.new()
+	gases.set_moles(GlobalTypes.Gases.OXYGEN, oxygen_concentration)
+	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_concentration)
 
 func exchange_gas(gas: GlobalTypes.Gases, moles: float):
 	var current_moles := gases.get_moles(gas)

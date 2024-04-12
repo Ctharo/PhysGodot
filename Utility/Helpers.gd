@@ -1,5 +1,5 @@
 class_name Helpers
-## Class containing global helper functions 
+## Class containing global helper functions
 
 ## Converts a string to title case
 static func to_title_case(s: String) -> String:

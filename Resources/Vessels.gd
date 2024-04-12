@@ -1,5 +1,5 @@
-extends Iterator
 class_name Vessels
+extends Iterator
 ## Iterable collection of Vessel instances with helpful methods
 
 var vessels: Array[Vessel] :
@@ -16,16 +16,13 @@ func add(vessel: Vessel) -> void:
 	vessels.append(vessel)
 
 func fill_vessels_with_blood() -> void:
-	for vessel in vessels:
-		var current_volume: float = 0.0
-		while current_volume < vessel.volume:
-			var blood: Blood = Blood.new()
-			vessel.blood.append(blood)
-			current_volume += blood.volume
+	for vessel: Vessel in vessels:
+		var blood: Blood = Blood.new(vessel.max_volume)
+		vessel.blood = blood
 
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var _vessels:= Vessels.new()
-	for vessel in vessels:
+	for vessel: Vessel in vessels:
 		if vessel.type == vessel_type:
 			_vessels.add(vessel)
 	return _vessels
@@ -39,14 +36,14 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	var total_moles: float = 0.0
-	for vessel in vessels:
+	for vessel: Vessel in vessels:
 		total_moles += vessel.get_moles(gas)
 	return total_moles
 
 func get_volume() -> float:
 	var total_volume: float = 0.0
-	for vessel in vessels:
-		total_volume += vessel.current_volume()
+	for vessel: Vessel in vessels:
+		total_volume += vessel.volume
 	return total_volume
 
 ## Returns [Vessels] of [Vessel] with [member Vessel.type] == [member Vessel.CAPILLIARIES].
@@ -65,13 +62,13 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	if total_volume == 0:
 		printerr("Total volume of all vessels is zero")
 	var concentration = moles/total_volume
-	for vessel in vessels:
-		var moles_for_vessel: float = concentration * vessel.current_volume()
+	for vessel: Vessel in vessels:
+		var moles_for_vessel: float = concentration * vessel.volume
 		var final_moles_for_vessel: float = moles_for_vessel + vessel.get_moles(gas)
 		assert(final_moles_for_vessel >= 0, "Moles should not be less than zero")
 		vessel.set_moles(gas, final_moles_for_vessel)
 
 ## Warning: Does not follow conservation of mass. Debugging only.
 func set_moles(gas: GlobalTypes.Gases, moles: float):
-	for vessel in vessels:
+	for vessel: Vessel in vessels:
 		vessel.set_moles(gas, moles)
