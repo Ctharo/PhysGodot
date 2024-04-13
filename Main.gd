@@ -32,32 +32,60 @@ func _process(delta: float) -> void:
 		body.queue_free()
 
 func create_ui(b: Body) -> void:
+	# Return early if hbox is not available
 	if hbox == null:
 		return
+
+
+	# Clear any existing children in the hbox
 	for child in hbox.get_children():
 		if child != null:
 			child.queue_free()
-	for organ: Organ in b.organs as Organs:
-		var vbox := VBoxContainer.new()
-		var label := Label.new()
-		var label_health := Label.new()
-		label.text = organ.name
-		label_health.text = "Health: %s" % (organ.health * 100)
 
+	var organ_count: int = b.organs.get_count()
+
+	# Determine the width for each organ based on the number of organs
+	var organ_width: int = hbox.get_rect().size.x / max(organ_count, 1)
+
+	# Iterate over each organ in the body
+	for organ in b.organs as Organs:
+		var vbox := VBoxContainer.new()
+		vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		vbox.size.x = organ_width
 		hbox.add_child(vbox)
-		vbox.add_child(label)
+
+		# RichTextLabel for organ information with BBCode enabled
+		var organ_info := RichTextLabel.new()
+		organ_info.bbcode_enabled = true
+		organ_info.fit_content = true
+		organ_info.append_text("[b]" + organ.name + "[/b]")
+		vbox.add_child(organ_info)
+
+		# Health information
+		var health_info := RichTextLabel.new()
+		health_info.bbcode_enabled = true
+		health_info.fit_content = true
+		health_info.append_text("Health: [color=lime]" + str(int(organ.health * 100)) + "%[/color]")
+		vbox.add_child(health_info)
+
+		# Chemical imbalance warning
 		if organ.bad_chemistry:
-			var bad_chem_warning_label: Label = Label.new()
-			bad_chem_warning_label.text = "Warning: Chemical imbalance detected!"
-			vbox.add_child(bad_chem_warning_label)
-		vbox.add_child(label_health)
-		for gas: int in GlobalTypes.Gases.values() as Array[int]:
-			var label2 := Label.new()
-			label2.text = "Tissue [%s]: %f" % [Gases.get_string(gas), organ.get_concentration(gas)]
-			var label3 := Label.new()
-			label3.text = "Vessel [%s]: %f" % [Gases.get_string(gas), organ.get_capillaries().get_concentration(gas)]
-			vbox.add_child(label2)
-			vbox.add_child(label3)
+			var chem_warning := RichTextLabel.new()
+			chem_warning.bbcode_enabled = true
+			chem_warning.fit_content = true
+			chem_warning.append_text("[color=red][b]Warning:[/b] Chemical imbalance detected![/color]")
+
+			vbox.add_child(chem_warning)
+
+		# Gas-specific information
+		for gas in GlobalTypes.Gases.values() as Array[int]:
+			var gas_info := RichTextLabel.new()
+			gas_info.bbcode_enabled = true
+			gas_info.fit_content = true
+			gas_info.append_text("[b]" + Gases.get_string(gas) + "[/b]\n")
+			gas_info.append_text("[Tissue]: %f \n" % organ.get_concentration(gas))
+			gas_info.append_text("[Vessel]: %f" % organ.get_capillaries().get_concentration(gas))
+			vbox.add_child(gas_info)
 
 
 

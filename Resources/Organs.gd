@@ -34,6 +34,9 @@ func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel) -> bo
 			return false
 	return true
 
+func get_count() -> int:
+	return organs.size()
+
 static func get_string(organ: GlobalTypes.Organs) -> String:
 	return GlobalTypes.Organs.keys()[organ]
 
