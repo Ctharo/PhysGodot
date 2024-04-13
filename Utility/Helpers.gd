@@ -4,7 +4,7 @@ class_name Helpers
 ## Converts a string to title case
 static func to_title_case(s: String) -> String:
 	# Split the string into words based on spaces
-	var words = s.split(" ")
+	var words: PackedStringArray = s.split(" ")
 
 	# Capitalize the first letter of each word
 	for i in range(words.size()):

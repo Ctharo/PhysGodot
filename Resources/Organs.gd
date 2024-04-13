@@ -27,7 +27,7 @@ func get_organ_by_type(organ_type: GlobalTypes.Organs) -> Organ:
 	return null
 
 ## Connects supplied source and sink vessels to organs
-func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel):
+func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel) -> bool:
 	for organ: Organ in organs:
 		if !organ.connect_vessels_to_tissues(source_vessel, sink_vessel):
 			printerr("Failed to connect %s with vessels" % organ.get_string())
@@ -37,4 +37,5 @@ func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel):
 static func get_string(organ: GlobalTypes.Organs) -> String:
 	return GlobalTypes.Organs.keys()[organ]
 
-
+static func is_of_type(organ: Organ, type: GlobalTypes.Organs) -> bool:
+	return organ.type == type

@@ -11,7 +11,7 @@ var gases: Array[Gas] :
 		return _collection
 
 # TODO: Change Gases initial moles to be an initial concentration
-func _init(g: Array[Gas] = []):
+func _init(g: Array[Gas] = []) -> void:
 	super._init(g)
 
 

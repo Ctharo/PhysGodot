@@ -3,26 +3,31 @@ class_name Body
 ##
 ##
 ## TODO: Should handle Blood movement from aorta to tissues and from tissues to vena_cava
-
 @export var organs: Organs
 @export var vessels: Vessels
+@export var dead: bool
 
-func _init(new_name: String):
+func _init(new_name: String) -> void:
 	name = new_name
-	# Print the name of the body in a formatted string
-	print("Body '%s' initialized" % name)
 
-func _ready():
+func _ready() -> void:
 	# Create Brain
-	var brain := Organ.new(GlobalTypes.Organs.BRAIN)
+	var brain_stats: OrganStats = load("res://Resources/OrganStats/BrainStats.tres")
+	var brain := Organ.new(GlobalTypes.Organs.BRAIN, brain_stats)
 	add_child(brain)
 
 	# Create Lungs
-	var lungs := Organ.new(GlobalTypes.Organs.LUNGS)
+	var lungs_stats: OrganStats = load("res://Resources/OrganStats/LungsStats.tres")
+	var lungs := Organ.new(GlobalTypes.Organs.LUNGS, lungs_stats)
 	add_child(lungs)
 
 	# Create Organs resource
 	organs = Organs.new([brain, lungs] as Array[Organ])
+	for organ: Organ in organs:
+		if !organ.on_bad_chemistry.is_connected(_on_organ_bad_chemistry):
+			organ.on_bad_chemistry.connect(_on_organ_bad_chemistry)
+		if !organ.on_died.is_connected(_on_organ_died):
+			organ.on_died.connect(_on_organ_died)
 
 	# Create Vessels resource
 	vessels = Vessels.new()
@@ -51,17 +56,29 @@ func _ready():
 	print("%s has been created successfully" % name)
 
 
-
 ## TODO: Not sure what this should be used for yet
-func _physics_process(_delta):
-	pass
+func _physics_process(_delta: float) -> void:
+	if dead:
+		return
 
-func get_brain():
+func _on_organ_bad_chemistry(organ: Organ, gas: GlobalTypes.Gases) -> void:
+	print("%s is experiencing a chemical imbalance with %s" % [organ.name, Gases.get_string(gas)])
+
+func _on_organ_died(organ: Organ) -> void:
+	print("%s's %s has died" % [name, organ.name])
+	if Organs.is_of_type(organ, GlobalTypes.Organs.BRAIN):
+		on_died()
+
+func get_brain() -> Organ:
 	return _get_organ(GlobalTypes.Organs.BRAIN)
 
-func get_lungs():
+func get_lungs() -> Organ:
 	return _get_organ(GlobalTypes.Organs.LUNGS)
 
 func _get_organ(organ_type: GlobalTypes.Organs) -> Organ:
 	return organs.get_organ_by_type(organ_type)
+
+func on_died() -> void:
+	print("%s has died" % name)
+	dead = true
 

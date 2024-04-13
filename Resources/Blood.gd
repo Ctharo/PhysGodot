@@ -8,13 +8,13 @@ extends Resource
 var gases: Gases
 
 ## The volume of the blood in liters
-var volume: float = 0.5
+var volume: float
 
-func _init(_volume: float = 0.5):
+func _init(_volume: float = 0.5) -> void:
 	self.volume = _volume
 	gases = Gases.new()
 
-func exchange_gas(gas: GlobalTypes.Gases, moles: float):
+func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var current_moles := gases.get_moles(gas)
 	assert(current_moles + moles > 0, "Moles cannot be less than zero")
 	set_moles(gas, current_moles + moles)
@@ -22,5 +22,5 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float):
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
 
-func set_moles(gas: GlobalTypes.Gases, moles: float):
+func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
 	gases.set_moles(gas, moles)

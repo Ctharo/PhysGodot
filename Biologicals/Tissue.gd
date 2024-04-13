@@ -5,9 +5,8 @@ class_name Tissue
 ## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases
 var vessels: Vessels
-var mass: float = randf_range(1, 3) #TODO: Tissue mass should cause increased rates of aerobic respiration, but also increased rates of gas exchange.
-var volume: float = 1.0
-var metabolism_factor: float = 0.001
+var mass: float #TODO: Tissue mass should cause increased rates of aerobic respiration, but also increased rates of gas exchange.
+var metabolism_factor: float ## Effects rate at which this tissue consumes O2 and produces CO2 (TODO: Maybe more)
 const GAS_EXCHANGE_FACTOR: float = 0.01
 
 @export_category("Meta")
@@ -15,13 +14,16 @@ var timer: float = 0.0
 const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
-func _init():
+func _init(metabolism_factor: float, mass: float) -> void:
 	vessels = Vessels.new()
+	self.metabolism_factor = metabolism_factor
+	self.mass = mass
 	init_vessels()
 	# TODO: Change Tissue initial moles to be an initial concentration
 	gases = Gases.new([Gas.new(GlobalTypes.Gases.OXYGEN, randf_range(0.08, 0.18) * mass), Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, randf_range(0.00, 0.05) * mass)] as Array[Gas])
 
-func _physics_process(delta):
+
+func _physics_process(delta: float) -> void:
 	# TODO: Should be responsible to run physiological processes
 	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
 	timer += delta
@@ -37,7 +39,7 @@ func _physics_process(delta):
 		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
 
 
-func init_vessels():
+func init_vessels() -> void:
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
 	add_child(capillaries)
 
@@ -56,7 +58,7 @@ func init_vessels():
 	vein.receive_from = capillaries
 	artery.deliver_to = capillaries
 
-func connect_vessels_to_tissue(source_vessel: Vessel, sink_vessel: Vessel):
+func connect_vessels_to_tissue(source_vessel: Vessel, sink_vessel: Vessel) -> bool:
 	if source_vessel.type != GlobalTypes.Vessels.AORTA or sink_vessel.type != GlobalTypes.Vessels.VENA_CAVA: # TODO: Can probably be removed at some point - used to ensure that the correct vessels are connected
 		printerr("Incorrect type source_vessel: %s sink_vessel: %s" % [source_vessel, sink_vessel])
 		return false
@@ -97,9 +99,7 @@ func exchange_gases(delta: float) -> void:
 
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
-	var moles: float = delta_concentration * volume * GAS_EXCHANGE_FACTOR * delta
-	if debug: print("Exchanging %s: Moles exchanged: %f" % [Gases.get_string(gas), moles])
-
+	var moles: float = delta_concentration * mass * GAS_EXCHANGE_FACTOR * delta
 	exchange_gas(gas, moles)
 	capillaries.exchange_gas(gas, -moles)
 
@@ -118,7 +118,7 @@ func get_all_vessels() -> Vessels:
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	return vessels.get_vessels_by_type(vessel_type)
 
-func aerobic_respiration(delta: float):
+func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
 	var oxygen_needed: float = min(metabolism_factor * delta, oxygen_moles)

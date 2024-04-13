@@ -8,7 +8,7 @@ var vessels: Array[Vessel] :
 	get:
 		return _collection
 
-func _init(v: Array[Vessel] = []):
+func _init(v: Array[Vessel] = []) -> void:
 	super._init(v)
 	fill_vessels_with_blood()
 
@@ -63,7 +63,8 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var total_volume: float = get_volume()
 	if total_volume == 0:
 		printerr("Total volume of all vessels is zero")
-	var concentration = moles/total_volume
+		return
+	var concentration: float = moles/total_volume
 	for vessel: Vessel in vessels:
 		var moles_for_vessel: float = concentration * vessel.volume
 		var final_moles_for_vessel: float = moles_for_vessel + vessel.get_moles(gas)
@@ -71,6 +72,6 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 		vessel.set_moles(gas, final_moles_for_vessel)
 
 ## Warning: Does not follow conservation of mass. Debugging only.
-func set_moles(gas: GlobalTypes.Gases, moles: float):
+func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
 	for vessel: Vessel in vessels:
 		vessel.set_moles(gas, moles)

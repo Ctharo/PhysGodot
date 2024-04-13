@@ -8,7 +8,7 @@ var tissues: Array[Tissue] :
 	get:
 		return _collection
 
-func _init(t: Array[Tissue] = []):
+func _init(t: Array[Tissue] = []) -> void:
 	super._init(t)
 
 ## Returns float of sum of moles of provided [param gas]: [Gas]
@@ -26,7 +26,7 @@ func total_mass() -> float:
 
 ## Returns float of sum of moles of provided [param gas] divided by [method total_mass] return value.
 func get_concentration(gas: GlobalTypes.Gases) -> float:
-	var mass = total_mass()
+	var mass: float = total_mass()
 	if mass == 0.0:
 		return 0.0
 	return get_moles(gas)/mass
@@ -51,6 +51,6 @@ func get_all_vessels() -> Vessels:
 func _iter() -> Iterator:
 	return Iterator.new(tissues)
 
-func set_debug(value: bool):
+func set_debug(value: bool) -> void:
 	for tissue: Tissue in tissues:
 		tissue.debug = value

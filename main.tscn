@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://ckynyjy4hqipe"]
+[gd_scene load_steps=3 format=3 uid="uid://ckynyjy4hqipe"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_gkth6"]
+[ext_resource type="PackedScene" uid="uid://c7fcdiusphjcn" path="res://ui.tscn" id="2_23uo2"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_gkth6")
+
+[node name="UI" parent="." instance=ExtResource("2_23uo2")]
+unique_name_in_owner = true

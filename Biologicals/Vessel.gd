@@ -4,7 +4,9 @@ class_name Vessel
 @export var _name: String
 @export var vessel_type: String
 ## Represents the current volume of [Blood] that this vessel is holding
-var volume: float = 0.0
+var volume: float :
+	get:
+		return blood.volume
 
 ## Represents the max volume of [Blood] that this vessel can hold
 var max_volume: float = 1.0
@@ -21,9 +23,9 @@ var blood: Blood
 ## The [Vessel] that this vessel receives [Blood] from TODO: Do we need this?
 @export var receive_from: Vessel
 
-func _init(_vessel_type: GlobalTypes.Vessels, _volume: float = 1.0):
+func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 	self.type = _vessel_type
-	self.volume = _volume
+	self.max_volume = max_volume
 	name = Helpers.to_title_case(Vessels.get_string(self.type))
 	_name = name
 
@@ -43,7 +45,6 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return self.blood.get_moles(gas)
 
-
 ## Sets total moles of a gas in the blood of this vessel
-func set_moles(gas: GlobalTypes.Gases, moles: float):
+func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
 	self.blood.set_moles(gas, moles)
