@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="OrganStats" load_steps=2 format=3 uid="uid://474u2c5br1q1"]
+
+[ext_resource type="Script" path="res://Resources/OrganStats/OrganStats.gd" id="1_hu6vk"]
+
+[resource]
+script = ExtResource("1_hu6vk")
+metabolism_factor = 0.001
+mass = 1.0

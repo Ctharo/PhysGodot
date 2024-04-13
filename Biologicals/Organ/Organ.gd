@@ -4,8 +4,8 @@ extends Node
 ##
 ## Physiological processes depend on Organ
 
-signal on_bad_chemistry
-signal on_died
+signal bad_chemistry_detected
+signal organ_died
 
 @export var organ_type:String :
 	get:
@@ -55,6 +55,8 @@ func _physics_process(delta: float) -> void:
 			health -= timer * organ_stats.metabolism_factor * 20
 		timer = 0
 
+
+
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)
 
@@ -83,5 +85,5 @@ func is_of_type(test_type: GlobalTypes.Organs) -> bool:
 
 func died() -> void:
 	dead = true
-	on_died.emit(self)
+	organ_died.emit(self)
 	self.set_physics_process(false)

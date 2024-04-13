@@ -3,6 +3,7 @@ class_name Body
 ##
 ##
 ## TODO: Should handle Blood movement from aorta to tissues and from tissues to vena_cava
+
 @export var organs: Organs
 @export var vessels: Vessels
 @export var dead: bool
@@ -17,17 +18,22 @@ func _ready() -> void:
 	add_child(brain)
 
 	# Create Lungs
-	var lungs_stats: OrganStats = load("res://Resources/OrganStats/LungsStats.tres")
+	var lungs_stats: OrganStats = load("res://Resources/OrganStats/LungsStats.tres") as OrganStats
 	var lungs := Organ.new(GlobalTypes.Organs.LUNGS, lungs_stats)
 	add_child(lungs)
+	
+	var heart_stats: OrganStats = load("res://Resources/OrganStats/HeartStats.tres")
+	var heart: Heart = Heart.new(GlobalTypes.Organs.HEART, heart_stats)
+	heart.heart_beated.connect(_on_heart_beat)
+	add_child(heart)
 
 	# Create Organs resource
-	organs = Organs.new([brain, lungs] as Array[Organ])
+	organs = Organs.new([brain, lungs, heart] as Array[Organ])
 	for organ: Organ in organs:
-		if !organ.on_bad_chemistry.is_connected(_on_organ_bad_chemistry):
-			organ.on_bad_chemistry.connect(_on_organ_bad_chemistry)
-		if !organ.on_died.is_connected(_on_organ_died):
-			organ.on_died.connect(_on_organ_died)
+		if !organ.bad_chemistry_detected.is_connected(_on_organ_bad_chemistry):
+			organ.bad_chemistry_detected.connect(_on_organ_bad_chemistry)
+		if !organ.organ_died.is_connected(_on_organ_died):
+			organ.organ_died.connect(_on_organ_died)
 
 	# Create Vessels resource
 	vessels = Vessels.new()
@@ -61,6 +67,10 @@ func _physics_process(_delta: float) -> void:
 	if dead:
 		return
 
+## Should move Blood throughout body
+func move_blood(delta: float) -> void:
+	pass
+
 func _on_organ_bad_chemistry(organ: Organ, gas: GlobalTypes.Gases) -> void:
 	print("%s is experiencing a chemical imbalance with %s" % [organ.name, Gases.get_string(gas)])
 
@@ -82,3 +92,5 @@ func on_died() -> void:
 	print("%s has died" % name)
 	dead = true
 
+func _on_heart_beat(stroke_volume: float) -> void:
+	pass
