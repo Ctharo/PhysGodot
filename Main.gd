@@ -15,6 +15,7 @@ func create_body(name_of_body: String) -> Body:
 	return new_body
 
 func _process(delta: float) -> void:
+	# HACK: For handling dead body
 	if body == null and hbox != null:
 		for child in hbox.get_children():
 			if child != null:
