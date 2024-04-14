@@ -6,8 +6,10 @@ class_name Vessel
 ## Represents the current volume of [Blood] that this vessel is holding
 var volume: float :
 	get:
-		return blood.volume
-
+		if blood:
+			return blood.volume
+		else:
+			return 0.0
 ## Represents the max volume of [Blood] that this vessel can hold
 var max_volume: float = 1.0
 
@@ -17,11 +19,11 @@ var type: GlobalTypes.Vessels
 ## Stores the [Blood] that this vessel is currently holding
 var blood: Blood
 
-## The [Vessel] that this vessel delivers [Blood] to
-@export var deliver_to: Vessel
+## The [Vessels] collection that this vessel delivers [Blood] to
+@export var deliver_to: Vessels
 
-## The [Vessel] that this vessel receives [Blood] from TODO: Do we need this?
-@export var receive_from: Vessel
+### The [Vessels] that this vessel receives [Blood] from TODO: Do we need this?
+#@export var receive_from: Vessels
 
 func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 	self.type = _vessel_type

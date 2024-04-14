@@ -28,10 +28,11 @@ func get_organ_by_type(organ_type: GlobalTypes.Organs) -> Organ:
 
 ## Connects supplied source and sink vessels to organs
 func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel) -> bool:
-	for organ: Organ in organs:
-		if !organ.connect_vessels_to_tissues(source_vessel, sink_vessel):
-			printerr("Failed to connect %s with vessels" % organ.get_string())
-			return false
+	# Set AORTA to deliver to all Artery
+	source_vessel.deliver_to = get_vessels_by_type(GlobalTypes.Vessels.ARTERY)
+	# Set all veins to deliver to VENA_CAVA
+	for vessel in get_vessels_by_type(GlobalTypes.Vessels.VEIN):
+		vessel.deliver_to = Vessels.new([sink_vessel] as Array[Vessel])
 	return true
 
 func get_count() -> int:

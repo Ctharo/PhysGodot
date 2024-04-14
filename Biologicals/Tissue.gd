@@ -52,23 +52,8 @@ func init_vessels() -> void:
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
 
 	# Connect capillaries
-	capillaries.receive_from = artery
-	capillaries.deliver_to = vein
-
-	vein.receive_from = capillaries
-	artery.deliver_to = capillaries
-
-func connect_vessels_to_tissue(source_vessel: Vessel, sink_vessel: Vessel) -> bool:
-	if source_vessel.type != GlobalTypes.Vessels.AORTA or sink_vessel.type != GlobalTypes.Vessels.VENA_CAVA: # TODO: Can probably be removed at some point - used to ensure that the correct vessels are connected
-		printerr("Incorrect type source_vessel: %s sink_vessel: %s" % [source_vessel, sink_vessel])
-		return false
-
-	# Connect tissue to vessel
-	for vein in get_vessels_by_type(GlobalTypes.Vessels.VEIN):
-		vein.deliver_to = sink_vessel
-	for artery in get_vessels_by_type(GlobalTypes.Vessels.ARTERY):
-		artery.receive_from = source_vessel
-	return true
+	capillaries.deliver_to = Vessels.new([vein] as Array[Vessel])
+	artery.deliver_to = Vessels.new([capillaries] as Array[Vessel])
 
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
@@ -118,6 +103,7 @@ func get_all_vessels() -> Vessels:
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	return vessels.get_vessels_by_type(vessel_type)
 
+## Tissue-specific task for producing CO2 and consuming O2
 func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 

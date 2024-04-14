@@ -66,13 +66,6 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 func get_all_vessels() -> Vessels:
 	return tissues.get_all_vessels()
 
-## Connects all tissues to source and sink vessels
-func connect_vessels_to_tissues(source_vessel: Vessel, sink_vessel: Vessel) -> bool:
-	for tissue: Tissue in tissues:
-		if !tissue.connect_vessels_to_tissue(source_vessel, sink_vessel):
-			return false
-	return true
-
 func set_debug(value: bool) -> void:
 	debug = value
 	tissues.set_debug(value)

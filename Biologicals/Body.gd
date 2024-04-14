@@ -43,6 +43,7 @@ func _ready() -> void:
 	add_child(aorta)
 	vessels.add(aorta)
 
+
 	var pulmonary_artery := Vessel.new(GlobalTypes.Vessels.PULMONARY_ARTERY)
 	add_child(pulmonary_artery)
 	vessels.add(pulmonary_artery)
@@ -54,6 +55,8 @@ func _ready() -> void:
 	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
 	add_child(vena_cava)
 	vessels.add(vena_cava)
+
+
 
 	# Connect all tissues to body vessels
 	if !organs.connect_vessels_to_organs(aorta, vena_cava):
@@ -68,7 +71,7 @@ func _physics_process(_delta: float) -> void:
 		return
 
 ## Should move Blood throughout body
-func move_blood(delta: float) -> void:
+func move_blood(_delta: float) -> void:
 	pass
 
 func _on_organ_bad_chemistry(organ: Organ, gas: GlobalTypes.Gases) -> void:
@@ -92,5 +95,5 @@ func on_died() -> void:
 	print("%s has died" % name)
 	dead = true
 
-func _on_heart_beat(stroke_volume: float) -> void:
+func _on_heart_beat(_stroke_volume: float) -> void:
 	pass
