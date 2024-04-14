@@ -21,7 +21,7 @@ func _ready() -> void:
 	var lungs_stats: OrganStats = load("res://Resources/OrganStats/LungsStats.tres") as OrganStats
 	var lungs := Organ.new(GlobalTypes.Organs.LUNGS, lungs_stats)
 	add_child(lungs)
-	
+
 	var heart_stats: OrganStats = load("res://Resources/OrganStats/HeartStats.tres")
 	var heart: Heart = Heart.new(GlobalTypes.Organs.HEART, heart_stats)
 	heart.heart_beated.connect(_on_heart_beat)

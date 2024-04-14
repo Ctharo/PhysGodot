@@ -47,15 +47,12 @@ func init_tissues() -> void:
 	tissues = Tissues.new([tissue] as Array[Tissue])
 
 func _physics_process(delta: float) -> void:
-	if dead:
-		return
+	if dead: return
 	timer += delta
 	if timer > 1:
 		if bad_chemistry:
 			health -= timer * organ_stats.metabolism_factor * 20
 		timer = 0
-
-
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)

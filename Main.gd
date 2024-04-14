@@ -92,20 +92,19 @@ func create_ui(b: Body) -> void:
 	# Return early if hbox is not available
 	if hbox == null:
 		return
-
+	#%UI.position = Vector2(0,0)
+	#hbox.position = Vector2(0,0)
 	# Clear any existing children in the hbox
 	for child in hbox.get_children():
 		if child != null:
 			child.queue_free()
 
-	var organ_count: int = b.organs.get_count()
-	var organ_width: float = hbox.size.x / max(organ_count, 1)
-
 	# Iterate over each organ in the body and create an OrganWidget
-	for organ in b.organs as Organs:
+	for organ: Organ in b.organs as Organs:
 		var organ_widget := OrganWidget.new(organ)
-		organ_widget.custom_minimum_size.x = organ_width
+		organ_widget.name = organ.name + "Widget"
 		hbox.add_child(organ_widget)
+
 
 
 
