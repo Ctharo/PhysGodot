@@ -36,22 +36,17 @@ func _ready() -> void:
 		if !organ.organ_died.is_connected(_on_organ_died):
 			organ.organ_died.connect(_on_organ_died)
 
-	# Create Vessels resource
-	vessels = Vessels.new()
-
 	# Create Vessels
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
 	add_child(aorta)
-	vessels.add(aorta)
-
 
 	var pulmonary_artery := Vessel.new(GlobalTypes.Vessels.PULMONARY_ARTERY)
 	add_child(pulmonary_artery)
-	vessels.add(pulmonary_artery)
 
+	## Connect major Body vessels
 	var pulmonary_vein := Vessel.new(GlobalTypes.Vessels.PULMONARY_VEIN)
+	pulmonary_vein.deliver_to = Vessels.new([aorta] as Array[Vessel])
 	add_child(pulmonary_vein)
-	vessels.add(pulmonary_vein)
 	
 	## Connect pulmonary circuit
 	pulmonary_artery.deliver_to = lungs.alveoli.get_capillaries()
@@ -59,8 +54,10 @@ func _ready() -> void:
 		vessel.deliver_to = Vessels.new([pulmonary_vein] as Array[Vessel])
 	
 	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
+	vena_cava.deliver_to = Vessels.new([pulmonary_artery] as Array[Vessel])
 	add_child(vena_cava)
-	vessels.add(vena_cava)
+
+	vessels = Vessels.new([aorta, pulmonary_artery, pulmonary_vein, vena_cava] as Array[Vessel])
 
 	# Connect all tissues to body vessels
 	if !organs.connect_vessels_to_organs(aorta, vena_cava):

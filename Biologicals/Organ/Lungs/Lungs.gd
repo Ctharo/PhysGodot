@@ -10,6 +10,7 @@ signal respired
 func _init(Organ_type: GlobalTypes.Organs, stats: OrganStats) -> void:
 	super._init(Organ_type, stats)
 	alveoli = Alveoli.new()
+	alveoli.name = "Alveoli"
 	add_child(alveoli)
 	respiratory_rate = 0.2
 

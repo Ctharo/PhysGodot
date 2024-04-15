@@ -4,7 +4,7 @@ extends Node
 @export var gases: Gases
 @export var volume: float = 6.0
 @export var vessels: Vessels
-var vascularity_factor: float = 1.0
+var vascularity_factor: float = 5.0
 var debug: bool
 
 func _init() -> void:
@@ -13,7 +13,6 @@ func _init() -> void:
 
 ## HINT Connections are set from Body
 func _init_vessels() -> void:
-	vessels = Vessels.new() 
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
 	add_child(capillaries)
 	vessels = Vessels.new([capillaries] as Array[Vessel])
@@ -63,3 +62,6 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
+
+func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
+	gases.set_moles(gas, moles)
