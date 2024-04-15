@@ -33,15 +33,11 @@ func _physics_process(delta: float) -> void:
 		if debug: print("%s tissue processing" % name)
 		exchange_gases(timer)
 		aerobic_respiration(timer)
+		reset_blood_gases()
 
 		timer = 0.0
 
-	## HACK: Ensures CO2 has a sink for debugging purposes
-	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.08:
-		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
-	## HACK: Ensures O2 has a source for debugging purposes
-	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.OXYGEN) < 0.205:
-		vessels.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, 0.21)
+
 	
 func init_vessels() -> void:
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
@@ -112,7 +108,16 @@ func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
 	var oxygen_needed: float = min(metabolism_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = metabolism_factor * 0 * delta #FIXME: For eliminating CO2 as a factor
+	var carbon_dioxide_produced: float = metabolism_factor * 0.5 * delta 
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
+
+## HACK method for debugging purposes until circulation is implemented
+func reset_blood_gases() -> void:
+		## HACK: Ensures CO2 has a sink for debugging purposes
+	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.01:
+		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
+	## HACK: Ensures O2 has a source for debugging purposes
+	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.OXYGEN) < 0.205:
+		vessels.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, 0.21)
