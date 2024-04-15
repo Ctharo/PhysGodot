@@ -56,8 +56,6 @@ func _ready() -> void:
 	add_child(vena_cava)
 	vessels.add(vena_cava)
 
-
-
 	# Connect all tissues to body vessels
 	if !organs.connect_vessels_to_organs(aorta, vena_cava):
 		printerr("Problem connecting vessels")
@@ -81,6 +79,9 @@ func _on_organ_died(organ: Organ) -> void:
 	print("%s's %s has died" % [name, organ.name])
 	if Organs.is_of_type(organ, GlobalTypes.Organs.BRAIN):
 		on_died()
+
+func get_organs() -> Organs:
+	return organs as Organs
 
 func get_brain() -> Organ:
 	return _get_organ(GlobalTypes.Organs.BRAIN)

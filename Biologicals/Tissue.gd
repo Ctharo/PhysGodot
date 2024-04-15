@@ -7,20 +7,22 @@ var gases: Gases
 var vessels: Vessels
 var mass: float #TODO: Tissue mass should cause increased rates of aerobic respiration, but also increased rates of gas exchange.
 var metabolism_factor: float ## Effects rate at which this tissue consumes O2 and produces CO2 (TODO: Maybe more)
-const GAS_EXCHANGE_FACTOR: float = 0.01
+var vascularity_factor: float ## Effects rate at which this tissue can diffuse gases from Capillaries 
+
 
 @export_category("Meta")
 var timer: float = 0.0
 const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
-func _init(metabolism_factor: float, mass: float) -> void:
+func _init(metabolism_factor: float, vascularity_factor: float, mass: float) -> void:
 	vessels = Vessels.new()
 	self.metabolism_factor = metabolism_factor
+	self.vascularity_factor = vascularity_factor
 	self.mass = mass
 	init_vessels()
 	# TODO: Change Tissue initial moles to be an initial concentration
-	gases = Gases.new([Gas.new(GlobalTypes.Gases.OXYGEN, randf_range(0.08, 0.18) * mass), Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, randf_range(0.00, 0.05) * mass)] as Array[Gas])
+	gases = Gases.new([Gas.new(GlobalTypes.Gases.OXYGEN, 0.21 * mass), Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, 0 * mass)] as Array[Gas])
 
 
 func _physics_process(delta: float) -> void:
@@ -37,8 +39,10 @@ func _physics_process(delta: float) -> void:
 	## HACK: Ensures CO2 has a sink for debugging purposes
 	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.08:
 		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
-
-
+	## HACK: Ensures O2 has a source for debugging purposes
+	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.OXYGEN) < 0.205:
+		vessels.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, 0.21)
+	
 func init_vessels() -> void:
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
 	add_child(capillaries)
@@ -84,7 +88,7 @@ func exchange_gases(delta: float) -> void:
 
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
-	var moles: float = delta_concentration * mass * GAS_EXCHANGE_FACTOR * delta
+	var moles: float = delta_concentration * mass * vascularity_factor * delta
 	exchange_gas(gas, moles)
 	capillaries.exchange_gas(gas, -moles)
 
@@ -108,7 +112,7 @@ func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
 	var oxygen_needed: float = min(metabolism_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = metabolism_factor * 2 * delta
+	var carbon_dioxide_produced: float = metabolism_factor * 0 * delta #FIXME: For eliminating CO2 as a factor
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)

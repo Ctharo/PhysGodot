@@ -4,9 +4,9 @@ extends Iterator
 
 var organs: Array[Organ] :
 	set(value):
-		_collection = value
+		_collection = value as Array[Organ]
 	get:
-		return _collection
+		return _collection as Array[Organ]
 
 func _iter() -> Iterator:
 	return Iterator.new(organs)
@@ -14,9 +14,9 @@ func _iter() -> Iterator:
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
 	for organ: Organ in organs:
-		for tissue: Tissue in organ.tissues:
-			for vessel: Vessel in tissue.get_vessels_by_type(vessel_type):
-				vessels.add(vessel)
+		for tissue: Tissue in organ.tissues as Tissues:
+			for vessel: Vessel in tissue.get_vessels_by_type(vessel_type) as Vessels:
+				vessels.add(vessel) 
 	return vessels
 
 ## This assumes there is only going to be 1 organ for each type (reasonable?)
@@ -31,7 +31,7 @@ func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel) -> bo
 	# Set AORTA to deliver to all Artery
 	source_vessel.deliver_to = get_vessels_by_type(GlobalTypes.Vessels.ARTERY)
 	# Set all veins to deliver to VENA_CAVA
-	for vessel in get_vessels_by_type(GlobalTypes.Vessels.VEIN):
+	for vessel: Vessel in get_vessels_by_type(GlobalTypes.Vessels.VEIN) as Vessels:
 		vessel.deliver_to = Vessels.new([sink_vessel] as Array[Vessel])
 	return true
 

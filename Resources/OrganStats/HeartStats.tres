@@ -5,4 +5,5 @@
 [resource]
 script = ExtResource("1_hu6vk")
 metabolism_factor = 0.001
+vascularity_factor = 1.0
 mass = 1.0

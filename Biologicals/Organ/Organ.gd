@@ -21,7 +21,7 @@ signal organ_died
 	get:
 		var r: bool = false
 		for tissue: Tissue in tissues:
-			if tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.07 or tissues.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.1:
+			if tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.12 or tissues.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.1:
 				r = true
 		return r
 
@@ -41,7 +41,7 @@ func _init(Organ_type: GlobalTypes.Organs, stats: OrganStats) -> void:
 func init_tissues() -> void:
 	# TODO: Should divide total mass among tissues if instancing more than 1.
 	assert(self.organ_stats.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
-	var tissue: Tissue = Tissue.new(self.organ_stats.metabolism_factor, self.organ_stats.mass)
+	var tissue: Tissue = Tissue.new(self.organ_stats.metabolism_factor, self.organ_stats.vascularity_factor, self.organ_stats.mass)
 	tissue.name = self.name + " Tissue"
 	add_child(tissue)
 	tissues = Tissues.new([tissue] as Array[Tissue])

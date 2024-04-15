@@ -4,5 +4,6 @@
 
 [resource]
 script = ExtResource("1_joj2l")
-metabolism_factor = 0.005
+metabolism_factor = 0.001
+vascularity_factor = 1.0
 mass = 1.5

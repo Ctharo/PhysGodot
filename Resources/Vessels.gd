@@ -17,10 +17,8 @@ func add(vessel: Vessel) -> void:
 
 func fill_vessels_with_blood() -> void:
 	for vessel: Vessel in vessels:
-		var blood: Blood = Blood.new(vessel.max_volume)
-		blood.set_moles(GlobalTypes.Gases.OXYGEN, 0.2 * blood.volume)
-		blood.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * blood.volume)
-		vessel.blood = blood
+		vessel.fill_with_blood()
+
 
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var _vessels:= Vessels.new()
