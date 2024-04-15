@@ -13,7 +13,14 @@ var gases: Array[Gas] :
 # TODO: Change Gases initial moles to be an initial concentration
 func _init(g: Array[Gas] = []) -> void:
 	super._init(g)
+	_init_gases()
 
+func _init_gases() -> void:
+	var oxygen_stats: GasStats = load("res://Resources/GasStats/OxygenStats.tres") as GasStats
+	var o2: Gas = Gas.new(GlobalTypes.Gases.OXYGEN, oxygen_stats)
+	var carbon_dioxide_stats: GasStats = load("res://Resources/GasStats/CarbonDioxideStats.tres") as GasStats
+	var co2: Gas = Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_stats)
+	gases = [o2, co2] as Array[Gas]
 
 ## Sets the amount of a specified gas.
 func set_moles(gas_type: GlobalTypes.Gases, moles: float = 0.0) -> void:
@@ -22,7 +29,7 @@ func set_moles(gas_type: GlobalTypes.Gases, moles: float = 0.0) -> void:
 		if gas.gas_type == gas_type:
 			gas.moles = moles
 			return
-	gases.append(Gas.new(gas_type, moles))
+	printerr("Cannot set moles for gas: Gas not found")
 
 func get_moles(gas_type: GlobalTypes.Gases) -> float:
 	for gas: Gas in gases:

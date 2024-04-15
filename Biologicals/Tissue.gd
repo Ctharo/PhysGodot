@@ -20,10 +20,8 @@ func _init(metabolism_factor: float, vascularity_factor: float, mass: float) -> 
 	self.metabolism_factor = metabolism_factor
 	self.vascularity_factor = vascularity_factor
 	self.mass = mass
-	init_vessels()
-	# TODO: Change Tissue initial moles to be an initial concentration
-	gases = Gases.new([Gas.new(GlobalTypes.Gases.OXYGEN, 0.21 * mass), Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, 0 * mass)] as Array[Gas])
-
+	_init_vessels()
+	_init_gases()
 
 func _physics_process(delta: float) -> void:
 	# TODO: Should be responsible to run physiological processes
@@ -37,9 +35,12 @@ func _physics_process(delta: float) -> void:
 
 		timer = 0.0
 
-
+func _init_gases() -> void:
+	gases = Gases.new()
+	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * mass)
+	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * mass)
 	
-func init_vessels() -> void:
+func _init_vessels() -> void:
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
 	add_child(capillaries)
 
@@ -115,9 +116,7 @@ func aerobic_respiration(delta: float) -> void:
 
 ## HACK method for debugging purposes until circulation is implemented
 func reset_blood_gases() -> void:
-		## HACK: Ensures CO2 has a sink for debugging purposes
 	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.01:
 		vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
-	## HACK: Ensures O2 has a source for debugging purposes
 	if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.OXYGEN) < 0.205:
 		vessels.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, 0.21)

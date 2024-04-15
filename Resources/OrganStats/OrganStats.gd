@@ -9,4 +9,3 @@ extends Resource
 
 ## Used for concentration calculations
 @export var mass: float
-

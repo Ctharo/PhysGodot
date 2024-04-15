@@ -12,7 +12,12 @@ var volume: float
 
 func _init(_volume: float = 0.5) -> void:
 	self.volume = _volume
+	_init_gases()
+
+func _init_gases() -> void:
 	gases = Gases.new()
+	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * volume)
+	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.05 * volume)
 
 func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var current_moles := gases.get_moles(gas)

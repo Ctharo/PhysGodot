@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="GasStats" load_steps=2 format=3 uid="uid://c2pb2notnkt2m"]
+
+[ext_resource type="Script" path="res://Resources/GasStats/GasStats.gd" id="1_5ckyw"]
+
+[resource]
+script = ExtResource("1_5ckyw")
+solubility = 1.0

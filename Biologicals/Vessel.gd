@@ -33,8 +33,7 @@ func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 
 func fill_with_blood()-> void:
 	var b: Blood = Blood.new(max_volume)
-	b.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * b.volume)
-	b.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * b.volume)
+
 	blood = b
 
 ##
