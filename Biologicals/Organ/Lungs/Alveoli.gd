@@ -10,8 +10,7 @@ var debug: bool
 func _init() -> void:
 	gases = Gases.new()
 	_init_vessels()
-	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * volume)
-	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.03 * volume)
+	_on_respiration()
 	
 ## HINT Connections are set from Body
 func _init_vessels() -> void:
@@ -24,6 +23,10 @@ func _init_vessels() -> void:
 	
 func _physics_process(delta: float) -> void:
 	exchange_gases(delta)
+	
+func _on_respiration() -> void:
+	set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * volume)
+	set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.05 * volume)
 	
 func exchange_gases(delta: float) -> void:
 	var capillaries: Vessels = get_capillaries()

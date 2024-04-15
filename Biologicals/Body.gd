@@ -100,26 +100,27 @@ func on_died() -> void:
 	dead = true
 
 ## HACK: For simulating Blood flow (i.e., transfer of gases between blood in capillaries)
-func _on_heart_beat(_stroke_volume: float, delta: float) -> void:
+func _on_heart_beat(stroke_volume: float) -> void:
 	var pulmonary_capillaries: Vessels = get_lungs().alveoli.get_capillaries()
+	
 	for organ: Organ in organs:
-		var capillary_o2_concentration: float = organ.get_concentration(GlobalTypes.Gases.OXYGEN)
-		var pulm_capillary_o2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
-		var capillary_co2_concentration: float = organ.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
-		var pulm_capillary_co2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
-		
-		var delta_o2_concentration: float = capillary_o2_concentration - pulm_capillary_o2_concentration
-		var o2_moles: float = delta_o2_concentration * pulmonary_capillaries.get_volume() * get_lungs().alveoli.vascularity_factor * delta
-		
-		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + o2_moles)
-		organ.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, organ.get_capillaries().get_moles(GlobalTypes.Gases.OXYGEN) - o2_moles)
+		var organ_capillaries: Vessels = organ.get_capillaries()
 
-		var delta_co2_concentration: float = capillary_co2_concentration - pulm_capillary_co2_concentration
-		var co2_moles: float = delta_co2_concentration * pulmonary_capillaries.get_volume() * get_lungs().alveoli.vascularity_factor * delta
+		# Calculate gas removal based on organ capillaries
+		var organ_o2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN) * stroke_volume
+		var organ_co2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) * stroke_volume
 		
-		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + co2_moles)
-		organ.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, organ.get_capillaries().get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) - co2_moles)
+		# Calculate gas addition based on pulmonary capillaries (donor blood)
+		var pulm_o2_moles_added: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN) * stroke_volume
+		var pulm_co2_moles_added: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) * stroke_volume
+		
+		# Update moles in organ capillaries
+		organ_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, organ_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) - organ_o2_moles_removed + pulm_o2_moles_added)
+		organ_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, organ_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) - organ_co2_moles_removed + pulm_co2_moles_added)
 
+		# Optionally, update moles in pulmonary capillaries if you need to simulate the change there too
+		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
+		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
 ## TODO: Not yet implemented
 func _on_lungs_respired() -> void:
 	pass

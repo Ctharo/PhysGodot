@@ -51,16 +51,49 @@ func _init(organ: Organ) -> void:
 	match organ.type:
 		GlobalTypes.Organs.LUNGS:
 			_lungs_setup(organ)
+		GlobalTypes.Organs.HEART:
+			_heart_setup(organ)
 		_:
 			pass
-			
-func _lungs_setup(organ: Organ) -> void:
-	var chem_warning := RichTextLabel.new()
-	chem_warning.name = "ChemWarningLabel"
-	chem_warning.bbcode_enabled = true
-	chem_warning.fit_content = true
-	chem_warning.append_text(" ")
-	add_child(chem_warning)
+	
+func _heart_setup(organ: Heart) -> void:
+	var space := RichTextLabel.new()
+	space.name = "space"
+	space.bbcode_enabled = true
+	space.fit_content = true
+	space.append_text(" ")
+	add_child(space)
+	
+	var heart_rate_info := RichTextLabel.new()
+	heart_rate_info.name = "respiration_info"
+	heart_rate_info.bbcode_enabled = true
+	heart_rate_info.fit_content = true
+	var hr: float = organ.heart_rate * 60 
+	heart_rate_info.append_text("[b]Heart Rate: [/b] %s/min" % hr)
+	add_child(heart_rate_info)
+	
+func _lungs_setup(organ: Lungs) -> void:
+	var space := RichTextLabel.new()
+	space.name = "space"
+	space.bbcode_enabled = true
+	space.fit_content = true
+	space.append_text(" ")
+	add_child(space)
+	
+	var respiration_info := RichTextLabel.new()
+	respiration_info.name = "respiration_info"
+	respiration_info.bbcode_enabled = true
+	respiration_info.fit_content = true
+	var rr: float = organ.respiratory_rate * 60 
+	respiration_info.append_text("[b]Respiration Rate: [/b] %s/min" % rr)
+	add_child(respiration_info)
+	
+	var space2 := RichTextLabel.new()
+	space2.name = "space2"
+	space2.bbcode_enabled = true
+	space2.fit_content = true
+	space2.append_text(" ")
+	add_child(space2)
 	
 	var alveoli_info := RichTextLabel.new()
 	alveoli_info.name = "AlveoliNameLabel"
@@ -79,4 +112,5 @@ func _lungs_setup(organ: Organ) -> void:
 		gas_info.append_text("[Alveoli]: %f \n" % organ.alveoli.get_concentration(gas))
 		gas_info.append_text("[Pulmonary Capillaries]: %f" % organ.alveoli.get_capillaries().get_concentration(gas))
 		add_child(gas_info)
+	
 	

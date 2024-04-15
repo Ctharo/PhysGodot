@@ -26,5 +26,4 @@ func respire(delta: float) -> void:
 	respiratory_rate_timer += delta
 	if respiratory_rate_timer > 1/respiratory_rate:
 		respiratory_rate_timer = 0
-		alveoli.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * alveoli.volume)
-		alveoli.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.005 * alveoli.volume)
+		alveoli._on_respiration()

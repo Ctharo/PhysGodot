@@ -21,5 +21,5 @@ func heart_beat(delta: float) -> void:
 		return
 	heart_rate_timer += delta
 	if heart_rate_timer > 1/heart_rate:
-		heart_beated.emit(stroke_volume, delta)
+		heart_beated.emit(stroke_volume)
 		heart_rate_timer = 0
