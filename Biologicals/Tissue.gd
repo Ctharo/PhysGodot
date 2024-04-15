@@ -31,7 +31,6 @@ func _physics_process(delta: float) -> void:
 		if debug: print("%s tissue processing" % name)
 		exchange_gases(timer)
 		aerobic_respiration(timer)
-		reset_blood_gases()
 
 		timer = 0.0
 

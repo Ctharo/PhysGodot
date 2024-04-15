@@ -1,0 +1,28 @@
+class_name Lungs
+extends Organ
+
+signal respired
+
+@export var respiratory_rate: float
+@export var respiratory_rate_timer: float
+@export var alveoli: Alveoli
+
+func _init(Organ_type: GlobalTypes.Organs, stats: OrganStats) -> void:
+	super._init(Organ_type, stats)
+	alveoli = Alveoli.new()
+	add_child(alveoli)
+	respiratory_rate = 0.2
+
+func _physics_process(delta: float) -> void:
+	if dead: return
+	super._physics_process(delta)
+	respire(delta)
+	
+func respire(delta: float) -> void:
+	if respiratory_rate == 0:
+		return
+	respiratory_rate_timer += delta
+	if respiratory_rate_timer > 1/respiratory_rate:
+		respiratory_rate_timer = 0
+		alveoli.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * alveoli.volume)
+		alveoli.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.005 * alveoli.volume)

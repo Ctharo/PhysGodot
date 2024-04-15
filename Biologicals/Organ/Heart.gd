@@ -12,6 +12,7 @@ func _init(Organ_type: GlobalTypes.Organs, stats: OrganStats) -> void:
 	stroke_volume = 0.06
 	
 func _physics_process(delta: float) -> void:
+	if dead: return
 	super._physics_process(delta)
 	heart_beat(delta)
 	

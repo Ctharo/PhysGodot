@@ -19,7 +19,8 @@ func _ready() -> void:
 
 	# Create Lungs
 	var lungs_stats: OrganStats = load("res://Resources/OrganStats/LungsStats.tres") as OrganStats
-	var lungs := Organ.new(GlobalTypes.Organs.LUNGS, lungs_stats)
+	var lungs := Lungs.new(GlobalTypes.Organs.LUNGS, lungs_stats)
+	lungs.respired.connect(_on_lungs_respired)
 	add_child(lungs)
 
 	var heart_stats: OrganStats = load("res://Resources/OrganStats/HeartStats.tres")
@@ -51,7 +52,12 @@ func _ready() -> void:
 	var pulmonary_vein := Vessel.new(GlobalTypes.Vessels.PULMONARY_VEIN)
 	add_child(pulmonary_vein)
 	vessels.add(pulmonary_vein)
-
+	
+	## Connect pulmonary circuit
+	pulmonary_artery.deliver_to = lungs.alveoli.get_capillaries()
+	for vessel: Vessel in lungs.alveoli.get_capillaries():
+		vessel.deliver_to = Vessels.new([pulmonary_vein] as Array[Vessel])
+	
 	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
 	add_child(vena_cava)
 	vessels.add(vena_cava)
@@ -96,5 +102,12 @@ func on_died() -> void:
 	print("%s has died" % name)
 	dead = true
 
+## TODO: Not yet implemented
 func _on_heart_beat(_stroke_volume: float) -> void:
 	pass
+
+## HACK for now will simply reset each Gas in Capillary gases from each Organ
+func _on_lungs_respired() -> void:
+	for vessel: Vessel in organs.get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES):
+		vessel.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * vessel.volume)
+		vessel.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.005)
