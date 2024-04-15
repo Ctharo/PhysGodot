@@ -15,6 +15,8 @@ func _ready() -> void:
 	# Create Brain
 	var brain_stats: OrganStats = load("res://Resources/OrganStats/BrainStats.tres")
 	var brain := Organ.new(GlobalTypes.Organs.BRAIN, brain_stats)
+	brain.hypercapnia.connect(_on_brain_hypercapnia)
+	brain.hypoxia.connect(_on_brain_hypoxia)
 	add_child(brain)
 
 	# Create Lungs
@@ -121,6 +123,13 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		# Optionally, update moles in pulmonary capillaries if you need to simulate the change there too
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
+
 ## TODO: Not yet implemented
 func _on_lungs_respired() -> void:
 	pass
+	
+func _on_brain_hypercapnia(_args: Variant) -> void:
+	print("Brain is hypercapneic!")
+
+func _on_brain_hypoxia(_args: Variant) -> void:
+	print("Brain is hypoxic!")

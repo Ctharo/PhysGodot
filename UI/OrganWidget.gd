@@ -27,12 +27,11 @@ func _init(organ: Organ) -> void:
 	chem_warning.name = "ChemWarningLabel"
 	chem_warning.bbcode_enabled = true
 	chem_warning.fit_content = true
-	if organ.bad_chemistry:
-		#var chem_warning := RichTextLabel.new()
-		#chem_warning.bbcode_enabled = true
-		#chem_warning.fit_content = true
-		chem_warning.append_text("[color=red]Warning: Chemical imbalance detected![/color]")
-	else:
+	if organ.hypoxic:
+		chem_warning.append_text("[color=red]Warning: Organ is hypoxic![/color] \n")
+	if organ.hypercapneic:
+		chem_warning.append_text("[color=red]Warning: Organ is hypercapneic![/color]")
+	if !organ.hypoxic and !organ.hypercapneic:
 		chem_warning.append_text(" ")
 	add_child(chem_warning)
 

@@ -113,9 +113,10 @@ func aerobic_respiration(delta: float) -> void:
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
-### HACK method for debugging purposes until circulation is implemented
-#func reset_blood_gases() -> void:
-	#if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.05:
-		#vessels.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0)
-	#if vessels.get_capillaries().get_concentration(GlobalTypes.Gases.OXYGEN) < 0.205:
-		#vessels.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, 0.21)
+## Checks if tissue has too high of CO2 concentration
+func is_hypercapneic() -> bool:
+	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.08
+
+## Checks if tissue has too low of O2 concentration
+func is_hypoxic() -> bool:
+	return get_concentration(GlobalTypes.Gases.OXYGEN) < 0.12

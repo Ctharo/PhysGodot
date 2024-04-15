@@ -5,6 +5,8 @@ extends Node
 ## Physiological processes depend on Organ
 
 signal bad_chemistry_detected
+signal hypercapnia
+signal hypoxia
 signal organ_died
 
 @export var organ_type:String :
@@ -17,14 +19,20 @@ signal organ_died
 		if health == 0:
 			died()
 
-@export var bad_chemistry: bool :
-	get:
-		var r: bool = false
-		for tissue: Tissue in tissues:
-			if tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < 0.12 or tissues.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > 0.1:
-				r = true
-		return r
 
+@export var bad_chemistry: bool # TODO: Depreciated? 
+var hypoxic: bool :
+	set(value):
+		if value and value != hypoxic:
+			hypoxia.emit(self)
+		hypoxic = value
+		
+var hypercapneic: bool :
+	set(value):
+		if value and value != hypercapneic:
+			hypercapnia.emit(self)
+		hypercapneic = value
+		
 @export var organ_stats: OrganStats
 @export var dead: bool = false
 var tissues: Tissues
@@ -50,9 +58,14 @@ func _physics_process(delta: float) -> void:
 	if dead: return
 	timer += delta
 	if timer > 1:
+		check_chemistry()
 		if bad_chemistry:
 			health -= timer * organ_stats.metabolism_factor * 20
 		timer = 0
+		
+func check_chemistry() -> void:
+	hypercapneic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapneic())
+	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)

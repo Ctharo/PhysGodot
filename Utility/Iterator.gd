@@ -18,6 +18,13 @@ func _init(collection: Array = []) -> void:
 	_collection = collection
 	current = START
 
+## Should be able to be used like Array.any() method
+func any(method: Callable) -> bool:
+	for element: Object in _collection:
+		if method.call(element):
+			return true
+	return false
+
 ## Check if the iteration should continue
 func should_continue() -> bool:
 	return (current < end)
