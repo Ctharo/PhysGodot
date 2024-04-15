@@ -22,7 +22,7 @@ func _init_gases() -> void:
 	var co2: Gas = Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_stats)
 	gases = [o2, co2] as Array[Gas]
 
-## Sets the amount of a specified gas.
+## Sets the amount of a specified gas
 func set_moles(gas_type: GlobalTypes.Gases, moles: float = 0.0) -> void:
 	assert(moles >= 0, "Moles for %s cannot be negative." % Gases.get_string(gas_type))
 	for gas: Gas in gases:
