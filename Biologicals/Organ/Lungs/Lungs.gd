@@ -18,7 +18,8 @@ func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
 	respire(delta)
-	
+
+## Resets moles of each Gas in Alveoli
 func respire(delta: float) -> void:
 	if respiratory_rate == 0:
 		return

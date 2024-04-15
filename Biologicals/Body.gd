@@ -99,12 +99,27 @@ func on_died() -> void:
 	print("%s has died" % name)
 	dead = true
 
-## TODO: Not yet implemented
-func _on_heart_beat(_stroke_volume: float) -> void:
-	pass
+## HACK: For simulating Blood flow (i.e., transfer of gases between blood in capillaries)
+func _on_heart_beat(_stroke_volume: float, delta: float) -> void:
+	var pulmonary_capillaries: Vessels = get_lungs().alveoli.get_capillaries()
+	for organ: Organ in organs:
+		var capillary_o2_concentration: float = organ.get_concentration(GlobalTypes.Gases.OXYGEN)
+		var pulm_capillary_o2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
+		var capillary_co2_concentration: float = organ.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+		var pulm_capillary_co2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+		
+		var delta_o2_concentration: float = capillary_o2_concentration - pulm_capillary_o2_concentration
+		var o2_moles: float = delta_o2_concentration * pulmonary_capillaries.get_volume() * get_lungs().alveoli.vascularity_factor * delta
+		
+		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + o2_moles)
+		organ.get_capillaries().set_moles(GlobalTypes.Gases.OXYGEN, organ.get_capillaries().get_moles(GlobalTypes.Gases.OXYGEN) - o2_moles)
 
-## HACK for now will simply reset each Gas in Capillary gases from each Organ
+		var delta_co2_concentration: float = capillary_co2_concentration - pulm_capillary_co2_concentration
+		var co2_moles: float = delta_co2_concentration * pulmonary_capillaries.get_volume() * get_lungs().alveoli.vascularity_factor * delta
+		
+		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + co2_moles)
+		organ.get_capillaries().set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, organ.get_capillaries().get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) - co2_moles)
+
+## TODO: Not yet implemented
 func _on_lungs_respired() -> void:
-	for vessel: Vessel in organs.get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES):
-		vessel.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * vessel.volume)
-		vessel.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.005)
+	pass

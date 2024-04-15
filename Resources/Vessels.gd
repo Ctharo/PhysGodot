@@ -19,7 +19,6 @@ func fill_vessels_with_blood() -> void:
 	for vessel: Vessel in vessels:
 		vessel.fill_with_blood()
 
-
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var _vessels:= Vessels.new()
 	for vessel: Vessel in vessels:
