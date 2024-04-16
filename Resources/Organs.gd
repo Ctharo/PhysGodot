@@ -1,6 +1,8 @@
 class_name Organs
 extends Iterator
-## Manages iterable list of [Organ] instances
+## Custom container class for [Organ] instances
+##
+## Custom container class for [Organ] instances
 
 var organs: Array[Organ] :
 	set(value):

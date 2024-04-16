@@ -19,50 +19,59 @@ signal organ_died
 		if health == 0:
 			died()
 
-
 @export var bad_chemistry: bool # TODO: Depreciated? 
 var hypoxic: bool :
 	set(value):
 		if value and value != hypoxic:
 			hypoxia.emit(self)
 		hypoxic = value
-		
+
 var hypercapneic: bool :
 	set(value):
 		if value and value != hypercapneic:
 			hypercapnia.emit(self)
 		hypercapneic = value
-		
-@export var organ_stats: OrganStats
+
+@export var params: TissueParams
 @export var dead: bool = false
 var tissues: Tissues
 var type: GlobalTypes.Organs
 var debug: bool
 var timer: float = 0.0
 
-func _init(Organ_type: GlobalTypes.Organs, stats: OrganStats) -> void:
+func _init(Organ_type: GlobalTypes.Organs, params: TissueParams) -> void:
 	self.type = Organ_type
-	self.organ_stats = stats
+	self.params = params
 	name = Helpers.to_title_case(Organs.get_string(type))
 	init_tissues()
 
 func init_tissues() -> void:
-	# TODO: Should divide total mass among tissues if instancing more than 1.
-	assert(self.organ_stats.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
-	var tissue: Tissue = Tissue.new(self.organ_stats.metabolism_factor, self.organ_stats.vascularity_factor, self.organ_stats.mass)
-	tissue.name = self.name + " Tissue"
-	add_child(tissue)
-	tissues = Tissues.new([tissue] as Array[Tissue])
-
+	var tissue_count: int = self.params.tissue_count # For dividing total organ mass by number of tissues. FIXME: Assumes equally-sized tissues.
+	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
+	var a: Array[Tissue] = [] as Array[Tissue]
+	for i in tissue_count:
+		var tissue: Tissue = Tissue.new(self.params, self.params.mass/tissue_count)
+		tissue.name = self.name + " Tissue %s" % (i + 1)
+		add_child(tissue)
+		a.append(tissue)
+	tissues = Tissues.new(a)
+	
 func _physics_process(delta: float) -> void:
 	if dead: return
 	timer += delta
 	if timer > 1:
 		check_chemistry()
-		if bad_chemistry:
-			health -= timer * organ_stats.metabolism_factor * 20
 		timer = 0
-		
+	health_check(delta)
+
+## Checks [Organ] status and decreases health accordingly
+func health_check(delta: float) -> void:
+	if hypoxic:
+		health -= delta * params.hypoxia_sensitivity * Settings.HEALTH_DECREASE_RATE
+	if hypercapneic:
+		health -= delta * params.hypercapnea_sensitivity * Settings.HEALTH_DECREASE_RATE
+
+## Assigns statuses to [Organ] based on [Tissue] statuses
 func check_chemistry() -> void:
 	hypercapneic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapneic())
 	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())

@@ -6,8 +6,8 @@ signal heart_beated
 @export var stroke_volume: float
 @export var heart_rate_timer: float
 
-func _init(Organ_type: GlobalTypes.Organs, stats: OrganStats) -> void:
-	super._init(Organ_type, stats)
+func _init(params: TissueParams) -> void:
+	super._init(GlobalTypes.Organs.HEART, params)
 	heart_rate = 1
 	stroke_volume = 0.06
 	

@@ -13,30 +13,30 @@ func _init(new_name: String) -> void:
 
 func _ready() -> void:
 	# Create Brain
-	var brain_stats: OrganStats = load("res://Resources/OrganStats/BrainStats.tres")
-	var brain := Organ.new(GlobalTypes.Organs.BRAIN, brain_stats)
-	brain.hypercapnia.connect(_on_brain_hypercapnia)
-	brain.hypoxia.connect(_on_brain_hypoxia)
+	var brain_params: TissueParams = load("res://Resources/Params/BrainParams.tres") as TissueParams
+	var brain: Brain = Brain.new(brain_params)
 	add_child(brain)
 
 	# Create Lungs
-	var lungs_stats: OrganStats = load("res://Resources/OrganStats/LungsStats.tres") as OrganStats
-	var lungs := Lungs.new(GlobalTypes.Organs.LUNGS, lungs_stats)
-	lungs.respired.connect(_on_lungs_respired)
+	var lungs_params: TissueParams = load("res://Resources/Params/LungsParams.tres") as TissueParams
+	var lungs: Lungs  = Lungs.new(lungs_params)
 	add_child(lungs)
 
-	var heart_stats: OrganStats = load("res://Resources/OrganStats/HeartStats.tres")
-	var heart: Heart = Heart.new(GlobalTypes.Organs.HEART, heart_stats)
-	heart.heart_beated.connect(_on_heart_beat)
+	var heart_params: TissueParams = load("res://Resources/Params/HeartParams.tres") as TissueParams
+	var heart: Heart = Heart.new(heart_params)
 	add_child(heart)
 
 	# Create Organs resource
 	organs = Organs.new([brain, lungs, heart] as Array[Organ])
+
+	## Connect signals
+	# Organ specific signals
+	heart.heart_beated.connect(_on_heart_beat)
+
+	# General signals
 	for organ: Organ in organs:
-		if !organ.bad_chemistry_detected.is_connected(_on_organ_bad_chemistry):
-			organ.bad_chemistry_detected.connect(_on_organ_bad_chemistry)
-		if !organ.organ_died.is_connected(_on_organ_died):
-			organ.organ_died.connect(_on_organ_died)
+		brain.connect_organ_signals(organ)
+		organ.organ_died.connect(_on_organ_died)
 
 	# Create Vessels
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
@@ -81,7 +81,6 @@ func _on_organ_bad_chemistry(organ: Organ, gas: GlobalTypes.Gases) -> void:
 	print("%s is experiencing a chemical imbalance with %s" % [organ.name, Gases.get_string(gas)])
 
 func _on_organ_died(organ: Organ) -> void:
-	print("%s's %s has died" % [name, organ.name])
 	if Organs.is_of_type(organ, GlobalTypes.Organs.BRAIN):
 		on_died()
 
@@ -101,8 +100,12 @@ func on_died() -> void:
 	print("%s has died" % name)
 	dead = true
 
-## HACK: For simulating Blood flow (i.e., transfer of gases between blood in capillaries)
+## Simulates the effects of a heart beat in moving around gases through blood.
 func _on_heart_beat(stroke_volume: float) -> void:
+	if stroke_volume <= 0:
+		printerr("Stroke volume must be greater than 0")
+		return
+
 	var pulmonary_capillaries: Vessels = get_lungs().alveoli.get_capillaries()
 	
 	for organ: Organ in organs:
@@ -120,16 +123,7 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		organ_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, organ_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) - organ_o2_moles_removed + pulm_o2_moles_added)
 		organ_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, organ_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) - organ_co2_moles_removed + pulm_co2_moles_added)
 
-		# Optionally, update moles in pulmonary capillaries if you need to simulate the change there too
+		# Update moles in pulmonary capillaries
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
 
-## TODO: Not yet implemented
-func _on_lungs_respired() -> void:
-	pass
-	
-func _on_brain_hypercapnia(_args: Variant) -> void:
-	print("Brain is hypercapneic!")
-
-func _on_brain_hypoxia(_args: Variant) -> void:
-	print("Brain is hypoxic!")

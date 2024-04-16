@@ -42,8 +42,8 @@ func _init(organ: Organ) -> void:
 		gas_info.bbcode_enabled = true
 		gas_info.fit_content = true
 		gas_info.append_text("[b]" + Gases.get_string(gas) + "[/b]\n")
-		gas_info.append_text("[Tissue]: %f \n" % organ.get_concentration(gas))
-		gas_info.append_text("[Vessel]: %f" % organ.get_capillaries().get_concentration(gas))
+		gas_info.append_text("[Tissue]: %s \n" % Helpers.as_percent(organ.get_concentration(gas), 2))
+		gas_info.append_text("[Vessel]: %s" % Helpers.as_percent(organ.get_capillaries().get_concentration(gas), 2))
 		add_child(gas_info)
 
 		
@@ -108,8 +108,8 @@ func _lungs_setup(organ: Lungs) -> void:
 		gas_info.bbcode_enabled = true
 		gas_info.fit_content = true
 		gas_info.append_text("[b]" + Gases.get_string(gas) + "[/b]\n")
-		gas_info.append_text("[Alveoli]: %f \n" % organ.alveoli.get_concentration(gas))
-		gas_info.append_text("[Pulmonary Capillaries]: %f" % organ.alveoli.get_capillaries().get_concentration(gas))
+		gas_info.append_text("[Alveoli]: %s \n" % Helpers.as_percent(organ.alveoli.get_concentration(gas), 2))
+		gas_info.append_text("[Pulmonary Capillaries]: %s" % Helpers.as_percent(organ.alveoli.get_capillaries().get_concentration(gas),2))
 		add_child(gas_info)
-	
+
 	

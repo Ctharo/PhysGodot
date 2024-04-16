@@ -12,3 +12,10 @@ static func to_title_case(s: String) -> String:
 
 	# Join the words back into a single string with spaces
 	return " ".join(words)
+
+static func as_percent(f: float, digit: int = 0) -> String:
+	return "%.*f%%" % [digit, (round_to_dec(f* 100, digit))] 
+
+static func round_to_dec(num: float, digit: int = 0) -> float:
+	return round(num * pow(10.0, digit)) / pow(10.0, digit)
+
