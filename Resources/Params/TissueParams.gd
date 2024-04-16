@@ -33,3 +33,8 @@ extends Resource
 ## Sets number of child [Tissue] instances
 @export var tissue_count: int = 1
 
+## General factor affecting rate at which health is lost
+@export var health_loss_factor: float = 1.0
+
+## Turns on/off the unique role of the [Organ] (depends on [Organ])
+@export var perform_organ_specific_task: bool = true

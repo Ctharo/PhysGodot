@@ -14,3 +14,5 @@ hypercapnea_sensitivity = 0.0
 vascularity_factor = 1.0
 mass = 1.5
 tissue_count = 1
+health_loss_factor = 1.0
+perform_organ_specific_task = true

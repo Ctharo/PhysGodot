@@ -1,12 +1,13 @@
-extends Node
 class_name Body
-##
+extends Node
+## Manages [Organs] and major [Vessels]
 ##
 ## TODO: Should handle Blood movement from aorta to tissues and from tissues to vena_cava
 
 @export var organs: Organs
 @export var vessels: Vessels
 @export var dead: bool
+
 
 func _init(new_name: String) -> void:
 	name = new_name
@@ -29,7 +30,7 @@ func _ready() -> void:
 	# Create Organs resource
 	organs = Organs.new([brain, lungs, heart] as Array[Organ])
 
-	## Connect signals
+	# Connect signals
 	# Organ specific signals
 	heart.heart_beated.connect(_on_heart_beat)
 
@@ -45,12 +46,12 @@ func _ready() -> void:
 	var pulmonary_artery := Vessel.new(GlobalTypes.Vessels.PULMONARY_ARTERY)
 	add_child(pulmonary_artery)
 
-	## Connect major Body vessels
+	# Connect major Body vessels
 	var pulmonary_vein := Vessel.new(GlobalTypes.Vessels.PULMONARY_VEIN)
 	pulmonary_vein.deliver_to = Vessels.new([aorta] as Array[Vessel])
 	add_child(pulmonary_vein)
 	
-	## Connect pulmonary circuit
+	# Connect pulmonary circuit
 	pulmonary_artery.deliver_to = lungs.alveoli.get_capillaries()
 	for vessel: Vessel in lungs.alveoli.get_capillaries():
 		vessel.deliver_to = Vessels.new([pulmonary_vein] as Array[Vessel])

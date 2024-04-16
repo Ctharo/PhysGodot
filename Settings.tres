@@ -1,6 +1,10 @@
-[gd_resource type="Resource" script_class="Settings" load_steps=2 format=3 uid="uid://c1a165w158wrr"]
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c1a165w158wrr"]
 
 [ext_resource type="Script" path="res://Utility/Settings.gd" id="1_1quh5"]
 
 [resource]
 script = ExtResource("1_1quh5")
+GAS_DIFFUSION_ENABLED = true
+BLOOD_CIRCULATION_ENABLED = true
+AEROBIC_RESPIRATION_ENABLED = true
+HEALTH_DECREASE_RATE = 1.0

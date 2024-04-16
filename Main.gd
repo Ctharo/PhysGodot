@@ -7,7 +7,6 @@ var bodies: Array[Body]
 
 var game_timer: float = 0.0
 var timer: float = 0.0
-var settings: Settings = preload("res://Settings.tres") as Settings
 const UI_UPDATE_RATE: float = 0.1 # Time for UI update in seconds
 
 func _ready() -> void:

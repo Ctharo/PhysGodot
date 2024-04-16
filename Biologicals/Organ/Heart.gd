@@ -14,8 +14,9 @@ func _init(params: TissueParams) -> void:
 func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
-	heart_beat(delta)
-	
+	if params.perform_organ_specific_task: heart_beat(delta)
+
+## Organ specific task responsible for timing of heartbeat which in turn triggers circulation from [Body]
 func heart_beat(delta: float) -> void:
 	if heart_rate == 0:
 		return

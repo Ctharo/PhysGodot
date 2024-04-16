@@ -9,7 +9,7 @@ signal hypercapnia
 signal hypoxia
 signal organ_died
 
-var settings: Settings = preload("res://Settings.tres") as Settings
+var settings: Settings = load("res://Settings.tres") as Settings
 
 @export var organ_type:String :
 	get:
@@ -21,7 +21,7 @@ var settings: Settings = preload("res://Settings.tres") as Settings
 		if health == 0:
 			died()
 
-@export var bad_chemistry: bool # TODO: Depreciated? 
+
 var hypoxic: bool :
 	set(value):
 		if value and value != hypoxic:
@@ -68,10 +68,11 @@ func _physics_process(delta: float) -> void:
 
 ## Checks [Organ] status and decreases health accordingly
 func health_check(delta: float) -> void:
+	if settings.INVINCIBLE_TISSUES: return
 	if hypoxic:
-		health -= delta * params.hypoxia_sensitivity * settings.HEALTH_DECREASE_RATE
+		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor
 	if hypercapnic:
-		health -= delta * params.hypercapnea_sensitivity * settings.HEALTH_DECREASE_RATE
+		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor
 
 ## Assigns statuses to [Organ] based on [Tissue] statuses
 func check_chemistry() -> void:

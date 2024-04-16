@@ -1,7 +1,7 @@
 extends Node
 class_name Tissue
 
-var settings: Settings = preload("res://Settings.tres") as Settings
+var settings: Settings = load("res://Settings.tres") as Settings
 
 @export_category("Tissue")
 ## Stores information required for managing gas diffusion between capillaries and stored gases
