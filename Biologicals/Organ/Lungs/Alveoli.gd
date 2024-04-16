@@ -1,6 +1,7 @@
 class_name Alveoli
 extends Node
 
+var settings: Settings = load("res://Settings.tres") as Settings
 @export var gases: Gases
 @export var volume: float = 6.0
 @export var vessels: Vessels
@@ -22,7 +23,7 @@ func _init_vessels() -> void:
 	capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.10 * capillaries.volume)
 	
 func _physics_process(delta: float) -> void:
-	exchange_gases(delta)
+	if settings.GAS_DIFFUSION_ENABLED: exchange_gases(delta)
 	
 func _on_respiration() -> void:
 	set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * volume)

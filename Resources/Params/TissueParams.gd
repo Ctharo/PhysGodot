@@ -38,3 +38,6 @@ extends Resource
 
 ## Turns on/off the unique role of the [Organ] (depends on [Organ])
 @export var perform_organ_specific_task: bool = true
+
+## Amount of [Blood] that can be contained within all [Vessel]s in the [Tissues]
+@export var blood_volume: float = 1.0

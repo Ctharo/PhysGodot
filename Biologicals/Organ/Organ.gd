@@ -52,7 +52,7 @@ func init_tissues() -> void:
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
 	var a: Array[Tissue] = [] as Array[Tissue]
 	for i in tissue_count:
-		var tissue: Tissue = Tissue.new(self.params, self.params.mass/tissue_count)
+		var tissue: Tissue = Tissue.new(self.params, self.params.mass/tissue_count, self.blood_volume/tissue_count)
 		tissue.name = self.name + " Tissue %s" % (i + 1)
 		add_child(tissue)
 		a.append(tissue)

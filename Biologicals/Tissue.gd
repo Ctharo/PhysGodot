@@ -18,11 +18,11 @@ var timer: float = 0.0
 const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
-func _init(params: TissueParams, mass: float) -> void:
+func _init(params: TissueParams, mass: float, blood_volume: float) -> void:
 	vessels = Vessels.new()
 	self.params = params
 	self.mass = mass
-	_init_vessels()
+	_init_vessels(blood_volume)
 	_init_gases()
 
 func _physics_process(delta: float) -> void:
@@ -41,14 +41,17 @@ func _init_gases() -> void:
 	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * mass)
 	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * mass)
 	
-func _init_vessels() -> void:
-	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
+func _init_vessels(total_blood_volume: float) -> void:
+	
+	var volume_per_vessel: float = total_blood_volume/3
+	
+	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES, volume_per_vessel)
 	add_child(capillaries)
 
-	var vein := Vessel.new(GlobalTypes.Vessels.VEIN)
+	var vein := Vessel.new(GlobalTypes.Vessels.VEIN, volume_per_vessel)
 	add_child(vein)
 
-	var artery := Vessel.new(GlobalTypes.Vessels.ARTERY)
+	var artery := Vessel.new(GlobalTypes.Vessels.ARTERY, volume_per_vessel)
 	add_child(artery)
 
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
