@@ -1,6 +1,8 @@
 extends Node
 class_name Tissue
 
+var settings: Settings = preload("res://Settings.tres") as Settings
+
 @export_category("Tissue")
 ## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases
@@ -29,8 +31,8 @@ func _physics_process(delta: float) -> void:
 	timer += delta
 	if timer > TIMER_INTERVAL:
 		if debug: print("%s tissue processing" % name)
-		if Settings.GAS_DIFFUSION_ENABLED: exchange_gases(timer)
-		if Settings.AEROBIC_RESPIRATION_ENABLED: aerobic_respiration(timer)
+		if settings.GAS_DIFFUSION_ENABLED: exchange_gases(timer)
+		if settings.AEROBIC_RESPIRATION_ENABLED: aerobic_respiration(timer)
 
 		timer = 0.0
 
@@ -107,8 +109,8 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
-	var oxygen_needed: float = min(params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = params.metabolism_factor * params.carbon_dioxide_production_factor * delta 
+	var oxygen_needed: float = min(0.001 * params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
+	var carbon_dioxide_produced: float = 0.001 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta 
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)

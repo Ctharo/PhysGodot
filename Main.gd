@@ -1,3 +1,4 @@
+class_name Main
 extends Node2D
 
 var bodies: Array[Body]
@@ -5,7 +6,8 @@ var bodies: Array[Body]
 @onready var hbox: HBoxContainer = %UI/VBoxContainer/OrganWidgetHBox as HBoxContainer
 
 var game_timer: float = 0.0
-var timer: float = 0.0 
+var timer: float = 0.0
+var settings: Settings = preload("res://Settings.tres") as Settings
 const UI_UPDATE_RATE: float = 0.1 # Time for UI update in seconds
 
 func _ready() -> void:

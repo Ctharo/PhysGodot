@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://ckynyjy4hqipe"]
+
+[ext_resource type="Script" path="res://Main.gd" id="1_gkth6"]
+[ext_resource type="PackedScene" uid="uid://c7fcdiusphjcn" path="res://UI/ui.tscn" id="2_23uo2"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_gkth6")
+
+[node name="UI" parent="." instance=ExtResource("2_23uo2")]
+unique_name_in_owner = true
+offset_right = 1152.0
+offset_bottom = 648.0

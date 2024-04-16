@@ -2,7 +2,7 @@ class_name TissueParams
 extends Resource
 
 ## Effects rate of [enum GlobalTypes.Gas.OXYGEN] consumption and [enum GlobalTypes.Gas.CARBON_DIOXIDE] production
-@export var metabolism_factor: float = 0.001
+@export var metabolism_factor: float = 1
 
 ## Effects rate of [enum GlobalTypes.Gas.OXYGEN] consumption
 @export var oxygen_consumption_factor: float = 1

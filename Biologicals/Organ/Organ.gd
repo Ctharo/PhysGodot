@@ -9,6 +9,8 @@ signal hypercapnia
 signal hypoxia
 signal organ_died
 
+var settings: Settings = preload("res://Settings.tres") as Settings
+
 @export var organ_type:String :
 	get:
 		return Helpers.to_title_case(Organs.get_string(type))
@@ -67,9 +69,9 @@ func _physics_process(delta: float) -> void:
 ## Checks [Organ] status and decreases health accordingly
 func health_check(delta: float) -> void:
 	if hypoxic:
-		health -= delta * params.hypoxia_sensitivity * Settings.HEALTH_DECREASE_RATE
+		health -= delta * params.hypoxia_sensitivity * settings.HEALTH_DECREASE_RATE
 	if hypercapneic:
-		health -= delta * params.hypercapnea_sensitivity * Settings.HEALTH_DECREASE_RATE
+		health -= delta * params.hypercapnea_sensitivity * settings.HEALTH_DECREASE_RATE
 
 ## Assigns statuses to [Organ] based on [Tissue] statuses
 func check_chemistry() -> void:

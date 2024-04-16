@@ -4,8 +4,8 @@
 
 [resource]
 script = ExtResource("1_yih08")
-metabolism_factor = 0.002
-oxygen_consumption_factor = 10.0
+metabolism_factor = 1.0
+oxygen_consumption_factor = 1.0
 min_o2_concentration = 0.15
 carbon_dioxide_production_factor = 1.0
 max_co2_concentration = 0.08

@@ -1,10 +1,16 @@
-[gd_resource type="Resource" script_class="OrganStats" load_steps=2 format=3 uid="uid://474u2c5br1q1"]
+[gd_resource type="Resource" script_class="TissueParams" load_steps=2 format=3 uid="uid://474u2c5br1q1"]
 
 [ext_resource type="Script" path="res://Resources/Params/TissueParams.gd" id="1_hu6vk"]
 
 [resource]
 script = ExtResource("1_hu6vk")
-metabolism_factor = 0.001
+metabolism_factor = 1.0
+oxygen_consumption_factor = 1.0
+min_o2_concentration = 0.12
+carbon_dioxide_production_factor = 1.0
+max_co2_concentration = 0.08
+hypoxia_sensitivity = 1.0
+hypercapnea_sensitivity = 1.0
 vascularity_factor = 1.0
 mass = 1.0
 tissue_count = 1
