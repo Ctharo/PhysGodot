@@ -116,7 +116,7 @@ func aerobic_respiration(delta: float) -> void:
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
 ## Checks if tissue has too high of CO2 concentration
-func is_hypercapneic() -> bool:
+func is_hypercapnic() -> bool:
 	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_co2_concentration
 
 ## Checks if tissue has too low of O2 concentration

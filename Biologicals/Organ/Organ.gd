@@ -28,11 +28,11 @@ var hypoxic: bool :
 			hypoxia.emit(self)
 		hypoxic = value
 
-var hypercapneic: bool :
+var hypercapnic: bool :
 	set(value):
-		if value and value != hypercapneic:
+		if value and value != hypercapnic:
 			hypercapnia.emit(self)
-		hypercapneic = value
+		hypercapnic = value
 
 @export var params: TissueParams
 @export var dead: bool = false
@@ -70,12 +70,12 @@ func _physics_process(delta: float) -> void:
 func health_check(delta: float) -> void:
 	if hypoxic:
 		health -= delta * params.hypoxia_sensitivity * settings.HEALTH_DECREASE_RATE
-	if hypercapneic:
+	if hypercapnic:
 		health -= delta * params.hypercapnea_sensitivity * settings.HEALTH_DECREASE_RATE
 
 ## Assigns statuses to [Organ] based on [Tissue] statuses
 func check_chemistry() -> void:
-	hypercapneic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapneic())
+	hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
 	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
@@ -101,3 +101,4 @@ func died() -> void:
 	dead = true
 	organ_died.emit(self)
 	self.set_physics_process(false)
+	

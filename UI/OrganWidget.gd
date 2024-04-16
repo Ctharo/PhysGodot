@@ -21,18 +21,17 @@ func _init(organ: Organ) -> void:
 	health_info.append_text("Health: [color=lime]" + str(int(organ.health * 100)) + "%[/color]")
 	add_child(health_info)
 
-
 	# Chemical imbalance warning
 	var chem_warning := RichTextLabel.new()
 	chem_warning.name = "ChemWarningLabel"
 	chem_warning.bbcode_enabled = true
 	chem_warning.fit_content = true
+	var warning_text := ""
 	if organ.hypoxic:
-		chem_warning.append_text("[color=red]Warning: Organ is hypoxic![/color] \n")
-	if organ.hypercapneic:
-		chem_warning.append_text("[color=red]Warning: Organ is hypercapneic![/color]")
-	if !organ.hypoxic and !organ.hypercapneic:
-		chem_warning.append_text(" ")
+		warning_text += "[color=red]Warning: Organ is hypoxic![/color] \n"
+	if organ.hypercapnic:
+		warning_text += "[color=red]Warning: Organ is hypercapneic![/color]"
+	chem_warning.append_text(warning_text if warning_text else " ")
 	add_child(chem_warning)
 
 	# Gas-specific information
@@ -42,11 +41,17 @@ func _init(organ: Organ) -> void:
 		gas_info.bbcode_enabled = true
 		gas_info.fit_content = true
 		gas_info.append_text("[b]" + Gases.get_string(gas) + "[/b]\n")
-		gas_info.append_text("[Tissue]: %s \n" % Helpers.as_percent(organ.get_concentration(gas), 2))
-		gas_info.append_text("[Vessel]: %s" % Helpers.as_percent(organ.get_capillaries().get_concentration(gas), 2))
-		add_child(gas_info)
-
 		
+		# Get concentrations and check conditions
+		var tissue_concentration := organ.get_concentration(gas)
+		var capillaries := organ.get_capillaries()
+		var vessel_concentration := capillaries.get_concentration(gas)
+		
+		gas_info.append_text("Tissue: [color=" + get_concentration_color_string(gas, organ) + "]%s[/color] \n" % Helpers.as_percent(tissue_concentration, 2))
+		gas_info.append_text("Vessel: [color=" + get_vessel_concentration_color_string(gas, organ, capillaries) + "]%s[/color]" % Helpers.as_percent(vessel_concentration, 2))
+		add_child(gas_info)
+	
+	# Additional setup based on organ type
 	match organ.type:
 		GlobalTypes.Organs.LUNGS:
 			_lungs_setup(organ)
@@ -54,7 +59,28 @@ func _init(organ: Organ) -> void:
 			_heart_setup(organ)
 		_:
 			pass
+
+func get_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ) -> String:
+	var result: String
+	match gas:
+		GlobalTypes.Gases.OXYGEN:
+			result = "red" if organ.hypoxic else "white"
+		GlobalTypes.Gases.CARBON_DIOXIDE:
+			result = "red" if organ.hypercapnic else "white"
+		_:
+			result = "white"
+	return result
 	
+func get_vessel_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ, vessels: Vessels) -> String:
+	var result: String
+	match gas:
+		GlobalTypes.Gases.OXYGEN:
+			result = "red" if vessels.get_concentration(gas) < organ.params.min_o2_concentration else "white"
+		GlobalTypes.Gases.CARBON_DIOXIDE:
+			result = "red" if vessels.get_concentration(gas) > organ.params.max_co2_concentration else "white"
+		_:
+			result = "white"
+	return result
 func _heart_setup(organ: Heart) -> void:
 	var space := RichTextLabel.new()
 	space.name = "space"
