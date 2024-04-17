@@ -18,6 +18,8 @@ var timer: float = 0.0
 const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
+var health: float = 1
+
 func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
 	self.params = params
@@ -33,7 +35,7 @@ func _physics_process(delta: float) -> void:
 		if debug: print("%s tissue processing" % name)
 		if settings.GAS_DIFFUSION_ENABLED: exchange_gases(timer)
 		if settings.AEROBIC_RESPIRATION_ENABLED: aerobic_respiration(timer)
-		status.check_chemistry(gases)
+		if !settings.INVINCIBLE_TISSUES: health_check(timer)
 		timer = 0.0
 
 func _init_gases() -> void:
@@ -60,6 +62,12 @@ func _init_vessels(total_blood_volume: float) -> void:
 	capillaries.deliver_to = Vessels.new([vein] as Array[Vessel])
 	artery.deliver_to = Vessels.new([capillaries] as Array[Vessel])
 
+func health_check(delta: float) -> void:
+	if self.is_hypoxic():
+		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor
+	if self.is_hypercapnic():
+		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor
+		
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if params.mass == 0:

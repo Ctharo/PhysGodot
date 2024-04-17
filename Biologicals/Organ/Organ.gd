@@ -11,15 +11,13 @@ signal organ_died
 
 var settings: Settings = load("res://Settings.tres") as Settings
 
-@export var organ_type:String :
+@export var organ_type: String :
 	get:
 		return Helpers.to_title_case(Organs.get_string(type))
 
-@export var health: float = 1.0:
-	set(value):
-		health = max(value, 0)
-		if health == 0:
-			died()
+@export var health: float :
+	get:
+		return tissues.get_mean_health()
 
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 @export var status: Status
@@ -33,6 +31,7 @@ func _init(Organ_type: GlobalTypes.Organs, params: TissueParams) -> void:
 	self.type = Organ_type
 	self.params = params
 	self.status = Status.new(self.params)
+
 	name = Helpers.to_title_case(Organs.get_string(type))
 	init_tissues()
 
@@ -53,27 +52,6 @@ func init_tissues() -> void:
 func _physics_process(delta: float) -> void:
 	if dead: return
 	timer += delta
-	if timer > 1:
-		check_chemistry()
-		timer = 0
-	health_check(delta)
-
-## Checks [Organ] status and decreases health accordingly [br]
-## TODO: Should probably be done in [Tissue].
-## TODO: Both Organ and Tissue should have a Status resource from which individual details are assigned
-func health_check(delta: float) -> void:
-	if settings.INVINCIBLE_TISSUES: return
-	if self.status.hypoxia:
-		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor
-	if self.status.hypercapnia:
-		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor
-
-## Assigns statuses to [Organ] based on [Tissue] statuses
-# TODO: May not be needed anymore
-func check_chemistry() -> void:
-	self.status.check_chemistry(tissues.get_gases())
-	#hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
-	#hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)
@@ -99,3 +77,8 @@ func died() -> void:
 	organ_died.emit(self)
 	self.set_physics_process(false)
 	
+func is_hypoxic() -> bool:
+	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
+	
+func is_hypercapnic() -> bool:
+	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())

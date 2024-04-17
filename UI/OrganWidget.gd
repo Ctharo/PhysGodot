@@ -64,9 +64,9 @@ func get_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ) -> Str
 	var result: String
 	match gas:
 		GlobalTypes.Gases.OXYGEN:
-			result = "red" if organ.status.hypoxia else "white"
+			result = "red" if organ.is_hypoxic() else "white"
 		GlobalTypes.Gases.CARBON_DIOXIDE:
-			result = "red" if organ.status.hypercapnia else "white"
+			result = "red" if organ.is_hypercapnic() else "white"
 		_:
 			result = "white"
 	return result
