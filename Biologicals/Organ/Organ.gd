@@ -15,13 +15,17 @@ var settings: Settings = load("res://Settings.tres") as Settings
 	get:
 		return Helpers.to_title_case(Organs.get_string(type))
 
+## Returns mean value of all tissue health
 @export var health: float :
 	get:
 		return tissues.get_mean_health()
 
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 @export var status: Status
-@export var dead: bool = false
+## Returns true if mean health of tissues is zero
+@export var dead: bool :
+	get:
+		return tissues.get_mean_health() == 0
 var tissues: Tissues
 var type: GlobalTypes.Organs
 var debug: bool
@@ -50,7 +54,9 @@ func init_tissues() -> void:
 	tissues = Tissues.new(a)
 	
 func _physics_process(delta: float) -> void:
-	if dead: return
+	if dead: 
+		died()
+		return
 	timer += delta
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
@@ -73,7 +79,6 @@ func is_of_type(test_type: GlobalTypes.Organs) -> bool:
 	return type == test_type
 
 func died() -> void:
-	dead = true
 	organ_died.emit(self)
 	self.set_physics_process(false)
 	

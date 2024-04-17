@@ -7,6 +7,7 @@ var settings: Settings = load("res://Settings.tres") as Settings
 ## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases
 var vessels: Vessels
+var dead: bool
 
 #region Set by OrganStats
 var params: TissueParams ## Stores values of normal ranges, physical data, etc.
@@ -18,7 +19,11 @@ var timer: float = 0.0
 const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
-var health: float = 1
+var health: float = 1 :
+	set(value):
+		health = max(value, 0)
+		if health == 0:
+			dead = true
 
 func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
@@ -30,6 +35,7 @@ func _init(params: TissueParams) -> void:
 func _physics_process(delta: float) -> void:
 	# TODO: Should be responsible to run physiological processes
 	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
+	if dead: return
 	timer += delta
 	if timer > TIMER_INTERVAL:
 		if debug: print("%s tissue processing" % name)
@@ -64,9 +70,9 @@ func _init_vessels(total_blood_volume: float) -> void:
 
 func health_check(delta: float) -> void:
 	if self.is_hypoxic():
-		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor
+		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
 	if self.is_hypercapnic():
-		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor
+		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
 		
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
@@ -128,9 +134,9 @@ func aerobic_respiration(delta: float) -> void:
 
 ## Checks if tissue has too high of CO2 concentration
 func is_hypercapnic() -> bool:
-	return status.hypercapnia
+	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 
 ## Checks if tissue has too low of O2 concentration
 func is_hypoxic() -> bool:
-	return status.hypoxia
+	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
 
