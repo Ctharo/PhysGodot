@@ -78,9 +78,10 @@ func health_check(delta: float) -> void:
 		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor
 
 ## Assigns statuses to [Organ] based on [Tissue] statuses
+# TODO: May not be needed anymore
 func check_chemistry() -> void:
-	hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_concentration_abnormal(GlobalTypes.Gases.CARBON_DIOXIDE))
-	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_concentration_abnormal(GlobalTypes.Gases.OXYGEN))
+	hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
+	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)

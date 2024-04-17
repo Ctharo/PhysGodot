@@ -9,24 +9,18 @@ extends Resource
 
 ## Contains the minimum concentration for each [enum GlobalTypes.Gas] that the [Tissue] can tolerate
 @export var min_concentration: Dictionary = {
-    GlobalTypes.Gases.OXYGEN: 0.12,
-    GlobalTypes.Gases.CARBON_DIOXIDE: 0.00,
+	GlobalTypes.Gases.OXYGEN: 0.12,
+	GlobalTypes.Gases.CARBON_DIOXIDE: 0.00,
 }
 
 ## Contains the maximum concentration for each [enum GlobalTypes.Gas] that the [Tissue] can tolerate
 @export var max_concentration: Dictionary = {
-    GlobalTypes.Gases.OXYGEN: 0.22,
-    GlobalTypes.Gases.CARBON_DIOXIDE: 0.08,
+	GlobalTypes.Gases.OXYGEN: 0.22,
+	GlobalTypes.Gases.CARBON_DIOXIDE: 0.08,
 }
-
-## Lower limit of what is considered hypercapneic
-@export var min_o2_concentration: float = 0.12
 
 ## Effects rate of [enum GlobalTypes.Gas.CARBON_DIOXIDE] production
 @export var carbon_dioxide_production_factor: float = 1
-
-## Upper limit of what is considered hypercapneic
-@export var max_co2_concentration: float = 0.08
 
 ## Effects how sensitive the [Organ] is with regards to losing health from lack of [enum GlobalTypes.Gas.OXYGEN] [br]
 ##(i.e., the rate of health lost during hypoxic status)

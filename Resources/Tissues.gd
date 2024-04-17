@@ -21,7 +21,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 func total_mass() -> float:
 	var total: float = 0.0
 	for tissue: Tissue in tissues:
-		total += tissue.mass
+		total += tissue.params.mass
 	return total
 
 ## Returns float of sum of moles of provided [param gas] divided by [method total_mass] return value.

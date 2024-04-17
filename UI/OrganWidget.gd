@@ -75,9 +75,9 @@ func get_vessel_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ,
 	var result: String
 	match gas:
 		GlobalTypes.Gases.OXYGEN:
-			result = "red" if vessels.get_concentration(gas) < organ.params.min_o2_concentration else "white"
+			result = "red" if vessels.get_concentration(gas) < organ.params.min_concentration[gas] else "white"
 		GlobalTypes.Gases.CARBON_DIOXIDE:
-			result = "red" if vessels.get_concentration(gas) > organ.params.max_co2_concentration else "white"
+			result = "red" if vessels.get_concentration(gas) > organ.params.max_concentration[gas] else "white"
 		_:
 			result = "white"
 	return result

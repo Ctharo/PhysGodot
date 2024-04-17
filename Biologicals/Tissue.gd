@@ -21,7 +21,7 @@ var debug: bool = false
 func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
 	self.params = params
-	self.status = Status.new(params as TissueParams)
+	self.status = Status.new(params)
 	_init_vessels(params.blood_volume)
 	_init_gases()
 
@@ -33,7 +33,7 @@ func _physics_process(delta: float) -> void:
 		if debug: print("%s tissue processing" % name)
 		if settings.GAS_DIFFUSION_ENABLED: exchange_gases(timer)
 		if settings.AEROBIC_RESPIRATION_ENABLED: aerobic_respiration(timer)
-
+		status.check_chemistry(gases)
 		timer = 0.0
 
 func _init_gases() -> void:
@@ -118,32 +118,11 @@ func aerobic_respiration(delta: float) -> void:
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
-## Checks against [member params] for normal gas concentrations [br]
-## Returns 1: int if above range, -1: int if below, and 0: int if nominal
-func check_concentration(gas: GlobalTypes.Gases) -> int:
-	var result: int = 0
-	var concentration: float = get_concentration(gas)
-	match gas:
-		GlobalTypes.Gases.OXYGEN:
-			if concentration < params.min_o2_concentration:
-				result = -1
-		GlobalTypes.Gases.CARBON_DIOXIDE:
-			if concentration > params.max_co2_concentration:
-				result = 1
-		_:
-			result = 0
-	return result
-
 ## Checks if tissue has too high of CO2 concentration
 func is_hypercapnic() -> bool:
-	return check_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) == 1
+	return status.hypercapnia
 
 ## Checks if tissue has too low of O2 concentration
 func is_hypoxic() -> bool:
-	return check_concentration(GlobalTypes.Gases.OXYGEN) == -1
+	return status.hypoxia
 
-## Assigns statuses based on chemistry
-func check_chemistry() -> void:
-	if check_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) == 1:
-		pass
-		

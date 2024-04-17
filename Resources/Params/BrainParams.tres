@@ -4,15 +4,22 @@
 
 [resource]
 script = ExtResource("1_yih08")
-metabolism_factor = null
-oxygen_consumption_factor = null
-min_o2_concentration = 0.15
-carbon_dioxide_production_factor = null
-max_co2_concentration = null
+metabolism_factor = 1.0
+oxygen_consumption_factor = 1.0
+min_concentration = {
+0: 0.12,
+1: 0.0
+}
+max_concentration = {
+0: 0.22,
+1: 0.08
+}
+carbon_dioxide_production_factor = 1.0
 hypoxia_sensitivity = 0.0
 hypercapnea_sensitivity = 0.0
-vascularity_factor = null
+vascularity_factor = 1.0
 mass = 1.5
-tissue_count = null
-health_loss_factor = null
-perform_organ_specific_task = null
+tissue_count = 1
+health_loss_factor = 1.0
+perform_organ_specific_task = true
+blood_volume = 1.0

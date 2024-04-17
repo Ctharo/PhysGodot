@@ -7,7 +7,7 @@ extends Iterator
 @export var hyperoxia: bool
 @export var params: TissueParams
 
-func __init__(params: TissueParams) -> void:
+func _init(params: TissueParams) -> void:
 	self.params = params
 	self.hypercapnia = false
 	self.hypocapnia = false
@@ -18,7 +18,7 @@ func __init__(params: TissueParams) -> void:
 func check_chemistry(gases: Gases) -> void:
 	for gas: Gas in gases:
 		var result: int = check(gas)
-		match gas:
+		match gas.gas_type:
 			GlobalTypes.Gases.CARBON_DIOXIDE:
 				if result != 0:
 					hypercapnia = true if result == 1 else false
@@ -41,7 +41,7 @@ func check(gas: Gas) -> int:
 	var gas_concentration: float = gas.moles/params.mass
 	if gas_concentration > params.max_concentration[gas.gas_type]:
 		result = 1
-	elif gas_concentration < params.min_concentration[gas.type]:
+	elif gas_concentration < params.min_concentration[gas.gas_type]:
 		result = -1
 	else:
 		result = 0
