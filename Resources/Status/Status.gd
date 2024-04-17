@@ -1,5 +1,5 @@
 class_name Status
-extends Iterator
+extends Node
 
 @export var hypercapnia: bool
 @export var hypocapnia: bool
@@ -9,10 +9,6 @@ extends Iterator
 
 func _init(params: TissueParams) -> void:
 	self.params = params
-	self.hypercapnia = false
-	self.hypocapnia = false
-	self.hypoxia = false
-	self.hyperoxia = false
 
 ## Assigns the status of the tissue based on the gases present
 func check_chemistry(gases: Gases) -> void:

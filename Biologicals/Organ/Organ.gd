@@ -21,19 +21,8 @@ var settings: Settings = load("res://Settings.tres") as Settings
 		if health == 0:
 			died()
 
-var hypoxic: bool :
-	set(value):
-		if value and value != hypoxic:
-			hypoxia.emit(self)
-		hypoxic = value
-
-var hypercapnic: bool :
-	set(value):
-		if value and value != hypercapnic:
-			hypercapnia.emit(self)
-		hypercapnic = value
-
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
+@export var status: Status
 @export var dead: bool = false
 var tissues: Tissues
 var type: GlobalTypes.Organs
@@ -43,6 +32,7 @@ var timer: float = 0.0
 func _init(Organ_type: GlobalTypes.Organs, params: TissueParams) -> void:
 	self.type = Organ_type
 	self.params = params
+	self.status = Status.new(self.params)
 	name = Helpers.to_title_case(Organs.get_string(type))
 	init_tissues()
 
@@ -70,18 +60,20 @@ func _physics_process(delta: float) -> void:
 
 ## Checks [Organ] status and decreases health accordingly [br]
 ## TODO: Should probably be done in [Tissue].
+## TODO: Both Organ and Tissue should have a Status resource from which individual details are assigned
 func health_check(delta: float) -> void:
 	if settings.INVINCIBLE_TISSUES: return
-	if hypoxic:
+	if self.status.hypoxia:
 		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor
-	if hypercapnic:
+	if self.status.hypercapnia:
 		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor
 
 ## Assigns statuses to [Organ] based on [Tissue] statuses
 # TODO: May not be needed anymore
 func check_chemistry() -> void:
-	hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
-	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
+	self.status.check_chemistry(tissues.get_gases())
+	#hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
+	#hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)

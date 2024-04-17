@@ -7,8 +7,10 @@ signal respired
 @export var respiratory_rate_timer: float
 @export var alveoli: Alveoli
 
+
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.LUNGS, params)
+
 	alveoli = Alveoli.new()
 	alveoli.name = "Alveoli"
 	add_child(alveoli)

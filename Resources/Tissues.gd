@@ -54,3 +54,11 @@ func _iter() -> Iterator:
 func set_debug(value: bool) -> void:
 	for tissue: Tissue in tissues:
 		tissue.debug = value
+		
+func get_gases() -> Gases:
+	var gases: Array[Gas] = [] as Array[Gas]
+	for tissue in tissues:
+		for gas in tissue.gases:
+			gases.append(gas)
+	return Gases.new(gases)
+	

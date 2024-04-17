@@ -4,6 +4,7 @@ extends Organ
 ##
 ## Responsible for signal responses from various stimuli.
 
+
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.BRAIN, params)
 
