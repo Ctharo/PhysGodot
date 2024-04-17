@@ -9,8 +9,8 @@ var gases: Gases
 var vessels: Vessels
 
 #region Set by OrganStats
-var params: TissueParams
-var mass: float #TODO: Tissue mass should cause increased rates of aerobic respiration, but also increased rates of gas exchange.
+var params: TissueParams ## Stores values of normal ranges, physical data, etc.
+var status: Status ## Stores current status of tissue
 #endregion
 
 @export_category("Meta")
@@ -18,11 +18,11 @@ var timer: float = 0.0
 const TIMER_INTERVAL: float = 0.1
 var debug: bool = false
 
-func _init(params: TissueParams, mass: float, blood_volume: float) -> void:
+func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
 	self.params = params
-	self.mass = mass
-	_init_vessels(blood_volume)
+	self.status = Status.new(params as TissueParams)
+	_init_vessels(params.blood_volume)
 	_init_gases()
 
 func _physics_process(delta: float) -> void:
@@ -38,8 +38,8 @@ func _physics_process(delta: float) -> void:
 
 func _init_gases() -> void:
 	gases = Gases.new()
-	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * mass)
-	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * mass)
+	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * params.mass)
+	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * params.mass)
 	
 func _init_vessels(total_blood_volume: float) -> void:
 	
@@ -62,10 +62,10 @@ func _init_vessels(total_blood_volume: float) -> void:
 
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
-	if mass == 0:
+	if params.mass == 0:
 		return 0.0
 	var moles: float = get_moles(gas)
-	return moles/mass
+	return moles/params.mass
 
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
@@ -89,7 +89,7 @@ func exchange_gases(delta: float) -> void:
 
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
-	var moles: float = delta_concentration * mass * params.vascularity_factor * delta
+	var moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
 	exchange_gas(gas, moles)
 	capillaries.exchange_gas(gas, -moles)
 
@@ -118,10 +118,32 @@ func aerobic_respiration(delta: float) -> void:
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
+## Checks against [member params] for normal gas concentrations [br]
+## Returns 1: int if above range, -1: int if below, and 0: int if nominal
+func check_concentration(gas: GlobalTypes.Gases) -> int:
+	var result: int = 0
+	var concentration: float = get_concentration(gas)
+	match gas:
+		GlobalTypes.Gases.OXYGEN:
+			if concentration < params.min_o2_concentration:
+				result = -1
+		GlobalTypes.Gases.CARBON_DIOXIDE:
+			if concentration > params.max_co2_concentration:
+				result = 1
+		_:
+			result = 0
+	return result
+
 ## Checks if tissue has too high of CO2 concentration
 func is_hypercapnic() -> bool:
-	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_co2_concentration
+	return check_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) == 1
 
 ## Checks if tissue has too low of O2 concentration
 func is_hypoxic() -> bool:
-	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_o2_concentration
+	return check_concentration(GlobalTypes.Gases.OXYGEN) == -1
+
+## Assigns statuses based on chemistry
+func check_chemistry() -> void:
+	if check_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) == 1:
+		pass
+		

@@ -21,7 +21,6 @@ var settings: Settings = load("res://Settings.tres") as Settings
 		if health == 0:
 			died()
 
-
 var hypoxic: bool :
 	set(value):
 		if value and value != hypoxic:
@@ -34,7 +33,7 @@ var hypercapnic: bool :
 			hypercapnia.emit(self)
 		hypercapnic = value
 
-@export var params: TissueParams
+@export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 @export var dead: bool = false
 var tissues: Tissues
 var type: GlobalTypes.Organs
@@ -51,8 +50,11 @@ func init_tissues() -> void:
 	var tissue_count: int = self.params.tissue_count # For dividing total organ mass by number of tissues. FIXME: Assumes equally-sized tissues.
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
 	var a: Array[Tissue] = [] as Array[Tissue]
+	var tissue_params: TissueParams = self.params.duplicate(true) ## Copy params, but change relavent data such as mass, blood volume, etc.
+	tissue_params.mass = self.params.mass / tissue_count
+	tissue_params.blood_volume = self.params.blood_volume / tissue_count
 	for i in tissue_count:
-		var tissue: Tissue = Tissue.new(self.params, self.params.mass/tissue_count, self.blood_volume/tissue_count)
+		var tissue: Tissue = Tissue.new(tissue_params)
 		tissue.name = self.name + " Tissue %s" % (i + 1)
 		add_child(tissue)
 		a.append(tissue)
@@ -66,7 +68,8 @@ func _physics_process(delta: float) -> void:
 		timer = 0
 	health_check(delta)
 
-## Checks [Organ] status and decreases health accordingly
+## Checks [Organ] status and decreases health accordingly [br]
+## TODO: Should probably be done in [Tissue].
 func health_check(delta: float) -> void:
 	if settings.INVINCIBLE_TISSUES: return
 	if hypoxic:
@@ -76,8 +79,8 @@ func health_check(delta: float) -> void:
 
 ## Assigns statuses to [Organ] based on [Tissue] statuses
 func check_chemistry() -> void:
-	hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
-	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
+	hypercapnic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_concentration_abnormal(GlobalTypes.Gases.CARBON_DIOXIDE))
+	hypoxic = tissues.any(func(tissue: Tissue) -> bool: return tissue.is_concentration_abnormal(GlobalTypes.Gases.OXYGEN))
 
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)

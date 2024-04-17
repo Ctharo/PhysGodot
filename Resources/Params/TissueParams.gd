@@ -7,6 +7,18 @@ extends Resource
 ## Effects rate of [enum GlobalTypes.Gas.OXYGEN] consumption
 @export var oxygen_consumption_factor: float = 1
 
+## Contains the minimum concentration for each [enum GlobalTypes.Gas] that the [Tissue] can tolerate
+@export var min_concentration: Dictionary = {
+    GlobalTypes.Gases.OXYGEN: 0.12,
+    GlobalTypes.Gases.CARBON_DIOXIDE: 0.00,
+}
+
+## Contains the maximum concentration for each [enum GlobalTypes.Gas] that the [Tissue] can tolerate
+@export var max_concentration: Dictionary = {
+    GlobalTypes.Gases.OXYGEN: 0.22,
+    GlobalTypes.Gases.CARBON_DIOXIDE: 0.08,
+}
+
 ## Lower limit of what is considered hypercapneic
 @export var min_o2_concentration: float = 0.12
 
@@ -41,3 +53,4 @@ extends Resource
 
 ## Amount of [Blood] that can be contained within all [Vessel]s in the [Tissues]
 @export var blood_volume: float = 1.0
+
