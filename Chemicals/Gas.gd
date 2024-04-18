@@ -7,8 +7,6 @@ extends Resource
 
 var gas_type: GlobalTypes.Gases
 
-
-
 func _init(type: GlobalTypes.Gases, stats: GasStats, initial_moles: float = 0.0) -> void:
 	gas_type = type
 	gas_stats = stats
@@ -16,12 +14,13 @@ func _init(type: GlobalTypes.Gases, stats: GasStats, initial_moles: float = 0.0)
 	name = Helpers.to_title_case(Gases.get_string(type))
 
 func set_moles(moles: float) -> void:
-	self.moles = moles
+	self.moles = max(moles, 0)
 
 func set_solubility(solubility: float) -> void:
 	if not gas_stats:
 		printerr("Cannot edit solubility for %s: stats not found" % name)
 	gas_stats.solubility = solubility
+
 
 func get_solubility() -> float:
 	if not gas_stats:
