@@ -70,9 +70,9 @@ func set_debug(value: bool) -> void:
 	debug = value
 	tissues.set_debug(value)
 
-## Returns bool if arg is same value as [member type]
+## Returns bool if arg is same value as [member type]. Uses [method Organs.is_of_type]
 func is_of_type(test_type: GlobalTypes.Organs) -> bool:
-	return self.type == test_type
+	return Organs.is_of_type(self, test_type)
 
 ## Called from [method check_health] when [member health] is zero
 func died() -> void:

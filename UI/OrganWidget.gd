@@ -1,5 +1,7 @@
 class_name OrganWidget
 extends VBoxContainer
+## UI object that will display information on an [Organ] passed on instantiation
+
 
 func _init(organ: Organ) -> void:
 	self.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -81,6 +83,7 @@ func get_vessel_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ,
 		_:
 			result = "white"
 	return result
+
 func _heart_setup(organ: Heart) -> void:
 	var space := RichTextLabel.new()
 	space.name = "space"

@@ -37,11 +37,14 @@ func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel) -> bo
 		vessel.deliver_to = Vessels.new([sink_vessel] as Array[Vessel])
 	return true
 
+## Returns organ count
 func get_count() -> int:
 	return organs.size()
 
+## Static method to retrieve a String name of an organ
 static func get_string(organ: GlobalTypes.Organs) -> String:
 	return GlobalTypes.Organs.keys()[organ]
 
+## Compares [Organ] types
 static func is_of_type(organ: Organ, type: GlobalTypes.Organs) -> bool:
 	return organ.type == type

@@ -21,7 +21,6 @@ func set_solubility(solubility: float) -> void:
 		printerr("Cannot edit solubility for %s: stats not found" % name)
 	gas_stats.solubility = solubility
 
-
 func get_solubility() -> float:
 	if not gas_stats:
 		printerr("Cannot get solubility for %s: stats not found" % name)

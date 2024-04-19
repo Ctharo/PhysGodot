@@ -2,6 +2,7 @@ class_name Tissues
 extends Iterator
 ## Iterable class that contains Tissue instances and helpful methods.
 
+## Contains all [Tissue]s in Array
 var tissues: Array[Tissue] :
 	set(value):
 		_collection = value
@@ -18,6 +19,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 		moles += tissue.get_moles(gas)
 	return moles
 
+## Returns sum of [member Tissue.mass] from [member tissues]
 func total_mass() -> float:
 	var total: float = 0.0
 	for tissue: Tissue in tissues:
@@ -31,9 +33,11 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 		return 0.0
 	return get_moles(gas)/mass
 
+## Returns [Vessels] of type [enum GlobalTypes.Vessels.CAPILLARIES]
 func get_capillaries() -> Vessels:
 	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
 
+## Returns [Vessels] of passed type [enum GlobalTypes.Vessels]
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
 	for tissue: Tissue in tissues:
@@ -41,6 +45,7 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 			vessels.add(vessel)
 	return vessels
 
+## Returns all [Vessel]s FIXME: May not be working
 func get_all_vessels() -> Vessels:
 	var vessels := Vessels.new()
 	for tissue: Tissue in tissues:
@@ -48,17 +53,18 @@ func get_all_vessels() -> Vessels:
 			vessels.add(vessel)
 	return vessels
 
-func _iter() -> Iterator:
-	return Iterator.new(tissues)
-
+## Depreciated?
 func set_debug(value: bool) -> void:
 	for tissue: Tissue in tissues:
 		tissue.debug = value
-		
+
+## Returns mean value of [member Tissue.health] of [Tissue]s found in [member tissues]
 func get_mean_health() -> float:
 	if not tissues.size(): return 0.0
 	var health: float = 0
 	for tissue: Tissue in tissues:
 		health += tissue.health
 	return health/tissues.size()
-	
+
+func _iter() -> Iterator:
+	return Iterator.new(tissues)

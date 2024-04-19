@@ -12,7 +12,7 @@ func _init(params: TissueParams) -> void:
 
 	heart_rate = 1
 	stroke_volume = 0.06
-	
+
 func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)

@@ -78,25 +78,31 @@ func _physics_process(_delta: float) -> void:
 func move_blood(_delta: float) -> void:
 	pass
 
+## Signal response
 func _on_organ_bad_chemistry(organ: Organ, gas: GlobalTypes.Gases) -> void:
 	print("%s is experiencing a chemical imbalance with %s" % [organ.name, Gases.get_string(gas)])
 
+## Signal response
 func _on_organ_died(organ: Organ) -> void:
 	if Organs.is_of_type(organ, GlobalTypes.Organs.BRAIN):
 		on_died()
 
+## Returns [member organs]
 func get_organs() -> Organs:
 	return organs as Organs
 
-func get_brain() -> Organ:
+## Returns brain
+func get_brain() -> Brain:
 	return _get_organ(GlobalTypes.Organs.BRAIN)
 
-func get_lungs() -> Organ:
+## Returns lungs
+func get_lungs() -> Lungs:
 	return _get_organ(GlobalTypes.Organs.LUNGS)
 
 func _get_organ(organ_type: GlobalTypes.Organs) -> Organ:
 	return organs.get_organ_by_type(organ_type)
 
+## Called when [member health] is zero
 func on_died() -> void:
 	print("%s has died" % name)
 	dead = true
