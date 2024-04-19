@@ -3,6 +3,8 @@ class_name Tissue
 
 ## Used to turn certain processes on/off
 var settings: Settings = load("res://Settings.tres") as Settings
+## Used for data logging and retrieval
+var data: Data
 
 ## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases
@@ -17,7 +19,7 @@ var status: Status ## Stores current status of tissue
 #endregion
 
 var timer: float = 0.0 ## Incremented by delta value in [method _physics_process], used to limit calculations
-const TIMER_INTERVAL: float = 0.1 ## Time between calculations
+const TIMER_INTERVAL: float = 1 ## Time between calculations
 var debug: bool = false ## Depreciated? Might not use anymore
 
 ## Ratio of health, where 1 is full health and 0 is death
@@ -34,6 +36,7 @@ func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
 	self.params = params
 	self.status = Status.new(params)
+	self.data = Data.new(self)
 	_init_vessels(params.blood_volume)
 	_init_gases()
 
@@ -113,7 +116,21 @@ func exchange_gases(delta: float) -> void:
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
 	var moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
-	# TODO: Maybe we can do some data collection here?
+	
+	# TODO: Data collection can be simplified
+	if moles < 0:
+		var delivered: Data.Delivered = Data.Delivered.new()
+		delivered.amount = abs(moles)
+		delivered.to = Vessels.get_string(GlobalTypes.Vessels.CAPILLARIES)
+		delivered.time = 0 # FIXME: Time should be since start of simulation
+		data.delivered_gas(delivered)
+	elif moles > 0:
+		var received: Data.Received = Data.Received.new()
+		received.amount = moles
+		received.from = Vessels.get_string(GlobalTypes.Vessels.CAPILLARIES)
+		received.time = 0 # FIXME: Time should be since start of simulation
+		data.received_gas(received)
+		
 	exchange_gas(gas, moles)
 	capillaries.exchange_gas(gas, -moles)
 
@@ -141,6 +158,8 @@ func aerobic_respiration(delta: float) -> void:
 	var oxygen_needed: float = min(0.001 * params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
 	var carbon_dioxide_produced: float = 5e-8 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
 
+	
+	
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
