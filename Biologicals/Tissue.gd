@@ -25,6 +25,9 @@ var debug: bool = false ## Depreciated? Might not use anymore
 ## Ratio of health, where 1 is full health and 0 is death
 var health: float = 1 :
 	set(value):
+		if dead:
+			health = 0
+			return
 		health = max(value, 0)
 		if health == 0:
 			dead = true
