@@ -4,6 +4,7 @@ extends Iterator
 ##
 ## Custom container class for [Organ] instances
 
+## Contains [Organ] instances for the [Body]
 var organs: Array[Organ] :
 	set(value):
 		_collection = value as Array[Organ]
@@ -13,6 +14,7 @@ var organs: Array[Organ] :
 func _iter() -> Iterator:
 	return Iterator.new(organs)
 
+## Returns all [Tissue]s found in [member Tissue.vessels]
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
 	for organ: Organ in organs:
