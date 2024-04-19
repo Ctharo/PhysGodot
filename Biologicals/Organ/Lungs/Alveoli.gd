@@ -12,7 +12,7 @@ func _init() -> void:
 	gases = Gases.new()
 	_init_vessels()
 	_on_respiration()
-	
+
 ## HINT Connections are set from Body
 func _init_vessels() -> void:
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES)
@@ -21,14 +21,14 @@ func _init_vessels() -> void:
 	vessels = Vessels.new([capillaries] as Array[Vessel])
 	capillaries.set_moles(GlobalTypes.Gases.OXYGEN, 0.0 * capillaries.volume)
 	capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.10 * capillaries.volume)
-	
+
 func _physics_process(delta: float) -> void:
 	if settings.GAS_DIFFUSION_ENABLED: exchange_gases(delta)
-	
+
 func _on_respiration() -> void:
 	set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * volume)
-	set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.05 * volume)
-	
+	set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0004 * volume)
+
 func exchange_gases(delta: float) -> void:
 	var capillaries: Vessels = get_capillaries()
 	var vessel_oxygen_concentration: float = capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)

@@ -16,7 +16,7 @@ extends Resource
 ## Contains the maximum concentration for each [enum GlobalTypes.Gas] that the [Tissue] can tolerate
 @export var max_concentration: Dictionary = {
 	GlobalTypes.Gases.OXYGEN: 0.22,
-	GlobalTypes.Gases.CARBON_DIOXIDE: 0.08,
+	GlobalTypes.Gases.CARBON_DIOXIDE: 0.05,
 }
 
 ## Effects rate of [enum GlobalTypes.Gas.CARBON_DIOXIDE] production

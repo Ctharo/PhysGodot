@@ -4,7 +4,6 @@ class_name Tissue
 ## Used to turn certain processes on/off
 var settings: Settings = load("res://Settings.tres") as Settings
 
-@export_category("Tissue")
 ## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases
 ## Represents the collection of child [Vessel]s
@@ -17,7 +16,6 @@ var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 var status: Status ## Stores current status of tissue
 #endregion
 
-@export_category("Meta")
 var timer: float = 0.0 ## Incremented by delta value in [method _physics_process], used to limit calculations
 const TIMER_INTERVAL: float = 0.1 ## Time between calculations
 var debug: bool = false ## Depreciated? Might not use anymore
@@ -115,6 +113,7 @@ func exchange_gases(delta: float) -> void:
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
 	var moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
+	# TODO: Maybe we can do some data collection here?
 	exchange_gas(gas, moles)
 	capillaries.exchange_gas(gas, -moles)
 
@@ -140,7 +139,7 @@ func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
 	var oxygen_needed: float = min(0.001 * params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = 0.001 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
+	var carbon_dioxide_produced: float = 5e-8 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)

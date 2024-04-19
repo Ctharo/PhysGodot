@@ -20,7 +20,7 @@ func _init(organ: Organ) -> void:
 	health_info.name = "HealthLabel"
 	health_info.bbcode_enabled = true
 	health_info.fit_content = true
-	health_info.append_text("Health: [color=lime]" + str(int(organ.health * 100)) + "%[/color]")
+	health_info.append_text("Health: [color=lime]%s[/color]" % Helpers.as_percent(organ.health))
 	add_child(health_info)
 
 	# Chemical imbalance warning

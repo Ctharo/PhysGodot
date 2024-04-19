@@ -134,3 +134,4 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
 
+
