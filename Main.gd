@@ -35,9 +35,7 @@ func _process(delta: float) -> void:
 		label.text = "No living bodies found"
 		hbox.add_child(label)
 		return
-		
 
-	
 	if timer > UI_UPDATE_RATE:
 		timer = 0.0
 		create_ui(bodies)
@@ -54,10 +52,10 @@ func create_ui(b: Array[Body]) -> void:
 	if hbox == null:
 		printerr("Hbox is null")
 		return
-		
+
 	# Clear any existing children in the hbox
 	clear_hbox()
-	
+
 	# Iterate over each organ in the body and create an OrganWidget
 	for body: Body in b as Array[Body]:
 		var organs: Organs = body.get_organs() as Organs
@@ -67,7 +65,7 @@ func create_ui(b: Array[Body]) -> void:
 			organ_widget.add_to_group("OrganWidget")
 			organ_widget.name = organ.name + "Widget"
 			hbox.add_child(organ_widget)
-	
+
 func add_timer_label() -> void:
 	var timer_label: RichTextLabel = RichTextLabel.new()
 	timer_label.add_to_group("Timer")

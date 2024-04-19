@@ -50,12 +50,12 @@ func _ready() -> void:
 	var pulmonary_vein := Vessel.new(GlobalTypes.Vessels.PULMONARY_VEIN)
 	pulmonary_vein.deliver_to = Vessels.new([aorta] as Array[Vessel])
 	add_child(pulmonary_vein)
-	
+
 	# Connect pulmonary circuit
 	pulmonary_artery.deliver_to = lungs.alveoli.get_capillaries()
 	for vessel: Vessel in lungs.alveoli.get_capillaries():
 		vessel.deliver_to = Vessels.new([pulmonary_vein] as Array[Vessel])
-	
+
 	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
 	vena_cava.deliver_to = Vessels.new([pulmonary_artery] as Array[Vessel])
 	add_child(vena_cava)
@@ -108,18 +108,18 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		return
 
 	var pulmonary_capillaries: Vessels = get_lungs().alveoli.get_capillaries()
-	
+
 	for organ: Organ in organs:
 		var organ_capillaries: Vessels = organ.get_capillaries()
 
 		# Calculate gas removal based on organ capillaries
 		var organ_o2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN) * stroke_volume
 		var organ_co2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) * stroke_volume
-		
+
 		# Calculate gas addition based on pulmonary capillaries (donor blood)
 		var pulm_o2_moles_added: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN) * stroke_volume
 		var pulm_co2_moles_added: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) * stroke_volume
-		
+
 		# Update moles in organ capillaries
 		organ_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, organ_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) - organ_o2_moles_removed + pulm_o2_moles_added)
 		organ_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, organ_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) - organ_co2_moles_removed + pulm_co2_moles_added)

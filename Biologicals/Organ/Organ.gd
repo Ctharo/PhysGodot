@@ -4,10 +4,10 @@ extends Node
 ##
 ## Physiological processes depend on Organ
 
-signal bad_chemistry_detected
-signal hypercapnia
-signal hypoxia
-signal organ_died
+signal bad_chemistry_detected ## Not sure if will use, too general
+signal hypercapnia ## Emitted if [enum GlobalTypes.Gases.CARBON_DIOXIDE] concentration in the [Tissue]s are higher than [member params.max_concentration]
+signal hypoxia ## Emitted if [enum GlobalTypes.Gases.OXYGEN] concentration in the [Tissue]s are lower than [member params.min_concentration]
+signal organ_died ## Emitted if all [member Tissue.health] values are zero
 
 var settings: Settings = load("res://Settings.tres") as Settings
 
@@ -19,9 +19,9 @@ var settings: Settings = load("res://Settings.tres") as Settings
 @export var health: float
 
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
-@export var status: Status
+@export var status: Status ## Custom iterator object to contain status values
 ## Returns true if mean health of tissues is zero
-@export var dead: bool 
+@export var dead: bool
 var tissues: Tissues
 var type: GlobalTypes.Organs
 var debug: bool
@@ -33,9 +33,9 @@ func _init(Organ_type: GlobalTypes.Organs, params: TissueParams) -> void:
 	self.status = Status.new(self.params)
 
 	name = Helpers.to_title_case(Organs.get_string(type))
-	init_tissues()
+	_init_tissues()
 
-func init_tissues() -> void:
+func _init_tissues() -> void:
 	var tissue_count: int = self.params.tissue_count # For dividing total organ mass by number of tissues. FIXME: Assumes equally-sized tissues.
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
 	var a: Array[Tissue] = [] as Array[Tissue]
@@ -50,20 +50,45 @@ func init_tissues() -> void:
 		add_child(tissue)
 		a.append(tissue)
 	tissues = Tissues.new(a)
-	
+
 func _physics_process(delta: float) -> void:
-	if dead: 
+	if dead:
 		return
 	timer += delta
 	if timer > 1:
 		check_health()
 		timer = 0.0
-	
+
+## Called from [method _physics_process] and handles setting [member health] and calling [method died] if necessary
 func check_health() -> void:
 	health = tissues.get_mean_health()
 	if health == 0.0:
 		died()
 
+## Depreciated? Might not use.
+func set_debug(value: bool) -> void:
+	debug = value
+	tissues.set_debug(value)
+
+## Returns bool if arg is same value as [member type]
+func is_of_type(test_type: GlobalTypes.Organs) -> bool:
+	return self.type == test_type
+
+## Called from [method check_health] when [member health] is zero
+func died() -> void:
+	dead = true
+	organ_died.emit(self)
+	self.set_physics_process(false)
+
+## HACK: Should instead be responding to mean o2 concentration
+func is_hypoxic() -> bool:
+	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
+
+## HACK: Should instead be responding to mean co2 concentration
+func is_hypercapnic() -> bool:
+	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
+
+#region [member tissues] helper methods
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)
 
@@ -75,21 +100,4 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 
 func get_all_vessels() -> Vessels:
 	return tissues.get_all_vessels()
-
-func set_debug(value: bool) -> void:
-	debug = value
-	tissues.set_debug(value)
-
-func is_of_type(test_type: GlobalTypes.Organs) -> bool:
-	return type == test_type
-
-func died() -> void:
-	dead = true
-	organ_died.emit(self)
-	self.set_physics_process(false)
-	
-func is_hypoxic() -> bool:
-	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
-	
-func is_hypercapnic() -> bool:
-	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
+#endregion

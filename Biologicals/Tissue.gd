@@ -1,12 +1,15 @@
 extends Node
 class_name Tissue
 
+## Used to turn certain processes on/off
 var settings: Settings = load("res://Settings.tres") as Settings
 
 @export_category("Tissue")
 ## Stores information required for managing gas diffusion between capillaries and stored gases
 var gases: Gases
+## Represents the collection of child [Vessel]s
 var vessels: Vessels
+## Is true when health reaches zero
 var dead: bool
 
 #region Set by OrganStats
@@ -15,10 +18,11 @@ var status: Status ## Stores current status of tissue
 #endregion
 
 @export_category("Meta")
-var timer: float = 0.0
-const TIMER_INTERVAL: float = 0.1
-var debug: bool = false
+var timer: float = 0.0 ## Incremented by delta value in [method _physics_process], used to limit calculations
+const TIMER_INTERVAL: float = 0.1 ## Time between calculations
+var debug: bool = false ## Depreciated? Might not use anymore
 
+## Ratio of health, where 1 is full health and 0 is death
 var health: float = 1 :
 	set(value):
 		health = max(value, 0)
@@ -48,11 +52,11 @@ func _init_gases() -> void:
 	gases = Gases.new()
 	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * params.mass)
 	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * params.mass)
-	
+
 func _init_vessels(total_blood_volume: float) -> void:
-	
+
 	var volume_per_vessel: float = total_blood_volume/3
-	
+
 	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES, volume_per_vessel)
 	add_child(capillaries)
 
@@ -68,12 +72,13 @@ func _init_vessels(total_blood_volume: float) -> void:
 	capillaries.deliver_to = Vessels.new([vein] as Array[Vessel])
 	artery.deliver_to = Vessels.new([capillaries] as Array[Vessel])
 
+## Responsible for removing health if certain conditions are met. Called from [method _physics_process].
 func health_check(delta: float) -> void:
 	if self.is_hypoxic():
 		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
 	if self.is_hypercapnic():
 		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
-		
+
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if params.mass == 0:
@@ -81,9 +86,11 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 	var moles: float = get_moles(gas)
 	return moles/params.mass
 
+## Returns the amount of gas in the tissue in moles
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
 
+## Responsible for directing the exchange of moles of gas between this class and child capillaries: [Vessel] based on concentration differences
 func exchange_gases(delta: float) -> void:
 	var capillaries: Vessels = get_capillaries()
 	var vessel_oxygen_concentration: float = capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
@@ -101,6 +108,7 @@ func exchange_gases(delta: float) -> void:
 	# After exchange
 	if debug: print("After exchange: Tissue [O2]: %f, [CO2]: %f, Vessel [O2]: %f, [CO2]: %f" % [get_concentration(GlobalTypes.Gases.OXYGEN), get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE), capillaries.get_concentration(GlobalTypes.Gases.OXYGEN), capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)])
 
+## Responsible for exchanging of moles of gas between this class and arg capillaries
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
 	var delta_concentration: float = capillary_concentration - tissue_concentration
 	var moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
@@ -113,6 +121,7 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	assert(total_moles >= 0, "%s moles cannot be negative." % gas)
 	gases.set_moles(gas, total_moles)
 
+#region Vessels helper methods
 func get_capillaries() -> Vessels:
 	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
 
@@ -121,13 +130,14 @@ func get_all_vessels() -> Vessels:
 
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	return vessels.get_vessels_by_type(vessel_type)
+#endregion
 
 ## Tissue-specific task for producing CO2 and consuming O2
 func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
 	var oxygen_needed: float = min(0.001 * params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = 0.001 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta 
+	var carbon_dioxide_produced: float = 0.001 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
