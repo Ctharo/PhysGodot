@@ -19,7 +19,7 @@ var status: Status ## Stores current status of tissue
 #endregion
 
 var timer: float = 0.0 ## Incremented by delta value in [method _physics_process], used to limit calculations
-const TIMER_INTERVAL: float = 1 ## Time between calculations
+const TIMER_INTERVAL: float = 0.1 ## Time between calculations
 var debug: bool = false ## Depreciated? Might not use anymore
 
 ## Ratio of health, where 1 is full health and 0 is death
@@ -94,45 +94,32 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
 
+
 ## Responsible for directing the exchange of moles of gas between this class and child capillaries: [Vessel] based on concentration differences
 func exchange_gases(delta: float) -> void:
-	var capillaries: Vessels = get_capillaries()
-	var vessel_oxygen_concentration: float = capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
-	var vessel_carbon_dioxide_concentration: float = capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
-	var tissue_oxygen_concentration: float = get_concentration(GlobalTypes.Gases.OXYGEN)
-	var tissue_carbon_dioxide_concentration: float = get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
-
-	# Before exchange
-	if debug: print("Before exchange: Tissue [O2]: %f, [CO2]: %f, Vessel [O2]: %f, [CO2]: %f" % [tissue_oxygen_concentration, tissue_carbon_dioxide_concentration, vessel_oxygen_concentration, vessel_carbon_dioxide_concentration])
-
 	# Exchange gases with capillaries
-	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, tissue_oxygen_concentration, vessel_oxygen_concentration, capillaries, delta)
-	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, tissue_carbon_dioxide_concentration, vessel_carbon_dioxide_concentration, capillaries, delta)
+	var capillaries: Vessels = self.get_capillaries()
+	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
+	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
 
-	# After exchange
-	if debug: print("After exchange: Tissue [O2]: %f, [CO2]: %f, Vessel [O2]: %f, [CO2]: %f" % [get_concentration(GlobalTypes.Gases.OXYGEN), get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE), capillaries.get_concentration(GlobalTypes.Gases.OXYGEN), capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)])
 
 ## Responsible for exchanging of moles of gas between this class and arg capillaries
-func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, tissue_concentration: float, capillary_concentration: float, capillaries: Vessels, delta: float) -> void:
-	var delta_concentration: float = capillary_concentration - tissue_concentration
-	var moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
-	
-	# TODO: Data collection can be simplified
-	if moles < 0:
-		var delivered: Data.Delivered = Data.Delivered.new()
-		delivered.amount = abs(moles)
-		delivered.to = Vessels.get_string(GlobalTypes.Vessels.CAPILLARIES)
-		delivered.time = 0 # FIXME: Time should be since start of simulation
-		data.delivered_gas(delivered)
-	elif moles > 0:
-		var received: Data.Received = Data.Received.new()
-		received.amount = moles
-		received.from = Vessels.get_string(GlobalTypes.Vessels.CAPILLARIES)
-		received.time = 0 # FIXME: Time should be since start of simulation
-		data.received_gas(received)
-		
-	exchange_gas(gas, moles)
-	capillaries.exchange_gas(gas, -moles)
+func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels, delta: float) -> void:
+	# Do nothing if concentrations are equal
+	if is_equal_approx(self.get_concentration(gas), capillaries.get_concentration(gas)):
+		return
+	# Assign donor and recipient
+	var donor: Object = capillaries if capillaries.get_concentration(gas) > self.get_concentration(gas) else self
+	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self
+	var delta_concentration: float = donor.get_concentration(gas) - self.get_concentration(gas)
+	var potential_moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
+	var moles: float = min(potential_moles, donor.get_moles(gas))
+	# Calculate the actual amount of moles that can be exchanged
+	if is_zero_approx(moles):
+		return
+	donor.exchange_gas(gas, -moles)
+	recipient.exchange_gas(gas, moles)
+
 
 ## Adds or removes moles of a gas from the tissue
 func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
@@ -156,10 +143,8 @@ func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
 	var oxygen_needed: float = min(0.001 * params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = 5e-8 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
+	var carbon_dioxide_produced: float = 5e-5 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
 
-	
-	
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
@@ -170,4 +155,3 @@ func is_hypercapnic() -> bool:
 ## Checks if tissue has too low of O2 concentration
 func is_hypoxic() -> bool:
 	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
-

@@ -56,15 +56,18 @@ func _iter() -> Iterator:
 static func get_string(vessel: GlobalTypes.Vessels) -> String:
 	return GlobalTypes.Vessels.keys()[vessel]
 
+# TODO: Should probably ensure we are maintaining mass conservation
 func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var total_volume: float = get_volume()
-	if total_volume == 0:
+	if is_zero_approx(total_volume):
 		printerr("Total volume of all vessels is zero")
 		return
 	var concentration: float = moles/total_volume
 	for vessel: Vessel in vessels:
 		var moles_for_vessel: float = concentration * vessel.volume
 		var final_moles_for_vessel: float = moles_for_vessel + vessel.get_moles(gas)
+		if is_zero_approx(final_moles_for_vessel):
+			final_moles_for_vessel = 0
 		assert(final_moles_for_vessel >= 0, "Moles should not be less than zero")
 		vessel.set_moles(gas, final_moles_for_vessel)
 
