@@ -33,6 +33,9 @@ func received_gas(received: Received) -> void:
 	}
 	r.append(dict)
 
+func get_mean_() -> void:
+	pass
+
 ## Meant to provide structure for incoming data
 class Delivered:
 	var to: String

@@ -101,16 +101,20 @@ func exchange_gases(delta: float) -> void:
 	var capillaries: Vessels = self.get_capillaries()
 	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
 	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
-
-
+		
 ## Responsible for exchanging of moles of gas between this class and arg capillaries
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels, delta: float) -> void:
 	# Do nothing if concentrations are equal
 	if is_equal_approx(self.get_concentration(gas), capillaries.get_concentration(gas)):
 		return
 	# Assign donor and recipient
-	var donor: Object = capillaries if capillaries.get_concentration(gas) > self.get_concentration(gas) else self
-	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self
+	# FIXME: What if we put the two in an array and sort by desc get_concentration() and the first would be the donor, 2nd recipient
+	
+	var donor: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self 
+	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self 
+	if donor == null or recipient == null:
+		push_error("Cannot exchange gas with capillaries: Donor or Recipient is null")
+		return
 	var delta_concentration: float = donor.get_concentration(gas) - self.get_concentration(gas)
 	var potential_moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
 	var moles: float = min(potential_moles, donor.get_moles(gas))
