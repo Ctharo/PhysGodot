@@ -82,12 +82,12 @@ func _init_vessels(total_blood_volume: float) -> void:
 ## Responsible for removing health if certain conditions are met. Called from [method _physics_process].
 func health_check(delta: float) -> void:
 	if self.is_hypoxic():
-		if Time.get_ticks_msec() - last_oxygen_sufficient > health_loss_buffer * 1000:
+		if Time.get_ticks_msec() - last_oxygen_sufficient > params.hypoxia_health_buffer * 1000:
 			health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
 	else:
 		last_oxygen_sufficient = Time.get_ticks_msec()
 	if self.is_hypercapnic():
-		if Time.get_ticks_msec() - last_carbon_dioxide_sufficient > health_loss_buffer * 1000:
+		if Time.get_ticks_msec() - last_carbon_dioxide_sufficient > params.hypercapnea_health_buffer * 1000:
 			health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
 	else:
 		last_carbon_dioxide_sufficient = Time.get_ticks_msec()
@@ -102,7 +102,6 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 ## Returns the amount of gas in the tissue in moles
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
-
 
 ## Responsible for directing the exchange of moles of gas between this class and child capillaries: [Vessel] based on concentration differences
 func exchange_gases(delta: float) -> void:

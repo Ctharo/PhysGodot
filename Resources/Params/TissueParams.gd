@@ -26,9 +26,15 @@ extends Resource
 ##(i.e., the rate of health lost during hypoxic status)
 @export var hypoxia_sensitivity: float = 1
 
+## How long in seconds the [Tissue] can handle being in a hypoxic state before losing health
+@export var hypoxia_health_buffer: float = 20
+
 ## Effects how sensitive the [Organ] is with regards to losing health from accumulation of [enum GlobalTypes.Gas.CARBON_DIOXIDE] [br]
-##(i.e., the rate of health lost during hypernapneic status)
+##(i.e., the rate of health lost during hypernapnic status)
 @export var hypercapnea_sensitivity: float = 1
+
+## How long in seconds the [Tissue] can handle being in a hypercapnic state before losing health
+@export var hypercapnea_health_buffer: float = 20
 
 ## Effects rate of gas diffusion between [Tissue] and [Vessel] (i.e., higher value increases rate of diffusion)
 @export var vascularity_factor: float = 1
