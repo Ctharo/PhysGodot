@@ -44,7 +44,7 @@ func clear_dead() -> bool:
 	var dead_bodies: Array[Body] = bodies.filter(func(body: Body) -> bool: return body == null or body.dead) as Array[Body]
 	for dead_body: Body in dead_bodies:
 		bodies.erase(dead_body)
-		dead_body.queue_free()
+		#dead_body.queue_free()
 	return dead_bodies.size() > 0
 
 func create_ui(b: Array[Body]) -> void:

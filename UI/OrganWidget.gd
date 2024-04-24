@@ -97,7 +97,7 @@ func _heart_setup(organ: Heart) -> void:
 	heart_rate_info.bbcode_enabled = true
 	heart_rate_info.fit_content = true
 	var hr: float = organ.heart_rate * 60
-	heart_rate_info.append_text("[b]Heart Rate: [/b] %s/min" % hr)
+	heart_rate_info.append_text("[b]Heart Rate: [/b] %.2f/min" % hr)
 	add_child(heart_rate_info)
 
 func _lungs_setup(organ: Lungs) -> void:

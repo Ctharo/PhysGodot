@@ -21,6 +21,9 @@ var status: Status ## Stores current status of tissue
 var timer: float = 0.0 ## Incremented by delta value in [method _physics_process], used to limit calculations
 const TIMER_INTERVAL: float = 0.1 ## Time between calculations
 var debug: bool = false ## Depreciated? Might not use anymore
+var health_loss_buffer: float = 20
+var last_oxygen_sufficient: float
+var last_carbon_dioxide_sufficient: float
 
 ## Ratio of health, where 1 is full health and 0 is death
 var health: float = 1 :
@@ -79,9 +82,15 @@ func _init_vessels(total_blood_volume: float) -> void:
 ## Responsible for removing health if certain conditions are met. Called from [method _physics_process].
 func health_check(delta: float) -> void:
 	if self.is_hypoxic():
-		health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
+		if Time.get_ticks_msec() - last_oxygen_sufficient > health_loss_buffer * 1000:
+			health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
+	else:
+		last_oxygen_sufficient = Time.get_ticks_msec()
 	if self.is_hypercapnic():
-		health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
+		if Time.get_ticks_msec() - last_carbon_dioxide_sufficient > health_loss_buffer * 1000:
+			health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
+	else:
+		last_carbon_dioxide_sufficient = Time.get_ticks_msec()
 
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
@@ -101,21 +110,22 @@ func exchange_gases(delta: float) -> void:
 	var capillaries: Vessels = self.get_capillaries()
 	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
 	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
-		
+
 ## Responsible for exchanging of moles of gas between this class and arg capillaries
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels, delta: float) -> void:
 	# Do nothing if concentrations are equal
 	if is_equal_approx(self.get_concentration(gas), capillaries.get_concentration(gas)):
 		return
 	# Assign donor and recipient
-	# FIXME: What if we put the two in an array and sort by desc get_concentration() and the first would be the donor, 2nd recipient
-	
-	var donor: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self 
-	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self 
+	# FIXME:I like the elegance of this method tho no type safety
+	@warning_ignore("incompatible_ternary")
+	var donor: Object = capillaries if capillaries.get_concentration(gas) > self.get_concentration(gas) else self
+	@warning_ignore("incompatible_ternary")
+	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self
 	if donor == null or recipient == null:
 		push_error("Cannot exchange gas with capillaries: Donor or Recipient is null")
 		return
-	var delta_concentration: float = donor.get_concentration(gas) - self.get_concentration(gas)
+	var delta_concentration: float = donor.get_concentration(gas) - recipient.get_concentration(gas)
 	var potential_moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
 	var moles: float = min(potential_moles, donor.get_moles(gas))
 	# Calculate the actual amount of moles that can be exchanged

@@ -82,11 +82,12 @@ func died() -> void:
 
 ## HACK: Should instead be responding to mean o2 concentration
 func is_hypoxic() -> bool:
-	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic())
+	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
 
 ## HACK: Should instead be responding to mean co2 concentration
 func is_hypercapnic() -> bool:
-	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic())
+	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > \
+	 params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 
 #region [member tissues] helper methods
 func get_concentration(gas: GlobalTypes.Gases) -> float:

@@ -70,9 +70,17 @@ func _ready() -> void:
 
 
 ## TODO: Not sure what this should be used for yet
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if dead:
 		return
+	var hypoxia_count: int
+	for organ: Organ in organs:
+		if organ.is_hypoxic():
+			hypoxia_count += 1
+	if hypoxia_count > 0:
+		get_heart().heart_rate = clamp(get_heart().heart_rate + delta * hypoxia_count * 2 / 100, 1, 3)
+	else:
+		get_heart().heart_rate = clamp(get_heart().heart_rate - delta / 100, 1, 3)
 
 ## Should move Blood throughout body
 func move_blood(_delta: float) -> void:
@@ -98,6 +106,9 @@ func get_brain() -> Brain:
 ## Returns lungs
 func get_lungs() -> Lungs:
 	return _get_organ(GlobalTypes.Organs.LUNGS)
+
+func get_heart() -> Heart:
+	return _get_organ(GlobalTypes.Organs.HEART)
 
 func _get_organ(organ_type: GlobalTypes.Organs) -> Organ:
 	return organs.get_organ_by_type(organ_type)
