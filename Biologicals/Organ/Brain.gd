@@ -6,8 +6,8 @@ extends Organ
 
 signal heart_rate_increase
 signal heart_rate_decrease
-signal respiratory_rate_increase
-signal respiratory_rate_decrease
+signal respiration_rate_increase
+signal respiration_rate_decrease
 
 var last_heart_stimulus_time: float
 var heart_stimulus_interval: float = 1
@@ -28,11 +28,11 @@ func connect_organ_signals(organ: Organ) -> void:
 	organ.hypercapnia.connect(_on_organ_hypercapnic)
 
 ## Will be used to respond to a hypoxic status of a monitored [Organ]
-func _on_organ_hypoxic(organ: Organ) -> void:
+func _on_organ_hypoxic(_organ: Organ) -> void:
 	pass
 
 ## Will be used to respond to a hypercapnic status of a monitored [Organ]
-func _on_organ_hypercapnic(organ: Organ) -> void:
+func _on_organ_hypercapnic(_organ: Organ) -> void:
 	pass
 
 ## Will be used to respond to the death of a monitored [Organ]

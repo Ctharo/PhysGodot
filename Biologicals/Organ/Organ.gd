@@ -82,6 +82,7 @@ func died() -> void:
 
 ## HACK: Should instead be responding to mean o2 concentration
 func is_hypoxic() -> bool:
+	var val: float = params.min_concentration[GlobalTypes.Gases.OXYGEN]
 	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
 
 ## HACK: Should instead be responding to mean co2 concentration

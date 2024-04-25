@@ -3,8 +3,8 @@ extends Organ
 
 signal respired
 
-@export var respiratory_rate: float
-@export var respiratory_rate_timer: float
+@export var respiration_rate: float
+@export var respiration_rate_timer: float
 @export var alveoli: Alveoli
 
 
@@ -14,7 +14,7 @@ func _init(params: TissueParams) -> void:
 	alveoli = Alveoli.new()
 	alveoli.name = "Alveoli"
 	add_child(alveoli)
-	respiratory_rate = 0.2
+	respiration_rate = 0.2
 
 func _physics_process(delta: float) -> void:
 	if dead: return
@@ -23,9 +23,9 @@ func _physics_process(delta: float) -> void:
 
 ## Organ specific task responsible for refreshing each [Gas] amount in [Alveoli]
 func respire(delta: float) -> void:
-	if respiratory_rate == 0:
+	if respiration_rate == 0:
 		return
-	respiratory_rate_timer += delta
-	if respiratory_rate_timer > 1/respiratory_rate:
-		respiratory_rate_timer = 0
+	respiration_rate_timer += delta
+	if respiration_rate_timer > 1/respiration_rate:
+		respiration_rate_timer = 0
 		alveoli._on_respiration()

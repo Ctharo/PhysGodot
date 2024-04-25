@@ -7,16 +7,18 @@ script = ExtResource("1_eh6w7")
 metabolism_factor = 1.0
 oxygen_consumption_factor = 1.0
 min_concentration = {
-0: 0.12,
+0: 0.16,
 1: 0.0
 }
 max_concentration = {
 0: 0.22,
-1: 0.08
+1: 0.05
 }
 carbon_dioxide_production_factor = 50.0
 hypoxia_sensitivity = 1.0
+hypoxia_health_buffer = 20.0
 hypercapnea_sensitivity = 1.0
+hypercapnea_health_buffer = 20.0
 vascularity_factor = 1.0
 mass = 1.3
 tissue_count = 1

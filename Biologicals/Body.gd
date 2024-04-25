@@ -73,23 +73,16 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
-	var hypoxia_count: int
-	var hypercapnia_count: int
+	var hypoxia_count: int = 0
+	var hypercapnia_count: int = 0
 	for organ: Organ in organs:
 		if organ.is_hypoxic():
 			hypoxia_count += 1
 		if organ.is_hypercapnic():
 			hypercapnia_count += 1
 	if hypoxia_count > 0:
-		get_heart().heart_rate = clamp(get_heart().heart_rate + delta * hypoxia_count * 3 / 100, 1, 3)
-	else:
-		get_heart().heart_rate = clamp(get_heart().heart_rate - delta / 100, 1, 3)
+		get_heart()._on_heart_rate_increase_signal_received()
 
-	if hypercapnia_count > 0:
-		get_lungs().respiration_rate = clamp(get_lungs().respiration_rate + delta * hypercapnia_count / 100, 1, 3)
-	else:
-		get_lungs().respiration_rate = clamp(get_lungs().respiration_rate - delta / 100, 4/60, 30/60)
-		
 ## Should move Blood throughout body
 func move_blood(_delta: float) -> void:
 	pass

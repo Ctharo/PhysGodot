@@ -112,8 +112,8 @@ func _lungs_setup(organ: Lungs) -> void:
 	respiration_info.name = "respiration_info"
 	respiration_info.bbcode_enabled = true
 	respiration_info.fit_content = true
-	var rr: float = organ.respiratory_rate * 60
-	respiration_info.append_text("[b]Respiration Rate: [/b] %s/min" % rr)
+	var rr: float = organ.respiration_rate * 60
+	respiration_info.append_text("[b]Respiration Rate: [/b] %.2f/min" % rr)
 	add_child(respiration_info)
 
 	var space2 := RichTextLabel.new()

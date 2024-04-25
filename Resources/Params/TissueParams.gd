@@ -5,11 +5,11 @@ extends Resource
 @export var metabolism_factor: float = 1
 
 ## Effects rate of [enum GlobalTypes.Gas.OXYGEN] consumption
-@export var oxygen_consumption_factor: float = 1
+@export var oxygen_consumption_factor: float = 15
 
 ## Contains the minimum concentration for each [enum GlobalTypes.Gas] that the [Tissue] can tolerate
 @export var min_concentration: Dictionary = {
-	GlobalTypes.Gases.OXYGEN: 0.12,
+	GlobalTypes.Gases.OXYGEN: 0.19,
 	GlobalTypes.Gases.CARBON_DIOXIDE: 0.00,
 }
 
@@ -20,7 +20,7 @@ extends Resource
 }
 
 ## Effects rate of [enum GlobalTypes.Gas.CARBON_DIOXIDE] production
-@export var carbon_dioxide_production_factor: float = 1
+@export var carbon_dioxide_production_factor: float = 50
 
 ## Effects how sensitive the [Organ] is with regards to losing health from lack of [enum GlobalTypes.Gas.OXYGEN] [br]
 ##(i.e., the rate of health lost during hypoxic status)
