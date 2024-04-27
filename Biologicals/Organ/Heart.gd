@@ -67,25 +67,7 @@ func _on_heart_rate_decrease_signal_received() -> void:
 func _on_heart_rate_increase_signal_received() -> void:
 	if Time.get_ticks_msec() - heart_rate_increase_signal_last_received > 1000:
 		chemical_receptor.receive_positive_signal()
-#
-#func _decay_signals() -> void:
-	#var current_time: int = Time.get_ticks_msec()
-#
-	#if current_time - heart_rate_increase_signal_last_received < HEART_RATE_SIGNAL_DECAY_BUFFER * 1000:
-		#return
-#
-	#if current_time - heart_rate_increase_signal_last_decayed_at > HEART_RATE_SIGNAL_DECAY_INTERVAL * 1000 and heart_rate_increase_signal_intensity > 0:
-		#heart_rate_increase_signal_last_decayed_at = current_time
-		#heart_rate_increase_signal_intensity -= 1
-		#if not heart_rate_increase_signal_intensity:
-			#_on_heart_rate_decrease_signal_received()
-#
-	#if current_time - heart_rate_decrease_signal_last_decayed_at > HEART_RATE_SIGNAL_DECAY_INTERVAL * 1000 and heart_rate_decrease_signal_intensity > 0:
-		#heart_rate_decrease_signal_last_decayed_at = current_time
-		#heart_rate_decrease_signal_intensity -= 1
-		#if not heart_rate_decrease_signal_intensity:
-			#_on_heart_rate_increase_signal_received()
-#
-#func _update_heart_rate(delta: float) -> void:
-	#var net_effect: float = (heart_rate_increase_signal_intensity * HEART_RATE_INCREASE_RATE_FACTOR) - (heart_rate_decrease_signal_intensity * HEART_RATE_DECREASE_RATE_FACTOR)
-	#heart_rate = heart_rate + net_effect * delta
+
+## Responsible for maintaining a regular beat in absence of other signals
+class SinoAtrialNode:
+	pass
