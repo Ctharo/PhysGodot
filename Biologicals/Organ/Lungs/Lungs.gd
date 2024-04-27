@@ -29,3 +29,6 @@ func respire(delta: float) -> void:
 	if respiration_rate_timer > 1/respiration_rate:
 		respiration_rate_timer = 0
 		alveoli._on_respiration()
+
+func _on_respiratory_rate_increase_signal_received() -> void:
+	print("Lungs has received respiratory rate increase signal - not yet implemented")

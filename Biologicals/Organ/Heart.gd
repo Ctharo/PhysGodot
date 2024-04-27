@@ -13,6 +13,8 @@ const STROKE_VOLUME: float = 0.07 # 70 ml per beat
 
 @export var heart_rate_timer: float
 
+var chemical_receptor: ChemicalReceptor
+
 const HEART_RATE_INCREASE_RATE_FACTOR: float = 0.001 ## Factor by which HR increases per signal
 const HEART_RATE_DECREASE_RATE_FACTOR: float = 0.1 ## Factor by which HR decreases per signal
 const HEART_RATE_SIGNAL_DECAY_FACTOR: float = 0.1 ## Factor by which HR signal intensity decays after buffer time
@@ -34,14 +36,20 @@ var heart_rate_decrease_signal_last_received: int ## Game time in milliseconds w
 
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.HEART, params)
+	chemical_receptor = ChemicalReceptor.new(change_hr, HEART_RATE_INCREASE_RATE_FACTOR, HEART_RATE_DECREASE_RATE_FACTOR)
+	add_child(chemical_receptor)
+	chemical_receptor.name = "Heart Rate Receptor"
 	heart_rate = 1
 
 func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
-	if params.perform_organ_specific_task: _decay_signals()
-	if params.perform_organ_specific_task: _update_heart_rate(delta)
+	#if params.perform_organ_specific_task: _decay_signals()
+	#if params.perform_organ_specific_task: _update_heart_rate(delta)
 	if params.perform_organ_specific_task: heart_beat(delta)
+
+func change_hr(value: float) -> void:
+	heart_rate += value
 
 ## Organ specific task responsible for timing of heartbeat which in turn triggers circulation from [Body]
 func heart_beat(delta: float) -> void:
@@ -54,32 +62,30 @@ func heart_beat(delta: float) -> void:
 
 func _on_heart_rate_decrease_signal_received() -> void:
 	if Time.get_ticks_msec() - heart_rate_decrease_signal_last_received > 1000:
-		heart_rate_decrease_signal_last_received = Time.get_ticks_msec()
-		heart_rate_decrease_signal_intensity += 1
+		chemical_receptor.receive_negative_signal()
 
 func _on_heart_rate_increase_signal_received() -> void:
 	if Time.get_ticks_msec() - heart_rate_increase_signal_last_received > 1000:
-		heart_rate_increase_signal_last_received = Time.get_ticks_msec()
-		heart_rate_increase_signal_intensity += 1
-
-func _decay_signals() -> void:
-	var current_time: int = Time.get_ticks_msec()
-
-	if current_time - heart_rate_increase_signal_last_received < HEART_RATE_SIGNAL_DECAY_BUFFER * 1000:
-		return
-
-	if current_time - heart_rate_increase_signal_last_decayed_at > HEART_RATE_SIGNAL_DECAY_INTERVAL * 1000 and heart_rate_increase_signal_intensity > 0:
-		heart_rate_increase_signal_last_decayed_at = current_time
-		heart_rate_increase_signal_intensity -= 1
-		if not heart_rate_increase_signal_intensity:
-			_on_heart_rate_decrease_signal_received()
-
-	if current_time - heart_rate_decrease_signal_last_decayed_at > HEART_RATE_SIGNAL_DECAY_INTERVAL * 1000 and heart_rate_decrease_signal_intensity > 0:
-		heart_rate_decrease_signal_last_decayed_at = current_time
-		heart_rate_decrease_signal_intensity -= 1
-		if not heart_rate_decrease_signal_intensity:
-			_on_heart_rate_increase_signal_received()
-
-func _update_heart_rate(delta: float) -> void:
-	var net_effect: float = (heart_rate_increase_signal_intensity * HEART_RATE_INCREASE_RATE_FACTOR) - (heart_rate_decrease_signal_intensity * HEART_RATE_DECREASE_RATE_FACTOR)
-	heart_rate = heart_rate + net_effect * delta
+		chemical_receptor.receive_positive_signal()
+#
+#func _decay_signals() -> void:
+	#var current_time: int = Time.get_ticks_msec()
+#
+	#if current_time - heart_rate_increase_signal_last_received < HEART_RATE_SIGNAL_DECAY_BUFFER * 1000:
+		#return
+#
+	#if current_time - heart_rate_increase_signal_last_decayed_at > HEART_RATE_SIGNAL_DECAY_INTERVAL * 1000 and heart_rate_increase_signal_intensity > 0:
+		#heart_rate_increase_signal_last_decayed_at = current_time
+		#heart_rate_increase_signal_intensity -= 1
+		#if not heart_rate_increase_signal_intensity:
+			#_on_heart_rate_decrease_signal_received()
+#
+	#if current_time - heart_rate_decrease_signal_last_decayed_at > HEART_RATE_SIGNAL_DECAY_INTERVAL * 1000 and heart_rate_decrease_signal_intensity > 0:
+		#heart_rate_decrease_signal_last_decayed_at = current_time
+		#heart_rate_decrease_signal_intensity -= 1
+		#if not heart_rate_decrease_signal_intensity:
+			#_on_heart_rate_increase_signal_received()
+#
+#func _update_heart_rate(delta: float) -> void:
+	#var net_effect: float = (heart_rate_increase_signal_intensity * HEART_RATE_INCREASE_RATE_FACTOR) - (heart_rate_decrease_signal_intensity * HEART_RATE_DECREASE_RATE_FACTOR)
+	#heart_rate = heart_rate + net_effect * delta
