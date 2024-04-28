@@ -32,11 +32,10 @@ func _init(member: Callable, increase_factor: float, decrease_factor: float) -> 
 	effector_method = member
 	POSITIVE_SIGNAL_EFFECT_FACTOR = increase_factor
 	NEGATIVE_SIGNAL_EFFECT_FACTOR = decrease_factor
-	
+
 func _physics_process(delta: float) -> void:
 	signal_decay()
 	effect(delta)
-	relax(delta)
 
 func effect(delta: float) -> void:
 	var net: int = net_signal()
@@ -45,12 +44,6 @@ func effect(delta: float) -> void:
 	var factor: float = POSITIVE_SIGNAL_EFFECT_FACTOR if net > 0 else NEGATIVE_SIGNAL_EFFECT_FACTOR
 	var value: float = float(net) * delta * factor
 	effector_method.call(value)
-
-func relax(delta: float) -> void:
-	var time: int = Time.get_ticks_msec()
-	if positive_signals.size() or negative_signals.size():
-		return
-	print("Relaxing not yet implemented")
 
 func net_signal() -> int:
 	var i: int

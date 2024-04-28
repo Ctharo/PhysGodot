@@ -16,7 +16,7 @@ const STROKE_VOLUME: float = 0.07 # 70 ml per beat
 var chemical_receptor: ChemicalReceptor
 
 const HEART_RATE_INCREASE_RATE_FACTOR: float = 0.001 ## Factor by which HR increases per signal
-const HEART_RATE_DECREASE_RATE_FACTOR: float = 0.1 ## Factor by which HR decreases per signal
+const HEART_RATE_DECREASE_RATE_FACTOR: float = 0.01 ## Factor by which HR decreases per signal
 const HEART_RATE_SIGNAL_DECAY_FACTOR: float = 0.1 ## Factor by which HR signal intensity decays after buffer time
 const HEART_RATE_SIGNAL_DECAY_BUFFER: float = 10 ## Time since last signal before decay starts
 const HEART_RATE_SIGNAL_DECAY_INTERVAL: float = 0.25 ## Time interval between signal intensity decay
@@ -44,9 +44,17 @@ func _init(params: TissueParams) -> void:
 func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
-	#if params.perform_organ_specific_task: _decay_signals()
-	#if params.perform_organ_specific_task: _update_heart_rate(delta)
 	if params.perform_organ_specific_task: heart_beat(delta)
+	if params.perform_organ_specific_task: pacemaker(delta)
+
+func pacemaker(delta) -> void:
+	if chemical_receptor.net_signal() == 0:
+		relax(delta)
+
+func relax(delta: float) -> void:
+	var time: int = Time.get_ticks_msec()
+	var val: float = delta * HEART_RATE_DECREASE_RATE_FACTOR * float(-1)
+	change_hr(val)
 
 func change_hr(value: float) -> void:
 	heart_rate += value
@@ -60,6 +68,15 @@ func heart_beat(delta: float) -> void:
 		heart_beated.emit(STROKE_VOLUME)
 		heart_rate_timer = 0
 
+## Receives and propogates signal accordingly
+func receive_signal(hormone: GlobalTypes.Hormones) -> void:
+	match hormone:
+		GlobalTypes.Hormones.DOPAMINE:
+			_on_heart_rate_increase_signal_received()
+
+		GlobalTypes.Hormones.EPINEPHERINE:
+			_on_heart_rate_increase_signal_received()
+
 func _on_heart_rate_decrease_signal_received() -> void:
 	if Time.get_ticks_msec() - heart_rate_decrease_signal_last_received > 1000:
 		chemical_receptor.receive_negative_signal()
@@ -67,7 +84,3 @@ func _on_heart_rate_decrease_signal_received() -> void:
 func _on_heart_rate_increase_signal_received() -> void:
 	if Time.get_ticks_msec() - heart_rate_increase_signal_last_received > 1000:
 		chemical_receptor.receive_positive_signal()
-
-## Responsible for maintaining a regular beat in absence of other signals
-class SinoAtrialNode:
-	pass

@@ -7,7 +7,7 @@ script = ExtResource("1_eh6w7")
 metabolism_factor = 1.0
 oxygen_consumption_factor = 1.0
 min_concentration = {
-0: 0.16,
+0: 0.12,
 1: 0.0
 }
 max_concentration = {
