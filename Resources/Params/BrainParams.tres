@@ -14,7 +14,7 @@ max_concentration = {
 0: 0.22,
 1: 0.05
 }
-carbon_dioxide_production_factor = 50.0
+carbon_dioxide_production_factor = 1.0
 hypoxia_sensitivity = 1.0
 hypoxia_health_buffer = 20.0
 hypercapnea_sensitivity = 1.0

@@ -70,7 +70,7 @@ func _ready() -> void:
 
 
 ## TODO: Not sure what this should be used for yet
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if dead:
 		return
 	var hypoxia_count: int = 0
@@ -81,9 +81,9 @@ func _physics_process(delta: float) -> void:
 		if organ.is_hypercapnic():
 			hypercapnia_count += 1
 	if hypoxia_count > 0:
-		get_heart().receive_signal(GlobalTypes.Hormones.DOPAMINE)
+		get_heart().receive_signal(GlobalTypes.PhysioSignal.INCREASE_RATE)
 	if hypercapnia_count > 0:
-		get_lungs().change_respiration_rate(-1) # TODO: Should be a signal reception like with hypoxia
+		get_lungs().receive_signal(GlobalTypes.PhysioSignal.INCREASE_RATE) # TODO: Should be a signal reception like with hypoxia
 
 ## Should move Blood throughout body
 func move_blood(_delta: float) -> void:

@@ -3,13 +3,20 @@ extends Organ
 
 signal respired
 
-@export var respiration_rate: float
+@export var respiration_rate: float :
+	set(value):
+		respiration_rate = max(value, 0)
+
+var chemical_receptor: ChemicalReceptor
+
 @export var respiration_rate_timer: float
 @export var alveoli: Alveoli
-const RESPIRATORY_RATE_INCREASE_RATE_FACTOR: float = 0.01 ## Factor by which RR increases per signal
 
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.LUNGS, params)
+	chemical_receptor = ChemicalReceptor.new(_change_respiration_rate, params)
+	add_child(chemical_receptor)
+	chemical_receptor.name = "Respiratory Rate Receptor"
 
 	alveoli = Alveoli.new()
 	alveoli.name = "Alveoli"
@@ -20,6 +27,13 @@ func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
 	if params.perform_organ_specific_task: respire(delta)
+	if params.perform_organ_specific_task: respiration_rate_manager()
+
+func respiration_rate_manager() -> void:
+	if respiration_rate < 0.08: # FIXME: This would be better if not hardcoded
+		receive_signal(GlobalTypes.PhysioSignal.INCREASE_RATE)
+	if chemical_receptor.net_signal() == 0:
+		receive_signal(GlobalTypes.PhysioSignal.DECREASE_RATE)
 
 ## Organ specific task responsible for refreshing each [Gas] amount in [Alveoli]
 func respire(delta: float) -> void:
@@ -30,8 +44,13 @@ func respire(delta: float) -> void:
 		respiration_rate_timer = 0
 		alveoli._on_respiration()
 
-func change_respiration_rate(value: float) -> void:
+func receive_signal(direction: GlobalTypes.PhysioSignal) -> void:
+	match direction:
+		GlobalTypes.PhysioSignal.INCREASE_RATE:
+			chemical_receptor.receive_positive_signal()
+		GlobalTypes.PhysioSignal.DECREASE_RATE:
+			chemical_receptor.receive_negative_signal()
+
+func _change_respiration_rate(value: float) -> void:
 	respiration_rate += value
 
-func _on_respiratory_rate_increase_signal_received() -> void:
-	print("Lungs has received respiratory rate increase signal - not yet implemented")

@@ -20,7 +20,7 @@ extends Resource
 }
 
 ## Effects rate of [enum GlobalTypes.Gas.CARBON_DIOXIDE] production
-@export var carbon_dioxide_production_factor: float = 50
+@export var carbon_dioxide_production_factor: float = 1
 
 ## Effects how sensitive the [Organ] is with regards to losing health from lack of [enum GlobalTypes.Gas.OXYGEN] [br]
 ##(i.e., the rate of health lost during hypoxic status)
@@ -54,3 +54,8 @@ extends Resource
 ## Amount of [Blood] that can be contained within all [Vessel]s in the [Tissues]
 @export var blood_volume: float = 1.0
 
+## Factor by which the [Organ]'s physiological function increases
+@export var physiological_rate_increase_factor: float
+
+## Factor by which the [Organ]'s physiological function decreases
+@export var physiological_rate_decrease_factor: float
