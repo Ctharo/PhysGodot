@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="TissueParams" load_steps=2 format=3 uid="uid://b360qgb6xnuqu"]
+[gd_resource type="Resource" script_class="TissueParams" load_steps=2 format=3 uid="uid://dp8c20mk1infd"]
 
-[ext_resource type="Script" path="res://Resources/Params/TissueParams.gd" id="1_eh6w7"]
+[ext_resource type="Script" path="res://Resources/Params/TissueParams/TissueParams.gd" id="1_yih08"]
 
 [resource]
-script = ExtResource("1_eh6w7")
+script = ExtResource("1_yih08")
 metabolism_factor = 1.0
 oxygen_consumption_factor = 1.0
 min_concentration = {
@@ -20,10 +20,8 @@ hypoxia_health_buffer = 20.0
 hypercapnea_sensitivity = 1.0
 hypercapnea_health_buffer = 20.0
 vascularity_factor = 1.0
-mass = 1.3
+mass = 1.5
 tissue_count = 1
 health_loss_factor = 1.0
 perform_organ_specific_task = true
 blood_volume = 1.0
-physiological_rate_increase_factor = 0.005
-physiological_rate_decrease_factor = 0.005
