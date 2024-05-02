@@ -2,7 +2,7 @@ class_name Gases
 extends Iterator
 ## Represents a collection of gases and their details.
 ##
-## Iterable
+## Contains helpful methods for managing [Gas] instances
 
 var gases: Array[Gas] :
 	set(value):
@@ -10,16 +10,17 @@ var gases: Array[Gas] :
 	get:
 		return _collection
 
+@export var oxygen_params: GasParams = preload("res://Resources/Params/GasParams/OxygenParams.tres") as GasParams
+@export var carbon_dioxide_params: GasParams = preload("res://Resources/Params/GasParams/CarbonDioxideParams.tres") as GasParams
+
 # TODO: Change Gases initial moles to be an initial concentration
 func _init(g: Array[Gas] = []) -> void:
 	super._init(g)
 	_init_gases()
 
 func _init_gases() -> void:
-	var oxygen_stats: GasStats = load("res://Resources/GasStats/OxygenStats.tres") as GasStats
-	var o2: Gas = Gas.new(GlobalTypes.Gases.OXYGEN, oxygen_stats)
-	var carbon_dioxide_stats: GasStats = load("res://Resources/GasStats/CarbonDioxideStats.tres") as GasStats
-	var co2: Gas = Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_stats)
+	var o2: Gas = Gas.new(GlobalTypes.Gases.OXYGEN, oxygen_params)
+	var co2: Gas = Gas.new(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_params)
 	gases = [o2, co2] as Array[Gas]
 
 ## Sets the amount of a specified gas

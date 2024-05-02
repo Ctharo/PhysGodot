@@ -12,11 +12,12 @@ var chemical_receptor: ChemicalReceptor
 
 @export var respiration_rate_timer: float
 @export var alveoli: Alveoli
+@export var signal_params: SignalParams = preload("res://Resources/Params/SignalParams/LungsSignalParams.tres")
 
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.LUNGS, params)
-	var s_params: SignalParams = load("res://Resources/Params/SignalParams/LungsSignalParams.tres")
-	chemical_receptor = ChemicalReceptor.new(_change_respiration_rate, s_params)
+	
+	chemical_receptor = ChemicalReceptor.new(_change_respiration_rate, signal_params)
 	add_child(chemical_receptor)
 	chemical_receptor.name = "Respiratory Rate Receptor"
 
