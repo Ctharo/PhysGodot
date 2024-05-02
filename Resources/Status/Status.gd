@@ -1,6 +1,9 @@
 class_name Status
 extends Resource
 
+# FIXME: Meant to be a child of an [Organ] or maybe [Tissue] class to handle updating the gas-related status
+# such as marking as hypoxic
+
 @export var hypercapnia: bool
 @export var hypocapnia: bool
 @export var hypoxia: bool
@@ -9,7 +12,6 @@ extends Resource
 
 func _init(params: TissueParams) -> void:
 	self.params = params
-
 
 ## Assigns the status of the tissue based on the gases present
 func check_chemistry(gases: Gases) -> void:

@@ -1,5 +1,11 @@
 class_name TissueParams
 extends Resource
+## Settings passed from [Organ] to each of its [Tissue] classes
+##
+## Each tissue has settings defined by the [Organ] in which they are children
+
+# For now, Organs and Tissues can use the same class type, but maybe we will have reason to create an 
+# OrganParams in the future
 
 ## Effects rate of [enum GlobalTypes.Gas.OXYGEN] consumption and [enum GlobalTypes.Gas.CARBON_DIOXIDE] production
 @export var metabolism_factor: float = 1
@@ -39,7 +45,8 @@ extends Resource
 ## Effects rate of gas diffusion between [Tissue] and [Vessel] (i.e., higher value increases rate of diffusion)
 @export var vascularity_factor: float = 1
 
-## Used for concentration calculations
+## Used for concentration calculations. If an [Organ] has multiple [Tissue]s, then the mass should be divided 
+## amongst the [Tissue]s
 @export var mass: float = 1
 
 ## Sets number of child [Tissue] instances
