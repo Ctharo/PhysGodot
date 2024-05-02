@@ -43,8 +43,6 @@ func _init_tissues() -> void:
 	tissue_params.mass = self.params.mass / tissue_count
 	tissue_params.blood_volume = self.params.blood_volume / tissue_count
 	for i in tissue_count:
-		if i == 1:
-			tissue_params.health_loss_factor = 0 #HACK: To test asymmetrical tissue damage
 		var tissue: Tissue = Tissue.new(tissue_params)
 		tissue.name = self.name + " Tissue %s" % (i + 1)
 		add_child(tissue)

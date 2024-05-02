@@ -29,7 +29,7 @@ const SIGNAL_DECAY_FACTOR: float = 0.03 ## Factor by which signal intensity deca
 const SIGNAL_DECAY_BUFFER: float = 10 ## Time since last signal before decay starts
 const SIGNAL_DECAY_INTERVAL: float = 0.25 ## Time interval between signal intensity decay
 
-func _init(member: Callable, params: TissueParams) -> void:
+func _init(member: Callable, params: SignalParams) -> void:
 	effector_method = member
 	POSITIVE_SIGNAL_EFFECT_FACTOR = params.physiological_rate_increase_factor
 	NEGATIVE_SIGNAL_EFFECT_FACTOR = params.physiological_rate_decrease_factor

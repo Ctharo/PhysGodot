@@ -54,8 +54,4 @@ extends Resource
 ## Amount of [Blood] that can be contained within all [Vessel]s in the [Tissues]
 @export var blood_volume: float = 1.0
 
-## Factor by which the [Organ]'s physiological function increases
-@export var physiological_rate_increase_factor: float
 
-## Factor by which the [Organ]'s physiological function decreases
-@export var physiological_rate_decrease_factor: float

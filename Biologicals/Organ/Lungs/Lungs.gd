@@ -14,7 +14,8 @@ var chemical_receptor: ChemicalReceptor
 
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.LUNGS, params)
-	chemical_receptor = ChemicalReceptor.new(_change_respiration_rate, params)
+	var s_params: SignalParams = load("res://Resources/Params/SignalParams/LungsSignalParams.tres")
+	chemical_receptor = ChemicalReceptor.new(_change_respiration_rate, s_params)
 	add_child(chemical_receptor)
 	chemical_receptor.name = "Respiratory Rate Receptor"
 

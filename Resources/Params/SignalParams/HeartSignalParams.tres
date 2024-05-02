@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SignalParams" load_steps=2 format=3 uid="uid://dreem376ktlah"]
+
+[ext_resource type="Script" path="res://Resources/Params/SignalParams/SignalParams.gd" id="1_3p2lm"]
+
+[resource]
+script = ExtResource("1_3p2lm")
+physiological_rate_increase_factor = 0.001
+physiological_rate_decrease_factor = 0.01

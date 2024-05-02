@@ -14,16 +14,16 @@ func _init(new_name: String) -> void:
 
 func _ready() -> void:
 	# Create Brain
-	var brain_params: TissueParams = load("res://Resources/Params/BrainParams.tres") as TissueParams
+	var brain_params: TissueParams = load("res://Resources/Params/TissueParams/BrainParams.tres") as TissueParams
 	var brain: Brain = Brain.new(brain_params)
 	add_child(brain)
 
 	# Create Lungs
-	var lungs_params: TissueParams = load("res://Resources/Params/LungsParams.tres") as TissueParams
+	var lungs_params: TissueParams = load("res://Resources/Params/TissueParams/LungsParams.tres") as TissueParams
 	var lungs: Lungs  = Lungs.new(lungs_params)
 	add_child(lungs)
 
-	var heart_params: TissueParams = load("res://Resources/Params/HeartParams.tres") as TissueParams
+	var heart_params: TissueParams = load("res://Resources/Params/TissueParams/HeartParams.tres") as TissueParams
 	var heart: Heart = Heart.new(heart_params)
 	add_child(heart)
 
