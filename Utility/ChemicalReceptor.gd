@@ -14,26 +14,13 @@ var negative_signal_last_decayed_at: int
 
 var positive_signals: Array[int]
 var negative_signals: Array[int]
-
-# FIXME: Should be set by parent class or??
-var POSITIVE_SIGNAL_EFFECT_FACTOR: float ## Factor by which positive signals influence
-var NEGATIVE_SIGNAL_EFFECT_FACTOR: float ## Factor by which negative signals influence
-var params: TissueParams
-
-const POSITIVE_SIGNAL_LIFETIME: float = 10 ## Time in seconds a positive signal will last before decaying
-const NEGATIVE_SIGNAL_LIFETIME: float = 10 ## Time in seconds a negative signal will last before decaying
-
-const SIGNAL_REFRACTORY_PERIOD: float = 0.5 ## Delay between signal receiving
-
-const SIGNAL_DECAY_FACTOR: float = 0.03 ## Factor by which signal intensity decays after buffer time
-const SIGNAL_DECAY_BUFFER: float = 10 ## Time since last signal before decay starts
-const SIGNAL_DECAY_INTERVAL: float = 0.25 ## Time interval between signal intensity decay
+var params: SignalParams
 
 func _init(member: Callable, params: SignalParams) -> void:
 	effector_method = member
-	POSITIVE_SIGNAL_EFFECT_FACTOR = params.physiological_rate_increase_factor
-	NEGATIVE_SIGNAL_EFFECT_FACTOR = params.physiological_rate_decrease_factor
-
+	self.params = params
+	assert(params)
+	
 func _physics_process(delta: float) -> void:
 	signal_decay()
 	effect(delta)
@@ -42,7 +29,7 @@ func effect(delta: float) -> void:
 	var net: int = net_signal()
 	if net == 0:
 		return
-	var factor: float = POSITIVE_SIGNAL_EFFECT_FACTOR if net > 0 else NEGATIVE_SIGNAL_EFFECT_FACTOR
+	var factor: float = params.physiological_rate_increase_factor if net > 0 else params.physiological_rate_decrease_factor
 	var value: float = float(net) * delta * factor
 	effector_method.call(value)
 
@@ -53,13 +40,13 @@ func net_signal() -> int:
 
 func receive_positive_signal() -> void:
 	var time: int = Time.get_ticks_msec()
-	if time - positive_signal_last_received_at > SIGNAL_REFRACTORY_PERIOD * 1000:
+	if time - positive_signal_last_received_at > params.signal_refractory_period * 1000:
 		positive_signal_last_received_at = time
 		positive_signals.append(time)
 
 func receive_negative_signal() -> void:
 	var time: int = Time.get_ticks_msec()
-	if time - negative_signal_last_received_at > SIGNAL_REFRACTORY_PERIOD * 1000:
+	if time - negative_signal_last_received_at > params.signal_refractory_period * 1000:
 		negative_signal_last_received_at = time
 		negative_signals.append(time)
 
@@ -70,7 +57,7 @@ func signal_decay() -> void:
 		if not pos_signals.size():
 			return
 		for s in pos_signals:
-			if time - s > POSITIVE_SIGNAL_LIFETIME * 1000:
+			if time - s > params.positive_signal_lifetime * 1000:
 				positive_signals.erase(s)
 		positive_signal_last_decayed_at = time
 
@@ -79,6 +66,6 @@ func signal_decay() -> void:
 		if not neg_signals.size():
 			return
 		for s in neg_signals:
-			if time - s > NEGATIVE_SIGNAL_LIFETIME * 1000:
+			if time - s > params.negative_signal_lifetime * 1000:
 				negative_signals.erase(s)
 		negative_signal_last_decayed_at = time

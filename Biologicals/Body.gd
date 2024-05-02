@@ -16,16 +16,16 @@ func _ready() -> void:
 	# Create Brain
 	var brain_params: TissueParams = load("res://Resources/Params/TissueParams/BrainParams.tres") as TissueParams
 	var brain: Brain = Brain.new(brain_params)
-	add_child(brain)
+
 
 	# Create Lungs
 	var lungs_params: TissueParams = load("res://Resources/Params/TissueParams/LungsParams.tres") as TissueParams
 	var lungs: Lungs  = Lungs.new(lungs_params)
-	add_child(lungs)
+
 
 	var heart_params: TissueParams = load("res://Resources/Params/TissueParams/HeartParams.tres") as TissueParams
 	var heart: Heart = Heart.new(heart_params)
-	add_child(heart)
+
 
 	# Create Organs resource
 	organs = Organs.new([brain, lungs, heart] as Array[Organ])
@@ -39,6 +39,10 @@ func _ready() -> void:
 		brain.connect_organ_signals(organ)
 		organ.organ_died.connect(_on_organ_died)
 
+	add_child(brain)
+	add_child(lungs)
+	add_child(heart)
+	
 	# Create Vessels
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
 	add_child(aorta)

@@ -14,11 +14,10 @@ const STROKE_VOLUME: float = 0.07 # 70 ml per beat
 @export var heart_rate_timer: float
 
 var chemical_receptor: ChemicalReceptor
-
+@export var signal_params: SignalParams = preload("res://Resources/Params/SignalParams/HeartSignalParams.tres")
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.HEART, params)
-	var s_params: SignalParams = load("res://Resources/Params/SignalParams/HeartSignalParams.tres")
-	chemical_receptor = ChemicalReceptor.new(change_hr, s_params)
+	chemical_receptor = ChemicalReceptor.new(change_hr, signal_params)
 	add_child(chemical_receptor)
 	chemical_receptor.name = "Heart Rate Receptor"
 	heart_rate = 1
