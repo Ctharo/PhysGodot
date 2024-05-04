@@ -20,7 +20,7 @@ func _init(member: Callable, params: SignalParams) -> void:
 	effector_method = member
 	self.params = params
 	assert(params)
-	
+
 func _physics_process(delta: float) -> void:
 	signal_decay()
 	effect(delta)

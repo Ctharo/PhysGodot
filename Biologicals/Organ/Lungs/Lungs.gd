@@ -7,9 +7,7 @@ signal respired
 	set(value):
 		respiration_rate = max(value, 0)
 
-@export var maintain_rate: float = 0.08 ## Used as minimum target for respiration rate
 var chemical_receptor: ChemicalReceptor
-
 @export var respiration_rate_timer: float
 @export var alveoli: Alveoli
 @export var signal_params: SignalParams = preload("res://Resources/Params/SignalParams/LungsSignalParams.tres")
@@ -32,7 +30,7 @@ func _physics_process(delta: float) -> void:
 	if params.perform_organ_specific_task: respiration_rate_manager()
 
 func respiration_rate_manager() -> void:
-	if respiration_rate < maintain_rate: # FIXME: This would be better if not hardcoded
+	if respiration_rate < signal_params.physiological_target_rate: # FIXME: This would be better if not hardcoded
 		receive_signal(GlobalTypes.PhysioSignal.INCREASE_RATE)
 	if chemical_receptor.net_signal() == 0:
 		receive_signal(GlobalTypes.PhysioSignal.DECREASE_RATE)

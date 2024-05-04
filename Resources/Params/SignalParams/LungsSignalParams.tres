@@ -4,5 +4,12 @@
 
 [resource]
 script = ExtResource("1_r6g5n")
+physiological_target_rate = 0.08
 physiological_rate_increase_factor = 0.005
 physiological_rate_decrease_factor = 0.005
+positive_signal_lifetime = 10.0
+negative_signal_lifetime = 10.0
+signal_refractory_period = 0.5
+signal_decay_factor = 0.03
+signal_decay_buffer = 10.0
+signal_decay_interval = 0.25

@@ -7,7 +7,7 @@ signal heart_beated
 @export var heart_rate: float :
 	set(value):
 		heart_rate = clamp(value, 0, 4) # 0 - 4 beats per second (0 - 240 bpm)
-@export var maintain_rate: float = 0.5 ## Used as minimum target for heart rate
+
 ## Stroke volume in litres per beat - clamped between 0 and 0.1 L per beat, probably won't be set dynamically
 const STROKE_VOLUME: float = 0.07 # 70 ml per beat
 
@@ -15,6 +15,7 @@ const STROKE_VOLUME: float = 0.07 # 70 ml per beat
 
 var chemical_receptor: ChemicalReceptor
 @export var signal_params: SignalParams = preload("res://Resources/Params/SignalParams/HeartSignalParams.tres")
+
 func _init(params: TissueParams) -> void:
 	super._init(GlobalTypes.Organs.HEART, params)
 	chemical_receptor = ChemicalReceptor.new(change_hr, signal_params)
@@ -29,7 +30,7 @@ func _physics_process(delta: float) -> void:
 	if params.perform_organ_specific_task: heart_rate_manager()
 
 func heart_rate_manager() -> void:
-	if heart_rate < maintain_rate: # FIXME: This would be better if not hardcoded
+	if heart_rate < signal_params.physiological_target_rate: # FIXME: This would be better if not hardcoded
 		receive_signal(GlobalTypes.PhysioSignal.INCREASE_RATE)
 	if chemical_receptor.net_signal() == 0:
 		receive_signal(GlobalTypes.PhysioSignal.DECREASE_RATE)

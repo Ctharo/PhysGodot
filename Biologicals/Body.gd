@@ -42,7 +42,7 @@ func _ready() -> void:
 	add_child(brain)
 	add_child(lungs)
 	add_child(heart)
-	
+
 	# Create Vessels
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
 	add_child(aorta)
