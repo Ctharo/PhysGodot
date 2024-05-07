@@ -20,7 +20,7 @@ func create_body(name_of_body: String) -> Body:
 
 func _process(delta: float) -> void:
 	timer += delta
-	timer_label_process(delta)
+	timer_label_process()
 	if hbox == null:
 		return
 
@@ -73,14 +73,13 @@ func add_timer_label() -> void:
 	timer_label.fit_content = true
 	timer_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	timer_label.size_flags_stretch_ratio = 0.2
-	timer_label.append_text("Time: %.1f" % game_timer)
+	timer_label.append_text("Time: %s" % Helpers.format_time(floor(Time.get_ticks_msec()/1000)))
 	vbox.add_child(timer_label)
 	vbox.move_child(timer_label, 0)
 
-func timer_label_process(delta: float) -> void:
+func timer_label_process() -> void:
 	if not bodies.size():
 		return
-	game_timer += delta
 	get_tree().call_group("Timer", "queue_free")
 	add_timer_label()
 
