@@ -32,7 +32,7 @@ func _physics_process(delta: float) -> void:
 func heart_rate_manager() -> void:
 	if heart_rate < signal_params.physiological_target_rate: # FIXME: This would be better if not hardcoded
 		receive_signal(GlobalTypes.PhysioSignal.INCREASE_RATE)
-	if chemical_receptor.net_signal() == 0:
+	if heart_rate > signal_params.physiological_target_rate:
 		receive_signal(GlobalTypes.PhysioSignal.DECREASE_RATE)
 
 func change_hr(value: float) -> void:

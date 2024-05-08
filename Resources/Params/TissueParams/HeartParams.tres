@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_hu6vk")
 metabolism_factor = 1.0
-oxygen_consumption_factor = 1.0
+oxygen_consumption_factor = 50.0
 min_concentration = {
 0: 0.12,
 1: 0.0
@@ -25,5 +25,3 @@ tissue_count = 1
 health_loss_factor = 1.0
 perform_organ_specific_task = true
 blood_volume = 1.0
-physiological_rate_increase_factor = 0.001
-physiological_rate_decrease_factor = 0.01

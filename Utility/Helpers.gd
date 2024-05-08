@@ -19,13 +19,14 @@ static func as_percent(f: float, digit: int = 0) -> String:
 static func round_to_dec(num: float, digit: int = 0) -> float:
 	return round(num * pow(10.0, digit)) / pow(10.0, digit)
 
-static func format_time(seconds: int) -> String:
+## Returns a string of the elapsed time from provided milliseconds (msecs) argument
+static func format_time(msecs: int) -> String:
 	@warning_ignore("integer_division")
-	var secs: int = int(seconds % 60)
+	var hours: int = msecs / 1000 / 3600
 	@warning_ignore("integer_division")
-	var hours: int = int(secs / 3600)
+	var minutes: int = (msecs / 1000 / 60) % 60  # Use modulo to get the remainder minutes
 	@warning_ignore("integer_division")
-	var minutes: int = int(seconds / 60)
+	var secs: int = (msecs / 1000) % 60  # Use modulo to get the remainder seconds
 	var formatted_time: String = ""
 
 	if hours > 0:
@@ -37,3 +38,4 @@ static func format_time(seconds: int) -> String:
 	formatted_time += str(secs) + "s"
 	
 	return formatted_time
+
