@@ -5,7 +5,10 @@ signal respired
 
 @export var respiration_rate: float :
 	set(value):
-		respiration_rate = max(value, 0)
+		if dead:
+			respiration_rate = 0
+		else:
+			respiration_rate = max(value, 0)
 
 var chemical_receptor: ChemicalReceptor
 @export var respiration_rate_timer: float
@@ -37,7 +40,7 @@ func respiration_rate_manager() -> void:
 
 ## Organ specific task responsible for refreshing each [Gas] amount in [Alveoli]
 func respire(delta: float) -> void:
-	if respiration_rate == 0:
+	if is_zero_approx(respiration_rate):
 		return
 	respiration_rate_timer += delta
 	if respiration_rate_timer > 1/respiration_rate:

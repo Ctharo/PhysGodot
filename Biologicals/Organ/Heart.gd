@@ -6,7 +6,10 @@ signal heart_beated
 ## Heart rate in beats per second - clamped between 0 and 4 (0 - 240 bpm)
 @export var heart_rate: float :
 	set(value):
-		heart_rate = clamp(value, 0, 4) # 0 - 4 beats per second (0 - 240 bpm)
+		if dead:
+			heart_rate = 0
+		else:
+			heart_rate = clamp(value, 0, 4) # 0 - 4 beats per second (0 - 240 bpm)
 
 ## Stroke volume in litres per beat - clamped between 0 and 0.1 L per beat, probably won't be set dynamically
 const STROKE_VOLUME: float = 0.07 # 70 ml per beat

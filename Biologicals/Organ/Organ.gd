@@ -76,7 +76,7 @@ func is_of_type(test_type: GlobalTypes.Organs) -> bool:
 func died() -> void:
 	dead = true
 	organ_died.emit(self)
-	self.set_physics_process(false)
+
 
 ## HACK: Should instead be responding to mean o2 concentration
 func is_hypoxic() -> bool:
