@@ -1,6 +1,9 @@
 class_name ChemicalReceptor
 extends Node
 ## Responsible to receive and integrate positive and negative signals to effect change
+##
+## Child of an [Organ], responsible to integrate all signals from all sources and alter some physiological
+## process
 
 var effector_method: Callable
 
