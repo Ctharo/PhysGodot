@@ -21,8 +21,11 @@ var type: GlobalTypes.Vessels
 var blood: Blood
 
 ## The [Vessels] collection that this vessel delivers [Blood] to
-@export var deliver_to: Vessels
-
+@export var deliver_to: Vessels :
+	set(value):			
+		Logger.log_event("Is now delivering to %s of %s" % [value.get_vessel_name(),value.get_parent_name()], self)
+		deliver_to = value
+		
 func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 	self.type = _vessel_type
 	self.max_volume = max_volume

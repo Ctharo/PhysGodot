@@ -75,3 +75,12 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
 	for vessel: Vessel in vessels:
 		vessel.set_moles(gas, moles)
+
+func get_parent_name() -> String:
+	return vessels[0].get_parent().name
+
+func get_vessel_name() -> String:
+	if vessels.size() == 1:
+		return vessels[0].name
+	else:
+		return "Vessels"

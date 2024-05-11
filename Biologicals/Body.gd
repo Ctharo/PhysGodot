@@ -14,21 +14,21 @@ func _init(new_name: String) -> void:
 
 func _ready() -> void:
 	# Create Brain
-	log_event("Attempting to create Brain")
+	log_event("Creating Brain")
 	var brain_params: TissueParams = load("res://Resources/Params/TissueParams/BrainParams.tres") as TissueParams
 	var brain: Brain = Brain.new(brain_params)
 	if brain:
 		log_event("Brain created successfully")
 
 	# Create Lungs
-	log_event("Attempting to create Lungs")
+	log_event("Creating Lungs")
 	var lungs_params: TissueParams = load("res://Resources/Params/TissueParams/LungsParams.tres") as TissueParams
 	var lungs: Lungs  = Lungs.new(lungs_params)
 	if lungs:
 		log_event("Lungs created successfully")
 
 	# Create Heart
-	log_event("Attempting to create Heart")
+	log_event("Creating Heart")
 	var heart_params: TissueParams = load("res://Resources/Params/TissueParams/HeartParams.tres") as TissueParams
 	var heart: Heart = Heart.new(heart_params)
 	if heart:
@@ -54,7 +54,7 @@ func _ready() -> void:
 	add_child(heart)
 
 	# Create Vessels
-	log_event("Creating vessels")
+	log_event("Creating central vessels")
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
 	add_child(aorta)
 
