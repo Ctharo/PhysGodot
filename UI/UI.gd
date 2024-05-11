@@ -1,7 +1,11 @@
 class_name UI
 extends Control
 
-var bodies: Array[Body]
+var bodies: Array[Body] :
+	set(value):
+		Logger.log_event("Body array received in UI", self)
+		bodies = value
+		
 @onready var vbox: VBoxContainer = %VBoxContainer as VBoxContainer
 @onready var hbox: HBoxContainer = %OrganWidgetHBox as HBoxContainer
 @onready var game_time_label: RichTextLabel = %GameTimeLabel as RichTextLabel
@@ -60,7 +64,6 @@ func clear_dead() -> bool:
 		bodies.erase(dead_body)
 		#dead_body.queue_free()
 	return dead_bodies.size() > 0
-
 
 func _on_game_time_timer_timeout() -> void:
 	refresh_timer_label()

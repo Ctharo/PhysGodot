@@ -14,23 +14,31 @@ func _init(new_name: String) -> void:
 
 func _ready() -> void:
 	# Create Brain
+	log_event("Attempting to create Brain")
 	var brain_params: TissueParams = load("res://Resources/Params/TissueParams/BrainParams.tres") as TissueParams
 	var brain: Brain = Brain.new(brain_params)
-
+	if brain:
+		log_event("Brain created successfully")
 
 	# Create Lungs
+	log_event("Attempting to create Lungs")
 	var lungs_params: TissueParams = load("res://Resources/Params/TissueParams/LungsParams.tres") as TissueParams
 	var lungs: Lungs  = Lungs.new(lungs_params)
+	if lungs:
+		log_event("Lungs created successfully")
 
-
+	# Create Heart
+	log_event("Attempting to create Heart")
 	var heart_params: TissueParams = load("res://Resources/Params/TissueParams/HeartParams.tres") as TissueParams
 	var heart: Heart = Heart.new(heart_params)
-
+	if heart:
+		log_event("Heart created successfully")
 
 	# Create Organs resource
 	organs = Organs.new([brain, lungs, heart] as Array[Organ])
 
 	# Connect signals
+	log_event("Connecting organ signals")
 	# Organ specific signals
 	heart.heart_beated.connect(_on_heart_beat)
 
@@ -38,12 +46,15 @@ func _ready() -> void:
 	for organ: Organ in organs:
 		brain.connect_organ_signals(organ)
 		organ.organ_died.connect(_on_organ_died)
-
+	log_event("Finished connecting organ signals")
+	
+	
 	add_child(brain)
 	add_child(lungs)
 	add_child(heart)
 
 	# Create Vessels
+	log_event("Creating vessels")
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
 	add_child(aorta)
 
@@ -65,12 +76,16 @@ func _ready() -> void:
 	add_child(vena_cava)
 
 	vessels = Vessels.new([aorta, pulmonary_artery, pulmonary_vein, vena_cava] as Array[Vessel])
-
+	log_event("Finished creating vessels")
+	
 	# Connect all tissues to body vessels
+	log_event("Connecting central vessels to organs")
 	if !organs.connect_vessels_to_organs(aorta, vena_cava):
-		printerr("Problem connecting vessels")
-
-	print("%s has been created successfully" % name)
+		log_event("Problem connecting vessels", Logger.Verbosity.ERROR)
+	else:
+		log_event("Successfully connected vessels")
+	
+	log_event("%s has been created successfully" % name)
 
 
 ## TODO: Not sure what this should be used for yet
@@ -116,7 +131,7 @@ func _get_organ(organ_type: GlobalTypes.Organs) -> Organ:
 
 ## Called when [member health] is zero
 func on_died() -> void:
-	print("%s has died" % name)
+	log_event("%s has died" % name, Logger.Verbosity.IMPORTANT)
 	dead = true
 
 ## Simulates the effects of a heart beat in moving around gases through blood.
@@ -146,4 +161,6 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
 
+func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
+		Logger.log_event(message, self, verbosity)
 
