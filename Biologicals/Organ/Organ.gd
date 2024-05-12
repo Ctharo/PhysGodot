@@ -101,3 +101,6 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 func get_all_vessels() -> Vessels:
 	return tissues.get_all_vessels()
 #endregion
+
+func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
+		Logger.log_event(message, self, verbosity)

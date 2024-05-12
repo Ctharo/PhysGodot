@@ -168,3 +168,6 @@ func is_hypercapnic() -> bool:
 ## Checks if tissue has too low of O2 concentration
 func is_hypoxic() -> bool:
 	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
+
+func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
+	Logger.log_event(message, self, verbosity)
