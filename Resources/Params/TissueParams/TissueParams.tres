@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="TissueParams" load_steps=2 format=3 uid="uid://bqg6n160ms0fo"]
+
+[ext_resource type="Script" path="res://Resources/Params/TissueParams/TissueParams.gd" id="1_ke2tl"]
+
+[resource]
+script = ExtResource("1_ke2tl")
+metabolism_factor = 1.0
+oxygen_consumption_factor = 1.0
+min_concentration = {
+0: 0.12,
+1: 0.0
+}
+max_concentration = {
+0: 0.22,
+1: 0.05
+}
+carbon_dioxide_production_factor = 1.0
+hypoxia_sensitivity = 1.0
+hypoxia_health_buffer = 20.0
+hypercapnea_sensitivity = 1.0
+hypercapnea_health_buffer = 20.0
+vascularity_factor = 1.0
+mass = 1.0
+tissue_count = 1
+health_loss_factor = 1.0
+perform_organ_specific_task = true
+blood_volume = 1.0
