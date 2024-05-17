@@ -78,6 +78,7 @@ func _init_vessels(total_blood_volume: float) -> void:
 	add_child(artery)
 
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
+	vessels.name = "%s's Vessels" % name
 
 	# Connect capillaries
 	capillaries.deliver_to = Vessels.new([vein] as Array[Vessel])

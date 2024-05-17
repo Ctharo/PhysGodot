@@ -38,4 +38,14 @@ static func format_time(msecs: int) -> String:
 	formatted_time += str(secs) + "s"
 	
 	return formatted_time
+	
+## Formats a float in scientific notation with optional significant figures
+static func to_sci_notation(num: float, sig_figs: int = 3) -> String:
+	if num == 0:
+		return "0"
+	# Determine the exponent in base 10
+	var exp: int = int(floor(log(abs(num))/log(10)))
+	# Determine the coefficient with the specified significant figures
+	var coeff: float = round(num / pow(10.0, exp) * pow(10.0, sig_figs - 1)) / pow(10.0, sig_figs - 1)
+	return "%.*fe%d" % [sig_figs - 1, coeff, exp]
 

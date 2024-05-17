@@ -2,6 +2,8 @@ class_name Vessels
 extends Iterator
 ## Iterable collection of Vessel instances with helpful methods
 
+var name: String
+
 var vessels: Array[Vessel] :
 	set(value):
 		_collection = value
