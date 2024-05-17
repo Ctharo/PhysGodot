@@ -28,7 +28,6 @@ var blood: Blood
 func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 	self.type = _vessel_type
 	self.max_volume = max_volume
-	name = Helpers.to_title_case(Vessels.get_string(self.type))
 
 ## Instantiates [Blood] with [member Blood.volume] equal to [member max_volume]
 func fill_with_blood()-> void:
