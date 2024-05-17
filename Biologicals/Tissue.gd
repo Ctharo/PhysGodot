@@ -68,13 +68,13 @@ func _init_vessels(total_blood_volume: float) -> void:
 
 	var volume_per_vessel: float = total_blood_volume/3
 
-	var capillaries := Vessel.new(GlobalTypes.Vessels.CAPILLARIES, volume_per_vessel)
+	var capillaries: Vessel = Vessel.new(GlobalTypes.Vessels.CAPILLARIES, volume_per_vessel)
 	add_child(capillaries)
 
-	var vein := Vessel.new(GlobalTypes.Vessels.VEIN, volume_per_vessel)
+	var vein: Vessel = Vessel.new(GlobalTypes.Vessels.VEIN, volume_per_vessel)
 	add_child(vein)
 
-	var artery := Vessel.new(GlobalTypes.Vessels.ARTERY, volume_per_vessel)
+	var artery: Vessel = Vessel.new(GlobalTypes.Vessels.ARTERY, volume_per_vessel)
 	add_child(artery)
 
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])

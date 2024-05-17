@@ -54,6 +54,7 @@ func _init_tissues() -> void:
 		add_child(tissue)
 		a.append(tissue)
 	tissues = Tissues.new(a)
+	tissues.name = self.name + "'s Tissues"
 
 func _physics_process(delta: float) -> void:
 	if dead:

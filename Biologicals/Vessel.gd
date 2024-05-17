@@ -34,6 +34,7 @@ func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 func fill_with_blood()-> void:
 	var b: Blood = Blood.new(max_volume)
 	blood = b
+	blood.name = name + "'s Blood"
 
 ## TODO: Currently does nothing
 func send_blood_to_vessel() -> void:

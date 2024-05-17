@@ -7,6 +7,8 @@ extends Resource
 ## Stores info about the gases present in the blood
 var gases: Gases
 
+var name: String
+
 ## The volume of the blood in liters
 var volume: float
 

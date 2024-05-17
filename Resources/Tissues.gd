@@ -1,6 +1,10 @@
 class_name Tissues
 extends Iterator
 ## Iterable class that contains Tissue instances and helpful methods.
+##
+##
+
+var name: String
 
 ## Contains all [Tissue]s in Array
 var tissues: Array[Tissue] :
