@@ -53,13 +53,13 @@ func test_health_calculation():
 # Test hypoxia detection
 func test_hypoxia_detection():
 	for tissue: Tissue in organ.tissues:
-		tissue.gases.set_moles(GlobalTypes.Gases.OXYGEN, tissue.params.min_concentration[GlobalTypes.Gases.OXYGEN] * tissue.params.mass - 0.1)
+		tissue.set_concentration(GlobalTypes.Gases.OXYGEN, tissue.params.min_concentration[GlobalTypes.Gases.OXYGEN] * 0.9)
 	assert_true(organ.is_hypoxic(), "Organ should be hypoxic if mean O2 concentration is below min_concentration")
 
 # Test hypercapnia detection
 func test_hypercapnia_detection():
 	for tissue: Tissue in organ.tissues:
-		tissue.gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, tissue.params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE] * tissue.params.mass + 0.1)
+		tissue.set_concentration(GlobalTypes.Gases.CARBON_DIOXIDE, tissue.params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE] * 1.1)
 	assert_true(organ.is_hypercapnic(), "Organ should be hypercapnic if mean CO2 concentration is above max_concentration")
 
 # Test organ death detection

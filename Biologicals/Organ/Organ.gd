@@ -17,7 +17,13 @@ var settings: Settings = load("res://Settings.tres") as Settings
 
 ## Returns mean value of all tissue health
 @export var health: float
-
+@export var mass: float :
+	get:
+		if tissues:
+			return tissues.total_mass()
+		else:
+			return 0.0
+			
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 @export var status: Status ## Custom iterator object to contain status values
 ## Returns true if mean health of tissues is zero
@@ -104,3 +110,4 @@ func get_all_vessels() -> Vessels:
 
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 		Logger.log_event(message, self, verbosity)
+

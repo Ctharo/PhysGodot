@@ -20,11 +20,15 @@ var status: Status ## Stores current status of tissue
 
 var timer: float = 0.0 ## Incremented by delta value in [method _physics_process], used to limit calculations
 const TIMER_INTERVAL: float = 0.1 ## Time between calculations
-var debug: bool = false ## Depreciated? Might not use anymore
 var health_loss_buffer: float = 20
 var last_oxygen_sufficient: float
 var last_carbon_dioxide_sufficient: float
-
+var mass: float :
+	get:
+		if params:
+			return params.mass
+		else:
+			return 0.0
 ## Ratio of health, where 1 is full health and 0 is death
 var health: float = 1 :
 	set(value):
@@ -49,7 +53,7 @@ func _physics_process(delta: float) -> void:
 	if dead: return
 	timer += delta
 	if timer > TIMER_INTERVAL:
-		if debug: print("%s tissue processing" % name)
+		Logger.log_verbose("Processing", self)
 		if settings.GAS_DIFFUSION_ENABLED: exchange_gases(timer)
 		if settings.AEROBIC_RESPIRATION_ENABLED: aerobic_respiration(timer)
 		if !settings.INVINCIBLE_TISSUES: health_check(timer)
@@ -57,8 +61,8 @@ func _physics_process(delta: float) -> void:
 
 func _init_gases() -> void:
 	gases = Gases.new()
-	gases.set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * params.mass)
-	gases.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * params.mass)
+	set_moles(GlobalTypes.Gases.OXYGEN, 0.21 * params.mass)
+	set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.0 * params.mass)
 
 func _init_vessels(total_blood_volume: float) -> void:
 
@@ -103,13 +107,23 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	return gases.get_moles(gas)
 
+## Use to directly set moles of a gas for this [Tissue]
+func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
+	gases.set_moles(gas, moles)
+
+## Use to directly set concentration of a gas for this [Tissue]
+func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
+	gases.set_moles(gas, concentration * mass) # [Gases] has no set_concentration method as it does not have inherent volume/mass
+
 ## Responsible for directing the exchange of moles of gas between this class and child capillaries: [Vessel] based on concentration differences
 func exchange_gases(delta: float) -> void:
+	Logger.log_debug("Exchanging gases with capillaries", self)
 	# Exchange gases with capillaries
 	var capillaries: Vessels = self.get_capillaries()
 	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
 	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
-
+	Logger.log_debug("Finished exchanging gases with capillaries", self)
+	
 ## Responsible for exchanging of moles of gas between this class and arg capillaries
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels, delta: float) -> void:
 	# Do nothing if concentrations are equal
@@ -122,7 +136,7 @@ func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels,
 	@warning_ignore("incompatible_ternary")
 	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self
 	if donor == null or recipient == null:
-		push_error("Cannot exchange gas with capillaries: Donor or Recipient is null")
+		Logger.log_error("Cannot exchange gas with capillaries: Donor or Recipient is null", self)
 		return
 	var delta_concentration: float = donor.get_concentration(gas) - recipient.get_concentration(gas)
 	var potential_moles: float = delta_concentration * params.mass * params.vascularity_factor * delta
@@ -130,15 +144,15 @@ func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels,
 	# Calculate the actual amount of moles that can be exchanged
 	if is_zero_approx(moles):
 		return
+	Logger.log_verbose("%s is sending %.2f moles to %s" % [donor.name, moles, recipient.name], self)
 	donor.exchange_gas(gas, -moles)
 	recipient.exchange_gas(gas, moles)
-
 
 ## Adds or removes moles of a gas from the tissue
 func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 	var total_moles: float = get_moles(gas) + moles
 	assert(total_moles >= 0, "%s moles cannot be negative." % gas)
-	gases.set_moles(gas, total_moles)
+	set_moles(gas, total_moles)
 
 #region Vessels helper methods
 func get_capillaries() -> Vessels:
@@ -161,6 +175,8 @@ func aerobic_respiration(delta: float) -> void:
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
+
+
 ## Checks if tissue has too high of CO2 concentration
 func is_hypercapnic() -> bool:
 	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
@@ -171,3 +187,4 @@ func is_hypoxic() -> bool:
 
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 	Logger.log_event(message, self, verbosity)
+

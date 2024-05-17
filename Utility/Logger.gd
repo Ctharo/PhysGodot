@@ -26,6 +26,9 @@ func log_event(message: String, sender: Node, verbosity: Logger.Verbosity = Logg
 	else:
 		print("Tick %s: %s -> %s" % [event.game_time_stamp, event.sender.name, event.message])
 
+func log_debug(message: String, sender: Node) -> void:
+	log_event(message, sender, Verbosity.DEBUG)
+
 func log_verbose(message: String, sender: Node) -> void:
 	log_event(message, sender, Verbosity.VERBOSE)
 		
