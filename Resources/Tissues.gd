@@ -66,5 +66,8 @@ func get_mean_health() -> float:
 		health += tissue.health
 	return health/tissues.size()
 
+func size() -> int:
+	return tissues.size()
+
 func _iter() -> Iterator:
 	return Iterator.new(tissues)
