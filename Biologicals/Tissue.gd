@@ -148,7 +148,7 @@ func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels,
 	# Calculate the actual amount of moles that can be exchanged
 	if is_zero_approx(moles):
 		return
-	Logger.log_verbose("%s is sending %.2f moles to %s" % [donor.name, moles, recipient.name], self)
+	Logger.log_verbose("%s is sending %s moles of %s to %s" % [donor.name, Helpers.to_sci_notation(moles), Gases.get_string(gas), recipient.name], self)
 	donor.exchange_gas(gas, -moles)
 	recipient.exchange_gas(gas, moles)
 
@@ -160,7 +160,9 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 
 #region Vessels helper methods
 func get_capillaries() -> Vessels:
-	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
+	var capillaries: Vessels = get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
+	capillaries.name = "%s's Capillaries" % name
+	return capillaries
 
 func get_all_vessels() -> Vessels:
 	return vessels
