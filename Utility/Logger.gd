@@ -20,11 +20,11 @@ func log_event(message: String, sender: Node, verbosity: Logger.Verbosity = Logg
 	if not event in events:
 		printerr("Problem logging event")
 		return
-		
+	var s: String = "[%s]: Tick %s: %s -> %s" % [Verbosity.keys()[verbosity], event.game_time_stamp, event.sender.name, event.message]
 	if verbosity == Verbosity.ERROR:
-		printerr("Tick %s: %s -> %s" % [event.game_time_stamp, event.sender.name, event.message])
+		printerr(s)
 	else:
-		print("[%s]: Tick %s: %s -> %s" % [Verbosity.keys()[verbosity], event.game_time_stamp, event.sender.name, event.message])
+		print(s)
 
 func log_debug(message: String, sender: Node) -> void:
 	log_event(message, sender, Verbosity.DEBUG)
