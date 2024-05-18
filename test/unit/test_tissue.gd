@@ -1,10 +1,5 @@
 extends GutTest
 
-# Constants
-const Organ = preload("res://Biologicals/Organ/Organ.gd")
-const TissueParams = preload("res://Resources/Params/TissueParams/TissueParams.gd")
-
-
 # Variables
 var tissue: Tissue
 var params: TissueParams

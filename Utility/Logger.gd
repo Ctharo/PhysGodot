@@ -2,9 +2,12 @@ extends Node
 
 enum Verbosity { VERBOSE, DEBUG, NORMAL, IMPORTANT, WARNING, ERROR }
 
+var settings = load("res://Settings.tres")
 var events: Array[Event] = [] as Array[Event]
 
 func log_event(message: String, sender: Node, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
+	if verbosity < settings.LOGGING_LEVEL:
+		return
 	if not sender:
 		printerr("Problem logging event: No sender")
 		return

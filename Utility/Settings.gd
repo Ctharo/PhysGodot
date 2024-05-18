@@ -5,3 +5,4 @@ extends Resource
 @export var BLOOD_CIRCULATION_ENABLED: bool = true
 @export var AEROBIC_RESPIRATION_ENABLED: bool = true
 @export var INVINCIBLE_TISSUES: bool = false
+@export var LOGGING_LEVEL: Logger.Verbosity = Logger.Verbosity.DEBUG
