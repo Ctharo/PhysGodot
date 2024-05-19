@@ -55,6 +55,8 @@ func _init_tissues() -> void:
 		a.append(tissue)
 	tissues = Tissues.new(a)
 	tissues.name = self.name + "'s Tissues"
+	Logger.log_warning("Test", self)
+	Logger.log_error("testing again", self)
 
 func _physics_process(delta: float) -> void:
 	if dead:

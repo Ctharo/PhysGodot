@@ -2,7 +2,7 @@ extends Node
 
 enum Verbosity { VERBOSE, DEBUG, NORMAL, IMPORTANT, WARNING, ERROR }
 
-var settings = load("res://Settings.tres")
+var settings: Resource = load("res://Settings.tres")
 var events: Array[Event] = [] as Array[Event]
 
 func log_event(message: String, sender: Node, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
@@ -12,26 +12,54 @@ func log_event(message: String, sender: Node, verbosity: Logger.Verbosity = Logg
 		printerr("Problem logging event: No sender")
 		return
 	var event: Event = Event.new(
-			message,
-			sender,
-			verbosity,
-			Time.get_ticks_msec(),
-			Time.get_datetime_string_from_datetime_dict(Time.get_datetime_dict_from_system(), true)
-		)
+		message,
+		sender,
+		verbosity,
+		Time.get_ticks_msec(),
+		Time.get_datetime_string_from_datetime_dict(Time.get_datetime_dict_from_system(), true)
+	)
 	events.append(event)
 	
 	if not event in events:
 		printerr("Problem logging event")
 		return
-	var s: String = "[%s]: Tick %s: %s -> %s" % [Verbosity.keys()[verbosity], event.game_time_stamp, event.sender.name, event.message]
+	
+	# Define fixed lengths for alignment
+	var verbosity_length: int = 10
+	var tick_length: int = 6
+	var sender_name_length: int = 16
+	
+	var verbosity_str: String = "[" + Verbosity.keys()[verbosity] + "]"
+	var tick_str: String = str(event.game_time_stamp)
+	var sender_name_str: String = event.sender.name
+	
+	# Pad the strings to ensure alignment
+	verbosity_str = verbosity_str.rpad(verbosity_length)
+	tick_str = tick_str.rpad(tick_length)
+	sender_name_str = sender_name_str.rpad(sender_name_length)
+	
+	var s: String = "%s: Tick %s: %s -> %s" % [
+		verbosity_str,
+		tick_str,
+		sender_name_str,
+		event.message
+	]
+	
 	if verbosity == Verbosity.ERROR:
 		printerr(s)
+		push_error(s)
+	elif verbosity == Verbosity.WARNING:
+		print(s)
+		push_warning(s)
 	else:
 		print(s)
 
 func log_debug(message: String, sender: Node) -> void:
 	log_event(message, sender, Verbosity.DEBUG)
 
+func log_warning(message: String, sender: Node) -> void:
+	log_event(message, sender, Verbosity.WARNING)
+	
 func log_verbose(message: String, sender: Node) -> void:
 	log_event(message, sender, Verbosity.VERBOSE)
 		
