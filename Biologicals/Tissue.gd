@@ -53,11 +53,12 @@ func _physics_process(delta: float) -> void:
 	if dead: return
 	timer += delta
 	if timer > TIMER_INTERVAL:
-		Logger.log_verbose("Processing", self)
+		Logger.log_verbose("Processing...", self)
 		if settings.GAS_DIFFUSION_ENABLED: exchange_gases(timer)
 		if settings.AEROBIC_RESPIRATION_ENABLED: aerobic_respiration(timer)
 		if !settings.INVINCIBLE_TISSUES: health_check(timer)
 		timer = 0.0
+		Logger.log_verbose("Finished processing", self)
 
 func _init_gases() -> void:
 	gases = Gases.new()

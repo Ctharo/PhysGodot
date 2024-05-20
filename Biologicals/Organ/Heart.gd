@@ -51,7 +51,7 @@ func heart_beat(delta: float) -> void:
 		heart_beated.emit(STROKE_VOLUME * chamber_refill(heart_rate_timer))
 		heart_rate_timer = 0
 
-## Receives and propogates signal accordingly
+## Receives and propogates signal to [member chemical_receptor]: [ChemicalReceptor]
 func receive_signal(direction: GlobalTypes.PhysioSignal) -> void:
 	match direction:
 		GlobalTypes.PhysioSignal.INCREASE_RATE:

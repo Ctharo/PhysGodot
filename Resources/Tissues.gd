@@ -36,6 +36,24 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if mass == 0.0:
 		return 0.0
 	return get_moles(gas)/mass
+	
+## Sets concentration of a [Gas] to all [Tissue]s
+func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
+	for tissue: Tissue in tissues:
+		tissue.set_concentration(gas, concentration)
+
+## Sets health of all [Tissue]s
+func set_health(health_value: float) -> void:
+	for tissue: Tissue in tissues:
+		tissue.health = health_value
+
+func all_dead() -> bool:
+	var dead: bool = true
+	for tissue: Tissue in tissues:
+		if not tissue.dead:
+			dead = false
+			break
+	return dead
 
 ## Returns [Vessels] of type [enum GlobalTypes.Vessels.CAPILLARIES]
 func get_capillaries() -> Vessels:

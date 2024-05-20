@@ -16,16 +16,23 @@ var settings: Settings = load("res://Settings.tres") as Settings
 		return Helpers.to_title_case(Organs.get_string(type))
 
 ## Returns mean value of all tissue health
-@export var health: float
+@export var health: float :
+	get:
+		if tissues:
+			health = tissues.get_mean_health()
+			return health
+		else:
+			return 0.0
+			
 @export var mass: float :
 	get:
 		if tissues:
 			return tissues.total_mass()
 		else:
 			return 0.0
-			
+
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
-@export var status: Status ## Custom iterator object to contain status values
+#@export var status: Status ## Custom iterator object to contain status values
 ## Returns true if mean health of tissues is zero
 @export var dead: bool
 var tissues: Tissues
@@ -36,7 +43,7 @@ var timer: float = 0.0
 func _init(Organ_type: GlobalTypes.Organs, params: TissueParams) -> void:
 	self.type = Organ_type
 	self.params = params
-	self.status = Status.new(self.params)
+	#self.status = Status.new(self.params)
 
 	name = Helpers.to_title_case(Organs.get_string(type))
 	_init_tissues()
@@ -55,8 +62,6 @@ func _init_tissues() -> void:
 		a.append(tissue)
 	tissues = Tissues.new(a)
 	tissues.name = self.name + "'s Tissues"
-	Logger.log_warning("Test", self)
-	Logger.log_error("testing again", self)
 
 func _physics_process(delta: float) -> void:
 	if dead:
@@ -68,8 +73,7 @@ func _physics_process(delta: float) -> void:
 
 ## Called from [method _physics_process] and handles setting [member health] and calling [method died] if necessary
 func check_health() -> void:
-	health = tissues.get_mean_health()
-	if health == 0.0:
+	if tissues.all_dead():
 		died()
 
 ## Depreciated? Might not use.
@@ -86,13 +90,10 @@ func died() -> void:
 	dead = true
 	organ_died.emit(self)
 
-
-## HACK: Should instead be responding to mean o2 concentration
 func is_hypoxic() -> bool:
 	var val: float = params.min_concentration[GlobalTypes.Gases.OXYGEN]
 	return get_concentration(GlobalTypes.Gases.OXYGEN) < val
 
-## HACK: Should instead be responding to mean co2 concentration
 func is_hypercapnic() -> bool:
 	var val: float = params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > val
@@ -100,6 +101,12 @@ func is_hypercapnic() -> bool:
 #region [member tissues] helper methods
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	return tissues.get_concentration(gas)
+	
+func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
+	tissues.set_concentration(gas, concentration)
+	
+func set_health(health_value: float) -> void:
+	tissues.set_health(health_value)
 
 func get_capillaries() -> Vessels:
 	return tissues.get_capillaries()
@@ -111,6 +118,4 @@ func get_all_vessels() -> Vessels:
 	return tissues.get_all_vessels()
 #endregion
 
-func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
-		Logger.log_event(message, self, verbosity)
 

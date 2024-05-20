@@ -1,34 +1,34 @@
 extends GutTest
 
 # Variables
-var tissue: Tissue
 var params: TissueParams
 var organ: Organ
 
+@warning_ignore("untyped_declaration")
 func before_all():
-	params = load("res://Resources/Params/TissueParams/TissueParams.tres")
-	# Set all params to default values for the tests
+	# Loading from TissueParams.tres means values are at default
+	params = load("res://Resources/Params/TissueParams/TissueParams.tres") as TissueParams
+	
+	# Adjusting values as needed
 	params.tissue_count = 3
-	params.mass = 9.0
-	params.blood_volume = 3.0
-	params.metabolism_factor = 1.0
-	params.min_concentration = { GlobalTypes.Gases.OXYGEN: 0.2 }
-	params.max_concentration = { GlobalTypes.Gases.CARBON_DIOXIDE: 0.3 }
-	tissue = Tissue.new(params)
 	gut.p("ran run setup", 2)
 
+@warning_ignore("untyped_declaration")
 func after_all():
 	gut.p("ran run teardown", 2)
 
+@warning_ignore("untyped_declaration")
 func before_each():
 	# Create a new organ for each test
 	organ = Organ.new(GlobalTypes.Organs.HEART, params)
 	gut.p("ran setup", 2)
 
+@warning_ignore("untyped_declaration")
 func after_each():
 	gut.p("ran teardown", 2)
 
 # Test organ initialization
+@warning_ignore("untyped_declaration")
 func test_organ_initialization():
 	assert_eq(organ.type, GlobalTypes.Organs.HEART, "Organ type should be HEART")
 	assert_eq(organ.params, params, "Organ params should be equal to the initialized params")
@@ -36,32 +36,32 @@ func test_organ_initialization():
 	assert_eq(organ.tissues.size(), params.tissue_count, "Tissues count should match tissue_count in params")
 
 # Test health calculation
+@warning_ignore("untyped_declaration")
 func test_health_calculation():
 	var i: int = 0
 	var health_values = [0.5, 0.7, 0.9]
 	for tissue: Tissue in organ.tissues:
 		tissue.health = health_values[i]
 		i += 1
-	organ.check_health()
-	assert_eq(organ.health, 0.7, "Health should be the mean of all tissue health values")
+	assert_almost_eq(organ.health, 0.7, 1e-10, "Health should be the mean of all tissue health values")
 
 # Test hypoxia detection
+@warning_ignore("untyped_declaration")
 func test_hypoxia_detection():
-	for tissue: Tissue in organ.tissues:
-		tissue.set_concentration(GlobalTypes.Gases.OXYGEN, tissue.params.min_concentration[GlobalTypes.Gases.OXYGEN] * 0.9)
+	organ.set_concentration(GlobalTypes.Gases.OXYGEN, params.min_concentration[GlobalTypes.Gases.OXYGEN] * 0.9)
 	assert_true(organ.is_hypoxic(), "Organ should be hypoxic if mean O2 concentration is below min_concentration")
 
 # Test hypercapnia detection
+@warning_ignore("untyped_declaration")
 func test_hypercapnia_detection():
-	for tissue: Tissue in organ.tissues:
-		tissue.set_concentration(GlobalTypes.Gases.CARBON_DIOXIDE, tissue.params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE] * 1.1)
+	organ.set_concentration(GlobalTypes.Gases.CARBON_DIOXIDE, params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE] * 1.1)
 	assert_true(organ.is_hypercapnic(), "Organ should be hypercapnic if mean CO2 concentration is above max_concentration")
 
 # Test organ death detection
+@warning_ignore("untyped_declaration")
 func test_organ_death():
-	for tissue: Tissue in organ.tissues:
-		tissue.health = 0.0
+	watch_signals(organ)
+	organ.set_health(0.0)
 	organ.check_health()
+	assert_signal_emitted(organ, "organ_died", "Organ should emit a signal indicating it has died")
 	assert_true(organ.dead, "Organ should be dead if all tissue health values are zero")
-
-

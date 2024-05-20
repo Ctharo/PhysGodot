@@ -29,9 +29,9 @@ func _init(organ: Organ) -> void:
 	chem_warning.bbcode_enabled = true
 	chem_warning.fit_content = true
 	var warning_text := ""
-	if organ.status.hypoxia:
+	if organ.is_hypoxic():
 		warning_text += "[color=red]Warning: Organ is hypoxic![/color] \n"
-	if organ.status.hypercapnia:
+	if organ.is_hypercapnic():
 		warning_text += "[color=red]Warning: Organ is hypercapneic![/color]"
 	chem_warning.append_text(warning_text if warning_text else " ")
 	add_child(chem_warning)
