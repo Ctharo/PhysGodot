@@ -16,6 +16,9 @@ var tissues: Array[Tissue] :
 func _init(t: Array[Tissue] = []) -> void:
 	super._init(t)
 
+func add_tissue(tissue: Tissue) -> void:
+	tissues.append(tissue)
+
 ## Returns float of sum of moles of provided [param gas]: [Gas]
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	var moles: float = 0.0
@@ -23,6 +26,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 		moles += tissue.get_moles(gas)
 	return moles
 
+#TODO: Cache this value
 ## Returns sum of [member Tissue.mass] from [member tissues]
 func total_mass() -> float:
 	var total: float = 0.0
@@ -82,6 +86,7 @@ func set_debug(value: bool) -> void:
 
 ## Returns mean value of [member Tissue.health] of [Tissue]s found in [member tissues]
 func get_mean_health() -> float:
+	assert(tissues)
 	if not tissues.size(): return 0.0
 	var health: float = 0
 	for tissue: Tissue in tissues:

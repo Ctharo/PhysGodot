@@ -1,5 +1,5 @@
 class_name Organ
-extends Node
+extends Cacheable
 ## Has a functional role
 ##
 ## Physiological processes depend on Organ
@@ -18,23 +18,14 @@ var settings: Settings = load("res://Settings.tres") as Settings
 ## Returns mean value of all tissue health
 @export var health: float :
 	get:
-		if _is_health_dirty:
-			_calculate_health()
-		return _cached_health
-
-var _cached_health: float :
-	set(value):
-		_cached_health = value
-		_is_health_dirty = false
-
-var _is_health_dirty: bool = true
+		var value: float = get_cached_value("health", self.tissues.get_mean_health)
+		if value == 0.0 and not dead:
+			died()
+		return value
 		
 @export var mass: float :
 	get:
-		if tissues:
-			return tissues.total_mass()
-		else:
-			return 0.0
+		return get_cached_value("mass", self.tissues.total_mass)
 
 @export var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 #@export var status: Status ## Custom iterator object to contain status values
@@ -55,41 +46,40 @@ func _init(Organ_type: GlobalTypes.Organs, params: TissueParams) -> void:
 
 func _init_tissues() -> void:
 	var tissue_count: int = self.params.tissue_count # For dividing total organ mass by number of tissues. FIXME: Assumes equally-sized tissues.
+	assert(tissue_count != 0)
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
 	var a: Array[Tissue] = [] as Array[Tissue]
 	var tissue_params: TissueParams = self.params.duplicate(true) ## Copy params, but change relavent data such as mass, blood volume, etc.
+	assert(tissue_params)
 	tissue_params.mass = self.params.mass / tissue_count
 	tissue_params.blood_volume = self.params.blood_volume / tissue_count
 	for i in tissue_count:
-		var tissue: Tissue = Tissue.new(tissue_params)
-		tissue.name = self.name + " Tissue %s" % (i + 1)
-		tissue.health_changed.connect(_on_tissue_health_changed)
-		add_child(tissue)
-		a.append(tissue)
+		_add_tissue(tissue_params)
+	assert(a)
 	tissues = Tissues.new(a)
+	assert(tissues)
 	tissues.name = self.name + "'s Tissues"
 
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
-	timer += delta
-	if timer > 1:
-		check_health()
-		timer = 0.0
 
-## Internal method to calculate the health
-func _calculate_health() -> void:
-	_cached_health = tissues.get_mean_health()
-	_is_health_dirty = false
+func _add_tissue(tissue_params: TissueParams) -> void:
+	if not tissues:
+		var a: Array[Tissue]
+		tissues = Tissues.new(a)
+	var tissue: Tissue = Tissue.new(tissue_params)
+	assert(tissue)
+	tissue.name = self.name + " Tissue %s" % (tissues.size() + 1)
+	tissue.health_changed.connect(_on_tissue_health_changed)
+	add_child(tissue)
+	tissues.add_tissue(tissue)
+	invalidate_cache("health")
+	invalidate_cache("mass")
 
 ## Signal handler for when any tissue's health changes
 func _on_tissue_health_changed() -> void:
-	_is_health_dirty = true
-
-## Called from [method _physics_process] and handles setting [member health] and calling [method died] if necessary
-func check_health() -> void:
-	if tissues.all_dead():
-		died()
+	invalidate_cache("health")
 
 ## Depreciated? Might not use.
 func set_debug(value: bool) -> void:
@@ -102,9 +92,11 @@ func is_of_type(test_type: GlobalTypes.Organs) -> bool:
 
 ## Called from [method check_health] when [member health] is zero
 func died() -> void:
+	assert(tissues.all_dead(), "All tissues should be dead")
 	dead = true
 	organ_died.emit(self)
 
+## TODO: Cache these values and only calculate on intervals
 func is_hypoxic() -> bool:
 	var val: float = params.min_concentration[GlobalTypes.Gases.OXYGEN]
 	return get_concentration(GlobalTypes.Gases.OXYGEN) < val
