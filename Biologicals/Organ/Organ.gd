@@ -4,9 +4,9 @@ extends Cacheable
 ##
 ## Physiological processes depend on Organ
 
-signal bad_chemistry_detected ## Not sure if will use, too general
-signal hypercapnia ## Emitted if [enum GlobalTypes.Gases.CARBON_DIOXIDE] concentration in the [Tissue]s are higher than [member params.max_concentration]
-signal hypoxia ## Emitted if [enum GlobalTypes.Gases.OXYGEN] concentration in the [Tissue]s are lower than [member params.min_concentration]
+#signal bad_chemistry_detected ## Not sure if will use, too general
+#signal hypercapnia ## Emitted if [enum GlobalTypes.Gases.CARBON_DIOXIDE] concentration in the [Tissue]s are higher than [member params.max_concentration]
+#signal hypoxia ## Emitted if [enum GlobalTypes.Gases.OXYGEN] concentration in the [Tissue]s are lower than [member params.min_concentration]
 signal organ_died ## Emitted if all [member Tissue.health] values are zero
 
 var settings: Settings = load("res://Settings.tres") as Settings
@@ -31,6 +31,25 @@ var settings: Settings = load("res://Settings.tres") as Settings
 #@export var status: Status ## Custom iterator object to contain status values
 ## Returns true if mean health of tissues is zero
 @export var dead: bool
+
+@export var is_hypoxic: bool :
+	get:
+		invalidate_cache("is_hypoxic") # FIXME: Should not invalidate every time accessed
+		return get_cached_value("is_hypoxic", self._is_hypoxic)
+		
+@export var is_hypercapnic: bool :
+	get:
+		invalidate_cache("is_hypercapnic") # FIXME: Should not invalidate every time accessed
+		return get_cached_value("is_hypercapnic", self._is_hypercapnic)
+
+var min_concentration: Dictionary :
+	get:
+		return params.min_concentration
+	
+var max_concentration: Dictionary :
+	get:
+		return params.max_concentration
+
 var tissues: Tissues
 var type: GlobalTypes.Organs
 var debug: bool
@@ -48,15 +67,12 @@ func _init_tissues() -> void:
 	var tissue_count: int = self.params.tissue_count # For dividing total organ mass by number of tissues. FIXME: Assumes equally-sized tissues.
 	assert(tissue_count != 0)
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
-	var a: Array[Tissue] = [] as Array[Tissue]
 	var tissue_params: TissueParams = self.params.duplicate(true) ## Copy params, but change relavent data such as mass, blood volume, etc.
 	assert(tissue_params)
 	tissue_params.mass = self.params.mass / tissue_count
 	tissue_params.blood_volume = self.params.blood_volume / tissue_count
 	for i in tissue_count:
 		_add_tissue(tissue_params)
-	assert(a)
-	tissues = Tissues.new(a)
 	assert(tissues)
 	tissues.name = self.name + "'s Tissues"
 
@@ -64,18 +80,17 @@ func _physics_process(delta: float) -> void:
 	if dead:
 		return
 
-func _add_tissue(tissue_params: TissueParams) -> void:
+func _add_tissue(params: TissueParams) -> void:
 	if not tissues:
 		var a: Array[Tissue]
 		tissues = Tissues.new(a)
-	var tissue: Tissue = Tissue.new(tissue_params)
+	var tissue: Tissue = Tissue.new(params)
 	assert(tissue)
 	tissue.name = self.name + " Tissue %s" % (tissues.size() + 1)
 	tissue.health_changed.connect(_on_tissue_health_changed)
 	add_child(tissue)
 	tissues.add_tissue(tissue)
-	invalidate_cache("health")
-	invalidate_cache("mass")
+	invalidate_all_cache()
 
 ## Signal handler for when any tissue's health changes
 func _on_tissue_health_changed() -> void:
@@ -95,15 +110,6 @@ func died() -> void:
 	assert(tissues.all_dead(), "All tissues should be dead")
 	dead = true
 	organ_died.emit(self)
-
-## TODO: Cache these values and only calculate on intervals
-func is_hypoxic() -> bool:
-	var val: float = params.min_concentration[GlobalTypes.Gases.OXYGEN]
-	return get_concentration(GlobalTypes.Gases.OXYGEN) < val
-
-func is_hypercapnic() -> bool:
-	var val: float = params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
-	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > val
 
 #region [member tissues] helper methods
 func get_concentration(gas: GlobalTypes.Gases) -> float:
@@ -125,4 +131,9 @@ func get_all_vessels() -> Vessels:
 	return tissues.get_all_vessels()
 #endregion
 
+func _is_hypoxic() -> bool:
+	return get_concentration(GlobalTypes.Gases.OXYGEN) < min_concentration[GlobalTypes.Gases.OXYGEN]
+		
+func _is_hypercapnic() -> bool:
+	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 
