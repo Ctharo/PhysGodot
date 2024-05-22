@@ -18,12 +18,17 @@ var settings: Settings = load("res://Settings.tres") as Settings
 ## Returns mean value of all tissue health
 @export var health: float :
 	get:
-		if tissues:
-			health = tissues.get_mean_health()
-			return health
-		else:
-			return 0.0
-			
+		if _is_health_dirty:
+			_calculate_health()
+		return _cached_health
+
+var _cached_health: float :
+	set(value):
+		_cached_health = value
+		_is_health_dirty = false
+
+var _is_health_dirty: bool = true
+		
 @export var mass: float :
 	get:
 		if tissues:
@@ -58,6 +63,7 @@ func _init_tissues() -> void:
 	for i in tissue_count:
 		var tissue: Tissue = Tissue.new(tissue_params)
 		tissue.name = self.name + " Tissue %s" % (i + 1)
+		tissue.health_changed.connect(_on_tissue_health_changed)
 		add_child(tissue)
 		a.append(tissue)
 	tissues = Tissues.new(a)
@@ -70,6 +76,15 @@ func _physics_process(delta: float) -> void:
 	if timer > 1:
 		check_health()
 		timer = 0.0
+
+## Internal method to calculate the health
+func _calculate_health() -> void:
+	_cached_health = tissues.get_mean_health()
+	_is_health_dirty = false
+
+## Signal handler for when any tissue's health changes
+func _on_tissue_health_changed() -> void:
+	_is_health_dirty = true
 
 ## Called from [method _physics_process] and handles setting [member health] and calling [method died] if necessary
 func check_health() -> void:

@@ -1,6 +1,29 @@
 extends Node
 class_name Tissue
 
+signal health_changed
+
+
+## Ratio of health, where 1 is full health and 0 is death
+var health: float :
+	set(value):
+		if dead:
+			health = 0
+			return
+		if value != health:
+			_health = value
+			_health_dirty = true
+			# Restart the timer to delay signal emission
+			if not _timer.is_stopped():
+				_timer.stop()
+			_timer.start()
+	get:
+		return _health
+
+var _health: float = 1
+var _health_dirty: bool = false
+var _timer: Timer = Timer.new()
+
 ## Used to turn certain processes on/off
 var settings: Settings = load("res://Settings.tres") as Settings
 ## Used for data logging and retrieval
@@ -29,15 +52,6 @@ var mass: float :
 			return params.mass
 		else:
 			return 0.0
-## Ratio of health, where 1 is full health and 0 is death
-var health: float = 1 :
-	set(value):
-		if dead:
-			health = 0
-			return
-		health = max(value, 0)
-		if health == 0:
-			dead = true
 
 func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
@@ -46,6 +60,11 @@ func _init(params: TissueParams) -> void:
 	self.data = Data.new(self)
 	_init_vessels(params.blood_volume)
 	_init_gases()
+	
+	_timer.wait_time = 0.1  # Delay before emitting the signal
+	_timer.one_shot = true
+	_timer.timeout.connect(_emit_health_changed)
+	add_child(_timer)
 
 func _physics_process(delta: float) -> void:
 	# TODO: Should be responsible to run physiological processes
@@ -100,6 +119,12 @@ func health_check(delta: float) -> void:
 			health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
 	else:
 		last_carbon_dioxide_sufficient = Time.get_ticks_msec()
+
+# Emit the health_changed signal if health is dirty
+func _emit_health_changed() -> void:
+	if _health_dirty:
+		health_changed.emit()
+		_health_dirty = false
 
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
