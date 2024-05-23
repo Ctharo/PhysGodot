@@ -29,9 +29,9 @@ func _init(organ: Organ) -> void:
 	chem_warning.bbcode_enabled = true
 	chem_warning.fit_content = true
 	var warning_text := ""
-	if organ.is_hypoxic():
+	if organ.is_hypoxic:
 		warning_text += "[color=red]Warning: Organ is hypoxic![/color] \n"
-	if organ.is_hypercapnic():
+	if organ.is_hypercapnic:
 		warning_text += "[color=red]Warning: Organ is hypercapneic![/color]"
 	chem_warning.append_text(warning_text if warning_text else " ")
 	add_child(chem_warning)
@@ -66,9 +66,9 @@ func get_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ) -> Str
 	var result: String
 	match gas:
 		GlobalTypes.Gases.OXYGEN:
-			result = "red" if organ.is_hypoxic() else "white"
+			result = "red" if organ.is_hypoxic else "white"
 		GlobalTypes.Gases.CARBON_DIOXIDE:
-			result = "red" if organ.is_hypercapnic() else "white"
+			result = "red" if organ.is_hypercapnic else "white"
 		_:
 			result = "white"
 	return result

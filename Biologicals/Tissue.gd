@@ -1,5 +1,5 @@
-extends Node
 class_name Tissue
+extends Cacheable
 
 signal health_changed
 

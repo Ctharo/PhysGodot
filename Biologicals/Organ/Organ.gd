@@ -4,9 +4,6 @@ extends Cacheable
 ##
 ## Physiological processes depend on Organ
 
-#signal bad_chemistry_detected ## Not sure if will use, too general
-#signal hypercapnia ## Emitted if [enum GlobalTypes.Gases.CARBON_DIOXIDE] concentration in the [Tissue]s are higher than [member params.max_concentration]
-#signal hypoxia ## Emitted if [enum GlobalTypes.Gases.OXYGEN] concentration in the [Tissue]s are lower than [member params.min_concentration]
 signal organ_died ## Emitted if all [member Tissue.health] values are zero
 
 var settings: Settings = load("res://Settings.tres") as Settings
@@ -34,13 +31,11 @@ var settings: Settings = load("res://Settings.tres") as Settings
 
 @export var is_hypoxic: bool :
 	get:
-		invalidate_cache("is_hypoxic") # FIXME: Should not invalidate every time accessed
-		return get_cached_value("is_hypoxic", self._is_hypoxic)
+		return get_cached_value("is_hypoxic", self._is_hypoxic, 5.0)
 		
 @export var is_hypercapnic: bool :
 	get:
-		invalidate_cache("is_hypercapnic") # FIXME: Should not invalidate every time accessed
-		return get_cached_value("is_hypercapnic", self._is_hypercapnic)
+		return get_cached_value("is_hypercapnic", self._is_hypercapnic, 5.0)
 
 var min_concentration: Dictionary :
 	get:
@@ -67,19 +62,21 @@ func _init_tissues() -> void:
 	var tissue_count: int = self.params.tissue_count # For dividing total organ mass by number of tissues. FIXME: Assumes equally-sized tissues.
 	assert(tissue_count != 0)
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
-	var tissue_params: TissueParams = self.params.duplicate(true) ## Copy params, but change relavent data such as mass, blood volume, etc.
-	assert(tissue_params)
-	tissue_params.mass = self.params.mass / tissue_count
-	tissue_params.blood_volume = self.params.blood_volume / tissue_count
 	for i in tissue_count:
-		_add_tissue(tissue_params)
+		_add_tissue(_get_tissue_params())
 	assert(tissues)
 	tissues.name = self.name + "'s Tissues"
 
 func _physics_process(delta: float) -> void:
 	if dead:
 		return
+	timer += delta
+	if timer > 1.0:
+		invalidate_cache("is_hypercapnic")
+		invalidate_cache("is_hypercapnic")
+		timer = 0.0
 
+## Creates a new [Tissue] and adds it to [member tissues]
 func _add_tissue(params: TissueParams) -> void:
 	if not tissues:
 		var a: Array[Tissue]
@@ -91,6 +88,21 @@ func _add_tissue(params: TissueParams) -> void:
 	add_child(tissue)
 	tissues.add_tissue(tissue)
 	invalidate_all_cache()
+
+## From the [Organ]'s parameters, the [Tissue]'s will be generated
+func _get_tissue_params() -> TissueParams:
+	var tissue_count: int = self.params.tissue_count
+	assert(tissue_count)
+	var tissue_params: TissueParams = self.params.duplicate(true) ## Copy params, but change relavent data such as mass, blood volume, etc.
+	assert(tissue_params)
+	
+	# Total Organ mass is divided amongst tissues
+	tissue_params.mass = self.params.mass / tissue_count
+	
+	# Total Organ blood volume is divided amongst tissues
+	tissue_params.blood_volume = self.params.blood_volume / tissue_count
+	
+	return tissue_params
 
 ## Signal handler for when any tissue's health changes
 func _on_tissue_health_changed() -> void:
