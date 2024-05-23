@@ -2,7 +2,7 @@ extends Node
 class_name Cacheable
 ## Provides caching capability for classes with calculation-dependent members
 ##
-##
+## Expect derived Node to provide static methods for forced calculations for cacheable values
 
 var cache: Dictionary = {}
 var cache_timestamps: Dictionary = {}
