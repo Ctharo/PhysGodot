@@ -1,12 +1,16 @@
 extends Node
 class_name Cacheable
+## Provides caching capability for classes with calculation-dependent members
+##
+##
 
 var cache: Dictionary = {}
 var cache_timestamps: Dictionary = {}
 
 const CHECK_EXPIRED_DURATION: float = 1.0
 
-# Method to get a cached value or calculate it if not present
+## Method to get a cached value or calculate it if not present. Calculator Callable should not rely on a potentially cached value 
+##[br](i.e., only static *.calculate_ methods should be passed).
 func get_cached_value(key: String, calculator: Callable, duration: float = -1) -> Variant:
 	if cache.has(key):
 		return cache[key]

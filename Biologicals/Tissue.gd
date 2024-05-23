@@ -38,11 +38,11 @@ var dead: bool
 
 @export var is_hypoxic: bool :
 	get:
-		return get_cached_value("is_hypoxic", self._is_hypoxic, 5.0)
+		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), 5.0)
 		
 @export var is_hypercapnic: bool :
 	get:
-		return get_cached_value("is_hypercapnic", self._is_hypercapnic, 5.0)
+		return get_cached_value("is_hypercapnic", Tissue.calculate_is_hypercapnic.bind(self), 5.0)
 
 #region Set by OrganStats
 var params: TissueParams ## Stores values of normal ranges, physical data, etc.
@@ -212,21 +212,26 @@ func aerobic_respiration(delta: float) -> void:
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
 
-
-
-## Checks if tissue has too high of CO2 concentration
-func _is_hypercapnic() -> bool:
-	return Tissue.calculate_concentration(self, GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
-
-## Checks if tissue has too low of O2 concentration
-func _is_hypoxic() -> bool:
-	return Tissue.calculate_concentration(self, GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
-
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 	Logger.log_event(message, self, verbosity)
 
+#region Static methods for calculations mostly
+## MUST GUARANTEE UP-TO-DATE CALCULATIONS 			##
+## NO CACHED VALUES SHOULD BE USED IN CALCULATIONS 	##
+##													##
+
+## Checks if tissue has too high of CO2 concentration
+static func calculate_is_hypercapnic(tissue: Tissue) -> bool:
+	return Tissue.calculate_concentration(tissue, GlobalTypes.Gases.CARBON_DIOXIDE) > tissue.params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
+
+## Checks if tissue has too low of O2 concentration
+static func calculate_is_hypoxic(tissue: Tissue) -> bool:
+	return Tissue.calculate_concentration(tissue, GlobalTypes.Gases.OXYGEN) < tissue.params.min_concentration[GlobalTypes.Gases.OXYGEN]
+
+## Returns concentration of a [Gas] within a [Tissue]
 static func calculate_concentration(tissue: Tissue, gas: GlobalTypes.Gases) -> float:
 	if tissue.mass == 0:
 		return 0.0
 	var moles: float = tissue.get_moles(gas)
 	return moles/tissue.mass
+#endregion
