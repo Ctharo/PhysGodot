@@ -218,7 +218,7 @@ func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.V
 #region Static methods for calculations mostly
 ## MUST GUARANTEE UP-TO-DATE CALCULATIONS 			##
 ## NO CACHED VALUES SHOULD BE USED IN CALCULATIONS 	##
-##													##
+
 
 ## Checks if tissue has too high of CO2 concentration
 static func calculate_is_hypercapnic(tissue: Tissue) -> bool:
