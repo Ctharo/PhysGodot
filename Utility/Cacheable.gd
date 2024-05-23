@@ -37,7 +37,7 @@ func is_dirty(key: String) -> bool:
 # Method to ensure the update timer exists and is running
 func ensure_update_timer() -> void:
 	if not has_node("_cache_update_timer"):
-		var timer = Timer.new()
+		var timer: Timer = Timer.new()
 		timer.name = "_cache_update_timer"
 		timer.wait_time = CHECK_EXPIRED_DURATION
 		timer.autostart = true
@@ -46,14 +46,14 @@ func ensure_update_timer() -> void:
 
 # Timer callback method to check and invalidate expired cache entries
 func _on_update_timer_timeout() -> void:
-	var current_time = Time.get_ticks_msec()
-	var keys_to_remove = []
+	var current_time: int = Time.get_ticks_msec()
+	var keys_to_remove: Array = []
 	
-	for key in cache_timestamps.keys():
+	for key:String in cache_timestamps.keys():
 		if cache_timestamps[key] <= current_time:
 			keys_to_remove.append(key)
 	
-	for key in keys_to_remove:
+	for key:String in keys_to_remove:
 		invalidate_cache(key)
 	
 	# Stop the timer if no timestamps are left

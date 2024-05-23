@@ -63,23 +63,18 @@ func _init_tissues() -> void:
 	assert(tissue_count != 0)
 	assert(self.params.metabolism_factor > 0, "metabolism_factor needs to be greater than zero to work")
 	for i in tissue_count:
-		_add_tissue(_get_tissue_params())
+		_add_tissue(_determine_tissue_params())
 	assert(tissues)
 	tissues.name = self.name + "'s Tissues"
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if dead:
 		return
-	timer += delta
-	if timer > 1.0:
-		invalidate_cache("is_hypercapnic")
-		invalidate_cache("is_hypercapnic")
-		timer = 0.0
 
 ## Creates a new [Tissue] and adds it to [member tissues]
 func _add_tissue(params: TissueParams) -> void:
 	if not tissues:
-		var a: Array[Tissue]
+		var a: Array[Tissue] = []
 		tissues = Tissues.new(a)
 	var tissue: Tissue = Tissue.new(params)
 	assert(tissue)
@@ -90,7 +85,7 @@ func _add_tissue(params: TissueParams) -> void:
 	invalidate_all_cache()
 
 ## From the [Organ]'s parameters, the [Tissue]'s will be generated
-func _get_tissue_params() -> TissueParams:
+func _determine_tissue_params() -> TissueParams:
 	var tissue_count: int = self.params.tissue_count
 	assert(tissue_count)
 	var tissue_params: TissueParams = self.params.duplicate(true) ## Copy params, but change relavent data such as mass, blood volume, etc.
@@ -125,7 +120,7 @@ func died() -> void:
 
 #region [member tissues] helper methods
 func get_concentration(gas: GlobalTypes.Gases) -> float:
-	return tissues.get_concentration(gas)
+	return get_cached_value("concentration_%s" % gas, Callable(tissues.get_concentration).bind(gas), 0.016)
 	
 func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
 	tissues.set_concentration(gas, concentration)
