@@ -36,6 +36,14 @@ var vessels: Vessels
 ## Is true when health reaches zero
 var dead: bool
 
+@export var is_hypoxic: bool :
+	get:
+		return get_cached_value("is_hypoxic", self._is_hypoxic, 5.0)
+		
+@export var is_hypercapnic: bool :
+	get:
+		return get_cached_value("is_hypercapnic", self._is_hypercapnic, 5.0)
+
 #region Set by OrganStats
 var params: TissueParams ## Stores values of normal ranges, physical data, etc.
 var status: Status ## Stores current status of tissue
@@ -109,12 +117,12 @@ func _init_vessels(total_blood_volume: float) -> void:
 
 ## Responsible for removing health if certain conditions are met. Called from [method _physics_process].
 func health_check(delta: float) -> void:
-	if self.is_hypoxic():
+	if self.is_hypoxic:
 		if Time.get_ticks_msec() - last_oxygen_sufficient > params.hypoxia_health_buffer * 1000:
 			health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
 	else:
 		last_oxygen_sufficient = Time.get_ticks_msec()
-	if self.is_hypercapnic():
+	if self.is_hypercapnic:
 		if Time.get_ticks_msec() - last_carbon_dioxide_sufficient > params.hypercapnea_health_buffer * 1000:
 			health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
 	else:
@@ -128,10 +136,7 @@ func _emit_health_changed() -> void:
 
 ## Returns the concentration of a gas in the tissue
 func get_concentration(gas: GlobalTypes.Gases) -> float:
-	if mass == 0:
-		return 0.0
-	var moles: float = get_moles(gas)
-	return moles/mass
+	return get_cached_value("concentration_%s" % gas, Callable(Tissue.calculate_concentration).bind(self, gas), 0.016)
 
 ## Returns the amount of gas in the tissue in moles
 func get_moles(gas: GlobalTypes.Gases) -> float:
@@ -210,13 +215,18 @@ func aerobic_respiration(delta: float) -> void:
 
 
 ## Checks if tissue has too high of CO2 concentration
-func is_hypercapnic() -> bool:
-	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
+func _is_hypercapnic() -> bool:
+	return Tissue.calculate_concentration(self, GlobalTypes.Gases.CARBON_DIOXIDE) > params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 
 ## Checks if tissue has too low of O2 concentration
-func is_hypoxic() -> bool:
-	return get_concentration(GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
+func _is_hypoxic() -> bool:
+	return Tissue.calculate_concentration(self, GlobalTypes.Gases.OXYGEN) < params.min_concentration[GlobalTypes.Gases.OXYGEN]
 
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 	Logger.log_event(message, self, verbosity)
 
+static func calculate_concentration(tissue: Tissue, gas: GlobalTypes.Gases) -> float:
+	if tissue.mass == 0:
+		return 0.0
+	var moles: float = tissue.get_moles(gas)
+	return moles/tissue.mass
