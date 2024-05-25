@@ -139,8 +139,8 @@ func get_all_vessels() -> Vessels:
 #endregion
 
 func _is_hypoxic() -> bool:
-	return get_concentration(GlobalTypes.Gases.OXYGEN) < min_concentration[GlobalTypes.Gases.OXYGEN]
+	return tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < min_concentration[GlobalTypes.Gases.OXYGEN]
 		
 func _is_hypercapnic() -> bool:
-	return get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
+	return tissues.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 

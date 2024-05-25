@@ -2,7 +2,7 @@ class_name Tissues
 extends Iterator
 ## Iterable class that contains Tissue instances and helpful methods.
 ##
-##
+## No methods should use or rely on cached values, only pure calculations here
 
 var name: String
 
@@ -79,15 +79,10 @@ func get_all_vessels() -> Vessels:
 			vessels.add(vessel)
 	return vessels
 
-## Depreciated?
-func set_debug(value: bool) -> void:
-	for tissue: Tissue in tissues:
-		tissue.debug = value
-
 ## Returns mean value of [member Tissue.health] of [Tissue]s found in [member tissues]
 func get_mean_health() -> float:
 	assert(tissues)
-	if not tissues.size(): return 0.0
+	if tissues.is_empty(): return 0.0
 	var health: float = 0
 	for tissue: Tissue in tissues:
 		health += tissue.health
