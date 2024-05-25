@@ -31,11 +31,11 @@ var settings: Settings = load("res://Settings.tres") as Settings
 
 @export var is_hypoxic: bool :
 	get:
-		return get_cached_value("is_hypoxic", self._is_hypoxic, 5.0)
+		return get_cached_value("is_hypoxic", self._is_hypoxic, 1.0)
 		
 @export var is_hypercapnic: bool :
 	get:
-		return get_cached_value("is_hypercapnic", self._is_hypercapnic, 5.0)
+		return get_cached_value("is_hypercapnic", self._is_hypercapnic, 1.0)
 
 var min_concentration: Dictionary :
 	get:
