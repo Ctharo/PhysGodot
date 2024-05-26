@@ -1,5 +1,9 @@
 extends Node
 class_name Cell
+## Responsible for managing cell-level processes
+##
+## Not yet implemented
+
 
 var receptors: Array = []
 var signal_counts: Dictionary = {}  # Total count of different types of signals
