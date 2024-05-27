@@ -37,7 +37,7 @@ func total_mass() -> float:
 
 ## Returns float of sum of moles of provided [param gas] divided by [method total_mass] return value.
 func get_concentration(gas: GlobalTypes.Gases) -> float:
-	Benchmarker.increment_call_count("get_concentration")
+	#Benchmarker.increment_call_count("get_concentration")
 	var mass: float = total_mass()
 	if mass == 0.0:
 		return 0.0
@@ -53,13 +53,9 @@ func set_health(health_value: float) -> void:
 	for tissue: Tissue in tissues:
 		tissue.health = health_value
 
+## Returns true if all tissues are dead
 func all_dead() -> bool:
-	var dead: bool = true
-	for tissue: Tissue in tissues:
-		if not tissue.dead:
-			dead = false
-			break
-	return dead
+	return tissues.all(func(tissue: Tissue) -> bool: return tissue.dead)
 
 ## Returns [Vessels] of type [enum GlobalTypes.Vessels.CAPILLARIES]
 func get_capillaries() -> Vessels:
