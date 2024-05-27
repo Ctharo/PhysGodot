@@ -1,9 +1,7 @@
 extends Node
 
-
 # Dictionary to store the count of method calls
 var call_counts: Dictionary = {}
-
 
 # Method to increment the call count for a given method
 func increment_call_count(method_name: String) -> void:
