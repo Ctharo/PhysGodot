@@ -38,11 +38,11 @@ var dead: bool
 
 @export var is_hypoxic: bool :
 	get:
-		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), 5.0)
+		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), false, 5.0)
 		
 @export var is_hypercapnic: bool :
 	get:
-		return get_cached_value("is_hypercapnic", Tissue.calculate_is_hypercapnic.bind(self), 5.0)
+		return get_cached_value("is_hypercapnic", Tissue.calculate_is_hypercapnic.bind(self), false, 5.0)
 
 #region Set by OrganStats
 var params: TissueParams ## Stores values of normal ranges, physical data, etc.

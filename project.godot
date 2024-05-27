@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Logger="*res://Utility/Logger.gd"
+Benchmarker="*res://Utility/Benchmarker.gd"
 
 [debug]
 

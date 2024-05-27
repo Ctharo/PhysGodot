@@ -31,19 +31,19 @@ var settings: Settings = load("res://Settings.tres") as Settings
 
 @export var is_hypoxic: bool :
 	get:
-		return get_cached_value("is_hypoxic", self._is_hypoxic, 1.0)
+		return get_cached_value("is_hypoxic", self._is_hypoxic, false, 1.0)
 		
 @export var is_hypercapnic: bool :
 	get:
-		return get_cached_value("is_hypercapnic", self._is_hypercapnic, 1.0)
+		return get_cached_value("is_hypercapnic", self._is_hypercapnic, false, 1.0)
 
 var min_concentration: Dictionary :
 	get:
-		return params.min_concentration
+		return get_params().min_concentration
 	
 var max_concentration: Dictionary :
 	get:
-		return params.max_concentration
+		return get_params().max_concentration
 
 var tissues: Tissues
 var type: GlobalTypes.Organs
@@ -70,6 +70,7 @@ func _init_tissues() -> void:
 func _physics_process(_delta: float) -> void:
 	if dead:
 		return
+
 
 ## Creates a new [Tissue] and adds it to [member tissues]
 func _add_tissue(params: TissueParams) -> void:
@@ -99,6 +100,9 @@ func _determine_tissue_params() -> TissueParams:
 	
 	return tissue_params
 
+func get_params() -> TissueParams:
+	return params
+
 ## Signal handler for when any tissue's health changes
 func _on_tissue_health_changed() -> void:
 	invalidate_cache("health")
@@ -119,8 +123,8 @@ func died() -> void:
 	organ_died.emit(self)
 
 #region [member tissues] helper methods
-func get_concentration(gas: GlobalTypes.Gases) -> float:
-	return get_cached_value("concentration_%s" % gas, Callable(tissues.get_concentration).bind(gas), 0.016)
+func get_concentration(gas: GlobalTypes.Gases, force_update: bool = false) -> float:
+	return get_cached_value("concentration_%s" % gas, Callable(tissues.get_concentration).bind(gas), force_update, 0.016)
 	
 func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
 	tissues.set_concentration(gas, concentration)
@@ -139,8 +143,8 @@ func get_all_vessels() -> Vessels:
 #endregion
 
 func _is_hypoxic() -> bool:
-	return tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < min_concentration[GlobalTypes.Gases.OXYGEN]
+	return tissues.any_hypoxic()
 		
 func _is_hypercapnic() -> bool:
-	return tissues.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) > max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
+	return tissues.any_hypercapnic()
 

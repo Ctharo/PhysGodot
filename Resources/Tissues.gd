@@ -6,6 +6,7 @@ extends Iterator
 
 var name: String
 
+
 ## Contains all [Tissue]s in Array
 var tissues: Array[Tissue] :
 	set(value):
@@ -36,6 +37,7 @@ func total_mass() -> float:
 
 ## Returns float of sum of moles of provided [param gas] divided by [method total_mass] return value.
 func get_concentration(gas: GlobalTypes.Gases) -> float:
+	Benchmarker.increment_call_count("get_concentration")
 	var mass: float = total_mass()
 	if mass == 0.0:
 		return 0.0
@@ -87,6 +89,12 @@ func get_mean_health() -> float:
 	for tissue: Tissue in tissues:
 		health += tissue.health
 	return health/tissues.size()
+
+func any_hypoxic() -> bool:
+	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic)
+
+func any_hypercapnic() -> bool:
+	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic)
 
 func size() -> int:
 	return tissues.size()
