@@ -1,5 +1,5 @@
 class_name ChemicalReceptor
-extends Node
+extends Cacheable
 
 ## Responsible for receiving and integrating positive and negative signals to effect change
 ##
@@ -79,7 +79,7 @@ func signal_decay() -> void:
 	var time: int = Time.get_ticks_msec()
 	if time - positive_signal_last_decayed_at > 1000:
 		var pos_signals: Array[int] = positive_signals.duplicate()
-		if not pos_signals.size():
+		if pos_signals.is_empty():
 			return
 		for s in pos_signals:
 			if time - s > params.positive_signal_lifetime * 1000:
@@ -88,7 +88,7 @@ func signal_decay() -> void:
 
 	if time - negative_signal_last_decayed_at > 1000:
 		var neg_signals: Array[int] = negative_signals.duplicate()
-		if not neg_signals.size():
+		if neg_signals.is_empty():
 			return
 		for s in neg_signals:
 			if time - s > params.negative_signal_lifetime * 1000:
