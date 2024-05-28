@@ -4,7 +4,6 @@ class_name Cell
 ##
 ## Not yet implemented
 
-
 var receptors: Array = []
 var signal_counts: Dictionary = {}  # Total count of different types of signals
 
@@ -28,29 +27,20 @@ func _compare_receptors(a: Receptor, b: Receptor) -> int:
 
 # Method to update receptors and degrade signals
 func update_signals() -> void:
-	for receptor in receptors:
+	for receptor: Receptor in receptors:
 		receptor.update_signals()
-		for _signal in receptor.bound_signals.keys():
+		for _signal: ChemicalSignal in receptor.bound_signals.keys():
 			signal_counts[_signal.type] = max(0, signal_counts.get(_signal.type, 0) - 1)
 
 # Called when the node enters the scene tree
 func _ready() -> void:
 	var timer = Timer.new()
 	timer.wait_time = 0.5  # Update signals every 0.5 seconds
-	timer.timeout.connect(_on_Timer_timeout)
+	timer.timeout.connect(_on_timer_timeout)
 	add_child(timer)
 	timer.start()
 
-	var receptor1 = Receptor.new()
-	var receptor2 = Receptor.new()
-	add_receptor(receptor1)
-	add_receptor(receptor2)
-
-	# Create a large number of signals
-	for i in range(2000):
-		var _signal = ChemicalSignal.new("type1", randi() % 100 / 100.0, 5.0, 1.0)
-		receive_signal(_signal)
 
 # Timer timeout callback function
-func _on_Timer_timeout() -> void:
+func _on_timer_timeout() -> void:
 	update_signals()
