@@ -18,9 +18,8 @@ func _iter() -> Iterator:
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
 	for organ: Organ in organs:
-		for tissue: Tissue in organ.tissues as Tissues:
-			for vessel: Vessel in tissue.get_vessels_by_type(vessel_type) as Vessels:
-				vessels.add(vessel)
+		for vessel: Vessel in organ.get_vessels_by_type(vessel_type) as Vessels:
+			vessels.add(vessel)
 	return vessels
 
 ## This assumes there is only going to be 1 organ for each type (reasonable?)
