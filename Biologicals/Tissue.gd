@@ -1,5 +1,8 @@
 class_name Tissue
 extends Cacheable
+## Describes the organization and functionality of a tissue, dependent on its role with an [Organ].
+#TODO: Make Cells class that will describe the composition and function of the cells in this tissue
+# Cells will be responsible to sample blood for signalling compounds to effect change in the Tissue/Organ
 
 signal health_changed
 

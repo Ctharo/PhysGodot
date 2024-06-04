@@ -47,11 +47,10 @@ func hypoxia_management(delta: float) -> void:
 	hypoxia_timer += delta
 	if hypoxia_timer > 0.2:
 		var parent: Body = get_parent()
-		if not parent:
-			assert(false)
+		assert(parent)
 		var organs: Organs = parent.organs
-		for organ: Organ in organs:
-			if organ.is_hypoxic: # FIXME: Relies on cacheable value, will cause problems?
+		for organ: Organ in organs: # TODO: Should release Chemical Messenger into blood which will result in GlobalTypes.PhysioSignal.INCREASE_RATE
+			if organ.is_hypoxic:
 				parent.send_signal(GlobalTypes.Organs.HEART, GlobalTypes.PhysioSignal.INCREASE_RATE)
 		hypoxia_timer = 0.0
 	

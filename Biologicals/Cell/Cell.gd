@@ -1,5 +1,5 @@
-extends Node
 class_name Cell
+extends Node
 ## Responsible for managing cell-level processes
 ##
 ## Not yet implemented
