@@ -1,5 +1,5 @@
 class_name Organs
-extends ElementContainer
+extends Iterator
 ## Custom container class for [Organ] instances
 ##
 ## Custom container class for [Organ] instances

@@ -1,5 +1,5 @@
 class_name Cells
-extends ElementContainer
+extends Iterator
 ## Custom container class for [Cell] instances
 ##
 ## Custom container class for [Cell] instances

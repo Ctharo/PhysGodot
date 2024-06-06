@@ -1,5 +1,5 @@
 class_name Tissues
-extends ElementContainer
+extends Iterator
 ## Iterable class that contains Tissue instances and helpful methods.
 ##
 ## No methods should use or rely on cached values, only pure calculations here

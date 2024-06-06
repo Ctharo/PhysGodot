@@ -1,5 +1,5 @@
 class_name Vessels
-extends ElementContainer
+extends Iterator
 ## Iterable collection of Vessel instances with helpful methods
 
 var name: String
