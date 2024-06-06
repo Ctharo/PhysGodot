@@ -1,29 +1,29 @@
 class_name Vessels
-extends Iterator
+extends ElementContainer
 ## Iterable collection of Vessel instances with helpful methods
 
 var name: String
 
-var vessels: Array[Vessel] :
-	set(value):
-		_collection = value
-	get:
-		return _collection
+#var vessels: Array[Vessel] :
+	#set(value):
+		#_collection = value
+	#get:
+		#return _collection
 
-func _init(v: Array[Vessel] = []) -> void:
+func _init(v: Array[Vessel] = [] as Array[Vessel]) -> void:
 	super._init(v)
 	fill_vessels_with_blood()
 
-func add(vessel: Vessel) -> void:
-	vessels.append(vessel)
+func add_vessel(vessel: Vessel) -> void:
+	add(vessel)
 
 func fill_vessels_with_blood() -> void:
-	for vessel: Vessel in vessels:
+	for vessel: Vessel in elements:
 		vessel.fill_with_blood()
 
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var _vessels:= Vessels.new()
-	for vessel: Vessel in vessels:
+	for vessel: Vessel in elements:
 		if vessel.type == vessel_type:
 			_vessels.add(vessel)
 	return _vessels
@@ -37,23 +37,19 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	var total_moles: float = 0.0
-	for vessel: Vessel in vessels:
+	for vessel: Vessel in elements:
 		total_moles += vessel.get_moles(gas)
 	return total_moles
 
 func get_volume() -> float:
 	var total_volume: float = 0.0
-	for vessel: Vessel in vessels:
+	for vessel: Vessel in elements:
 		total_volume += vessel.volume
 	return total_volume
 
 ## Returns [Vessels] of [Vessel] with [member Vessel.type] == [member Vessel.CAPILLIARIES].
 func get_capillaries() -> Vessels:
 	return get_vessels_by_type(GlobalTypes.Vessels.CAPILLARIES)
-
-# Making the Vessels class iterable
-func _iter() -> Iterator:
-	return Iterator.new(vessels)
 
 static func get_string(vessel: GlobalTypes.Vessels) -> String:
 	return GlobalTypes.Vessels.keys()[vessel]
@@ -65,7 +61,7 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 		printerr("Total volume of all vessels is zero")
 		return
 	var concentration: float = moles/total_volume
-	for vessel: Vessel in vessels:
+	for vessel: Vessel in elements:
 		var moles_for_vessel: float = concentration * vessel.volume
 		var final_moles_for_vessel: float = moles_for_vessel + vessel.get_moles(gas)
 		if is_zero_approx(final_moles_for_vessel):
@@ -75,14 +71,14 @@ func exchange_gas(gas: GlobalTypes.Gases, moles: float) -> void:
 
 ## Warning: Does not follow conservation of mass. Debugging only.
 func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
-	for vessel: Vessel in vessels:
+	for vessel: Vessel in elements:
 		vessel.set_moles(gas, moles)
 
 func get_parent_name() -> String:
-	return vessels[0].get_parent().name
+	return elements[0].get_parent().name
 
 func get_vessel_name() -> String:
-	if vessels.size() == 1:
-		return vessels[0].name
+	if elements.size() == 1:
+		return elements[0].name
 	else:
 		return "Vessels"

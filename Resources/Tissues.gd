@@ -1,29 +1,21 @@
 class_name Tissues
-extends Iterator
+extends ElementContainer
 ## Iterable class that contains Tissue instances and helpful methods.
 ##
 ## No methods should use or rely on cached values, only pure calculations here
 
 var name: String
 
-
-## Contains all [Tissue]s in Array
-var tissues: Array[Tissue] :
-	set(value):
-		_collection = value
-	get:
-		return _collection
-
-func _init(t: Array[Tissue] = []) -> void:
+func _init(t: Array[Tissue] = [] as Array[Tissue]) -> void:
 	super._init(t)
 
 func add_tissue(tissue: Tissue) -> void:
-	tissues.append(tissue)
+	add(tissue)
 
 ## Returns float of sum of moles of provided [param gas]: [Gas]
 func get_moles(gas: GlobalTypes.Gases) -> float:
 	var moles: float = 0.0
-	for tissue: Tissue in tissues:
+	for tissue: Tissue in elements as Array[Tissue]:
 		moles += tissue.get_moles(gas)
 	return moles
 
@@ -31,7 +23,7 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 ## Returns sum of [member Tissue.mass] from [member tissues]
 func total_mass() -> float:
 	var total: float = 0.0
-	for tissue: Tissue in tissues:
+	for tissue: Tissue in elements as Array[Tissue]:
 		total += tissue.mass
 	return total
 
@@ -45,17 +37,17 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 	
 ## Sets concentration of a [Gas] to all [Tissue]s
 func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
-	for tissue: Tissue in tissues:
+	for tissue: Tissue in elements as Array[Tissue]:
 		tissue.set_concentration(gas, concentration)
 
 ## Sets health of all [Tissue]s
 func set_health(health_value: float) -> void:
-	for tissue: Tissue in tissues:
+	for tissue: Tissue in elements as Array[Tissue]:
 		tissue.health = health_value
 
 ## Returns true if all tissues are dead
 func all_dead() -> bool:
-	return tissues.all(func(tissue: Tissue) -> bool: return tissue.dead)
+	return elements.all(func(tissue: Tissue) -> bool: return tissue.dead)
 
 ## Returns [Vessels] of type [enum GlobalTypes.Vessels.CAPILLARIES]
 func get_capillaries() -> Vessels:
@@ -64,36 +56,31 @@ func get_capillaries() -> Vessels:
 ## Returns [Vessels] of passed type [enum GlobalTypes.Vessels]
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
-	for tissue: Tissue in tissues:
-		for vessel: Vessel in tissue.get_vessels_by_type(vessel_type):
+	for tissue: Tissue in elements as Array[Tissue]:
+		for vessel: Vessel in tissue.get_vessels_by_type(vessel_type) as Vessels:
 			vessels.add(vessel)
 	return vessels
 
 ## Returns all [Vessel]s FIXME: May not be working
 func get_all_vessels() -> Vessels:
 	var vessels := Vessels.new()
-	for tissue: Tissue in tissues:
+	for tissue: Tissue in elements as Array[Tissue]:
 		for vessel: Vessel in tissue.get_all_vessels():
 			vessels.add(vessel)
 	return vessels
 
 ## Returns mean value of [member Tissue.health] of [Tissue]s found in [member tissues]
 func get_mean_health() -> float:
-	assert(tissues)
-	if tissues.is_empty(): return 0.0
+	assert(elements)
+	if is_empty(): return 0.0
 	var health: float = 0
-	for tissue: Tissue in tissues:
+	for tissue: Tissue in elements as Array[Tissue]:
 		health += tissue.health
-	return health/tissues.size()
+	return health/size()
 
 func any_hypoxic() -> bool:
-	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic)
+	return elements.any(func(tissue: Tissue) -> bool: return tissue.is_hypoxic)
 
 func any_hypercapnic() -> bool:
-	return tissues.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic)
+	return elements.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic)
 
-func size() -> int:
-	return tissues.size()
-
-func _iter() -> Iterator:
-	return Iterator.new(tissues)

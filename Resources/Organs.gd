@@ -1,30 +1,23 @@
 class_name Organs
-extends Iterator
+extends ElementContainer
 ## Custom container class for [Organ] instances
 ##
 ## Custom container class for [Organ] instances
 
-## Contains [Organ] instances for the [Body]
-var organs: Array[Organ] :
-	set(value):
-		_collection = value as Array[Organ]
-	get:
-		return _collection as Array[Organ]
-
-func _iter() -> Iterator:
-	return Iterator.new(organs)
+func _init(t: Array[Organ] = [] as Array[Organ]) -> void:
+	super._init(t)
 
 ## Returns all [Tissue]s found in [member Tissue.vessels]
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var vessels := Vessels.new()
-	for organ: Organ in organs:
+	for organ: Organ in elements:
 		for vessel: Vessel in organ.get_vessels_by_type(vessel_type) as Vessels:
 			vessels.add(vessel)
 	return vessels
 
 ## This assumes there is only going to be 1 organ for each type (reasonable?)
 func get_organ_by_type(organ_type: GlobalTypes.Organs) -> Organ:
-	for organ: Organ in organs:
+	for organ: Organ in elements:
 		if organ.is_of_type(organ_type):
 			return organ as Organ
 	return null
@@ -37,10 +30,6 @@ func connect_vessels_to_organs(source_vessel: Vessel, sink_vessel: Vessel) -> bo
 	for vessel: Vessel in get_vessels_by_type(GlobalTypes.Vessels.VEIN) as Vessels:
 		vessel.deliver_to = Vessels.new([sink_vessel] as Array[Vessel])
 	return true
-
-## Returns organ count
-func get_count() -> int:
-	return organs.size()
 
 ## Static method to retrieve a String name of an organ
 static func get_string(organ: GlobalTypes.Organs) -> String:
