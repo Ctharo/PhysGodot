@@ -59,4 +59,4 @@ func size() -> int:
 	return elements.size()
 
 func is_empty() -> bool:
-	return elements.size() == 0
+	return elements.is_empty()
