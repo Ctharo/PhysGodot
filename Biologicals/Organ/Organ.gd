@@ -82,7 +82,7 @@ func _add_tissue(params: TissueParams) -> void:
 	tissue.name = self.name + " Tissue %s" % (tissues.size() + 1)
 	tissue.health_changed.connect(_on_tissue_health_changed)
 	add_child(tissue)
-	tissues.add_tissue(tissue)
+	tissues.add(tissue)
 	invalidate_all_cache()
 
 ## From the [Organ]'s parameters, the [Tissue]'s will be generated

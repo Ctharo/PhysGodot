@@ -2,6 +2,7 @@ class_name Iterator
 extends Resource
 ## Iterator base class for iterating over a collection
 
+var name: String
 
 ## Generic container class for managing instances of type [T]
 var elements: Array:

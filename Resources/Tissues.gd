@@ -4,13 +4,10 @@ extends Iterator
 ##
 ## No methods should use or rely on cached values, only pure calculations here
 
-var name: String
+
 
 func _init(t: Array[Tissue] = [] as Array[Tissue]) -> void:
 	super._init(t)
-
-func add_tissue(tissue: Tissue) -> void:
-	add(tissue)
 
 ## Returns float of sum of moles of provided [param gas]: [Gas]
 func get_moles(gas: GlobalTypes.Gases) -> float:
