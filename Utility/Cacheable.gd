@@ -37,11 +37,11 @@ func get_cached_value(key: String, calculator: Callable, force_update: bool = fa
 
 	# Calculate the value if not cached, expired, or forced update
 
-	if force_update:
-		if is_recently_updated(key):
-				return cache[key]
-		else:
-			return cache[key]
+	#if force_update:
+		#if is_recently_updated(key):
+				#return cache[key]
+		#else:
+			#return cache[key]
 
 	# Calculate the value if not cached or expired
 	@warning_ignore("untyped_declaration")
