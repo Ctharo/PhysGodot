@@ -31,28 +31,16 @@ var settings: Settings = load("res://Settings.tres") as Settings
 
 @export var is_hypoxic: bool :
 	get:
-<<<<<<< Updated upstream
 		return get_cached_value("is_hypoxic", self._is_hypoxic, false, 1.0)
-		
-@export var is_hypercapnic: bool :
-	get:
-		return get_cached_value("is_hypercapnic", self._is_hypercapnic, false, 1.0)
-=======
-		return self._is_hypoxic()
 
 @export var is_hypercapnic: bool :
 	get:
-		return self._is_hypercapnic()
->>>>>>> Stashed changes
+		return get_cached_value("is_hypercapnic", self._is_hypercapnic, false, 1.0)
 
 var min_concentration: Dictionary :
 	get:
 		return get_params().min_concentration
-<<<<<<< Updated upstream
-	
-=======
 
->>>>>>> Stashed changes
 var max_concentration: Dictionary :
 	get:
 		return get_params().max_concentration
@@ -112,9 +100,6 @@ func _determine_tissue_params() -> TissueParams:
 
 	return tissue_params
 
-func get_params() -> TissueParams:
-	return params
-
 ## Signal handler for when any tissue's health changes
 func _on_tissue_health_changed() -> void:
 	invalidate_cache("health")
@@ -133,15 +118,9 @@ func died() -> void:
 	organ_died.emit(self)
 
 #region [member tissues] helper methods
-<<<<<<< Updated upstream
 func get_concentration(gas: GlobalTypes.Gases, force_update: bool = false) -> float:
 	return get_cached_value("concentration_%s" % gas, Callable(tissues.get_concentration).bind(gas), force_update, 0.016)
-	
-=======
-func get_concentration(gas: GlobalTypes.Gases) -> float:
-	return get_cached_value("concentration_%s" % gas, Callable(tissues.get_concentration).bind(gas), 0.2)
 
->>>>>>> Stashed changes
 func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
 	tissues.set_concentration(gas, concentration)
 
@@ -159,13 +138,8 @@ func get_all_vessels() -> Vessels:
 #endregion
 
 func _is_hypoxic() -> bool:
-<<<<<<< Updated upstream
 	return tissues.any_hypoxic()
-		
-=======
-	return tissues.get_concentration(GlobalTypes.Gases.OXYGEN) < min_concentration[GlobalTypes.Gases.OXYGEN]
 
->>>>>>> Stashed changes
 func _is_hypercapnic() -> bool:
 	return tissues.any_hypercapnic()
 

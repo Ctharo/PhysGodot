@@ -13,20 +13,14 @@ const CHECK_EXPIRED_DURATION: float = 1.0
 const MIN_UPDATE_INTERVAL: int = 100  # Minimum interval in milliseconds (approximately one frame at 60 FPS)
 
 ## Method to get a cached value or calculate it if not present. Calculator Callable should not rely on a potentially cached value
-<<<<<<< Updated upstream
 ## (i.e., only static *.calculate_ methods should be passed).
 func get_cached_value(key: String, calculator: Callable, force_update: bool = false, duration: float = -1) -> Variant:
-=======
-##[br](i.e., only static *.calculate_ methods should be passed).
-func get_cached_value(key: String, calculator: Callable, duration: float = -1) -> Variant:
->>>>>>> Stashed changes
 	var current_time: int = Time.get_ticks_msec()
-
 	# Check if the value is cached and not expired
 	if cache.has(key):
 		if cache_timestamps.has(key):
 			if cache_timestamps[key] > current_time:
-<<<<<<< Updated upstream
+
 				# If force_update is true, check if it was recently updated
 				if force_update:
 					if is_recently_updated(key):
@@ -42,11 +36,9 @@ func get_cached_value(key: String, calculator: Callable, duration: float = -1) -
 				return cache[key]
 
 	# Calculate the value if not cached, expired, or forced update
-	@warning_ignore("untyped_declaration")
-	var value = calculator.call()
-	cache[key] = value
-	cache_last_calculation[key] = current_time
-=======
+
+	if force_update:
+		if is_recently_updated(key):
 				return cache[key]
 		else:
 			return cache[key]
@@ -55,7 +47,7 @@ func get_cached_value(key: String, calculator: Callable, duration: float = -1) -
 	@warning_ignore("untyped_declaration")
 	var value = calculator.call()
 	cache[key] = value
->>>>>>> Stashed changes
+	cache_last_calculation[key] = current_time
 
 	# If a duration is provided, set up the timestamp
 	if duration > 0:
@@ -97,19 +89,11 @@ func _on_update_timer_timeout() -> void:
 	var current_time: int = Time.get_ticks_msec()
 	var keys_to_remove: Array = []
 
-<<<<<<< Updated upstream
 	for key: String in cache_timestamps.keys():
 		if cache_timestamps[key] <= current_time:
 			keys_to_remove.append(key)
 
 	for key: String in keys_to_remove:
-=======
-	for key:String in cache_timestamps.keys():
-		if cache_timestamps[key] <= current_time:
-			keys_to_remove.append(key)
-
-	for key:String in keys_to_remove:
->>>>>>> Stashed changes
 		invalidate_cache(key)
 
 	# Stop the timer if no timestamps are left

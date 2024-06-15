@@ -41,13 +41,8 @@ var dead: bool
 
 @export var is_hypoxic: bool :
 	get:
-<<<<<<< Updated upstream
 		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), false, 5.0)
-		
-=======
-		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), 5.0)
 
->>>>>>> Stashed changes
 @export var is_hypercapnic: bool :
 	get:
 		return get_cached_value("is_hypercapnic", Tissue.calculate_is_hypercapnic.bind(self), false, 5.0)
