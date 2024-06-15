@@ -49,8 +49,8 @@ func hypoxia_management(delta: float) -> void:
 		var parent: Body = get_parent()
 		assert(parent)
 		var organs: Organs = parent.organs
-		for organ: Organ in organs: # TODO: Should release Chemical Messenger into blood which will result in GlobalTypes.PhysioSignal.INCREASE_RATE
-			if organ.is_hypoxic:
+		for organ: Organ in organs as Organs: # TODO: Should release Chemical Messenger into blood which will result in GlobalTypes.PhysioSignal.INCREASE_RATE
+			if organ.is_hypoxic: # FIXME: This relies on possibly delayed value? Plus we have a hypoxia timer convoluting the process
 				parent.send_signal(GlobalTypes.Organs.HEART, GlobalTypes.PhysioSignal.INCREASE_RATE)
 		hypoxia_timer = 0.0
 	

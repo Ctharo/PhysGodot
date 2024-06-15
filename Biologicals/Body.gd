@@ -2,7 +2,7 @@ class_name Body
 extends Node
 ## Manages [Organs] and major [Vessels]
 ##
-## TODO: Should handle Blood movement from aorta to tissues and from tissues to vena_cava
+
 
 @export var organs: Organs
 @export var vessels: Vessels

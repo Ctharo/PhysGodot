@@ -2,8 +2,6 @@ extends Node
 class_name Vessel
 
 
-## TODO: May not do anything?
-@export var vessel_type: String
 ## Represents the current volume of [Blood] that this vessel is holding
 var volume: float :
 	get:

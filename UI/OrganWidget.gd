@@ -2,6 +2,7 @@ class_name OrganWidget
 extends VBoxContainer
 ## UI object that will display information on an [Organ] passed on instantiation
 
+#TODO: All calls to get_concentration() should instead be using a cached value?
 
 func _init(organ: Organ) -> void:
 	self.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -50,7 +51,7 @@ func _init(organ: Organ) -> void:
 		var vessel_concentration := capillaries.get_concentration(gas)
 
 		gas_info.append_text("Tissue: [color=" + get_concentration_color_string(gas, organ) + "]%s[/color] \n" % Helpers.as_percent(tissue_concentration, 2))
-		gas_info.append_text("Vessel: [color=" + get_vessel_concentration_color_string(gas, organ, capillaries) + "]%s[/color]" % Helpers.as_percent(vessel_concentration, 2))
+		gas_info.append_text("Vessel: [color=" + get_vessel_concentration_color_string(gas, organ, vessel_concentration) + "]%s[/color]" % Helpers.as_percent(vessel_concentration, 2))
 		add_child(gas_info)
 
 	# Additional setup based on organ type
@@ -62,6 +63,7 @@ func _init(organ: Organ) -> void:
 		_:
 			pass
 
+# TODO: Should have unified method to determine is abnormal threshold for this method and get_vessel_concentration_color_string
 func get_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ) -> String:
 	var result: String
 	match gas:
@@ -73,13 +75,13 @@ func get_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ) -> Str
 			result = "white"
 	return result
 
-func get_vessel_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ, vessels: Vessels) -> String:
+func get_vessel_concentration_color_string(gas: GlobalTypes.Gases, organ: Organ, vessel_concentration: float) -> String:
 	var result: String
 	match gas:
 		GlobalTypes.Gases.OXYGEN:
-			result = "red" if vessels.get_concentration(gas) < organ.params.min_concentration[gas] else "white"
+			result = "red" if vessel_concentration < organ.params.min_concentration[gas] else "white"
 		GlobalTypes.Gases.CARBON_DIOXIDE:
-			result = "red" if vessels.get_concentration(gas) > organ.params.max_concentration[gas] else "white"
+			result = "red" if vessel_concentration > organ.params.max_concentration[gas] else "white"
 		_:
 			result = "white"
 	return result
