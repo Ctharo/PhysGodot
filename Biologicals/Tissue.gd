@@ -41,8 +41,13 @@ var dead: bool
 
 @export var is_hypoxic: bool :
 	get:
+<<<<<<< Updated upstream
 		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), false, 5.0)
 		
+=======
+		return get_cached_value("is_hypoxic", Tissue.calculate_is_hypoxic.bind(self), 5.0)
+
+>>>>>>> Stashed changes
 @export var is_hypercapnic: bool :
 	get:
 		return get_cached_value("is_hypercapnic", Tissue.calculate_is_hypercapnic.bind(self), false, 5.0)
@@ -71,7 +76,7 @@ func _init(params: TissueParams) -> void:
 	self.data = Data.new(self)
 	_init_vessels(params.blood_volume)
 	_init_gases()
-	
+
 	_timer.wait_time = 0.1  # Delay before emitting the signal
 	_timer.one_shot = true
 	_timer.timeout.connect(_emit_health_changed)
@@ -161,7 +166,7 @@ func exchange_gases(delta: float) -> void:
 	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
 	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
 	Logger.log_debug("Finished exchanging gases with capillaries", self)
-	
+
 ## Responsible for exchanging of moles of gas between this class and arg capillaries
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels, delta: float) -> void:
 	# Do nothing if concentrations are equal
