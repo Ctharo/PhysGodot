@@ -31,14 +31,14 @@ static func format_time(msecs: int) -> String:
 
 	if hours > 0:
 		formatted_time += str(hours) + "h "
-	
+
 	if minutes > 0 or hours > 0:  # This ensures that minutes are included if hours are present
 		formatted_time += str(minutes) + "m "
-	
+
 	formatted_time += str(secs) + "s"
-	
+
 	return formatted_time
-	
+
 ## Formats a float in scientific notation with optional significant figures
 static func to_sci_notation(num: float, sig_figs: int = 3) -> String:
 	if num == 0:

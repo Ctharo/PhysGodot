@@ -31,7 +31,7 @@ func get_concentration(gas: GlobalTypes.Gases) -> float:
 	if mass == 0.0:
 		return 0.0
 	return get_moles(gas)/mass
-	
+
 ## Sets concentration of a [Gas] to all [Tissue]s
 func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
 	for tissue: Tissue in elements as Array[Tissue]:

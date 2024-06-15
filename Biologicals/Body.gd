@@ -47,8 +47,8 @@ func _ready() -> void:
 		brain.connect_organ_signals(organ)
 		organ.organ_died.connect(_on_organ_died)
 	log_event("Finished connecting organ signals")
-	
-	
+
+
 	add_child(brain)
 	add_child(lungs)
 	add_child(heart)
@@ -77,14 +77,14 @@ func _ready() -> void:
 
 	vessels = Vessels.new([aorta, pulmonary_artery, pulmonary_vein, vena_cava] as Array[Vessel])
 	log_event("Finished creating vessels")
-	
+
 	# Connect all tissues to body vessels
 	log_event("Connecting central vessels to organs")
 	if !organs.connect_vessels_to_organs(aorta, vena_cava):
 		log_event("Problem connecting vessels", Logger.Verbosity.ERROR)
 	else:
 		log_event("Successfully connected vessels")
-	
+
 	log_event("%s has been created successfully" % name)
 
 
@@ -92,7 +92,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if dead:
 		return
-		
+
 func send_signal(to_organ: GlobalTypes.Organs, sig: GlobalTypes.PhysioSignal) -> void:
 	match to_organ:
 		GlobalTypes.Organs.HEART:

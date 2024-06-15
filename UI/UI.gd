@@ -5,7 +5,7 @@ var bodies: Array[Body] :
 	set(value):
 		Logger.log_event("Body array received in UI", self)
 		bodies = value
-		
+
 @onready var vbox: VBoxContainer = %VBoxContainer as VBoxContainer
 @onready var hbox: HBoxContainer = %OrganWidgetHBox as HBoxContainer
 @onready var game_time_label: RichTextLabel = %GameTimeLabel as RichTextLabel
@@ -18,7 +18,7 @@ func _ready() -> void:
 func _on_update_ui_timer_timeout() -> void:
 	if hbox == null:
 		return
-		
+
 	if clear_dead():
 		return
 
@@ -30,7 +30,7 @@ func _on_update_ui_timer_timeout() -> void:
 		label.text = "No living bodies found"
 		hbox.add_child(label)
 		return
-		
+
 	create_ui(bodies)
 
 func create_ui(b: Array[Body]) -> void:

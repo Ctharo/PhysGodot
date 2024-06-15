@@ -30,8 +30,8 @@ func _init(params: TissueParams) -> void:
 func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
-	if params.perform_organ_specific_task: heart_beat(delta)
-	if params.perform_organ_specific_task: heart_rate_manager()
+	if get_params().perform_organ_specific_task: heart_beat(delta)
+	if get_params().perform_organ_specific_task: heart_rate_manager()
 
 func heart_rate_manager() -> void:
 	if heart_rate < signal_params.physiological_target_rate: # FIXME: This would be better if not hardcoded

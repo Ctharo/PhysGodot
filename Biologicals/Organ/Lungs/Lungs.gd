@@ -29,8 +29,8 @@ func _init(params: TissueParams) -> void:
 func _physics_process(delta: float) -> void:
 	if dead: return
 	super._physics_process(delta)
-	if params.perform_organ_specific_task: respire(delta)
-	if params.perform_organ_specific_task: respiration_rate_manager()
+	if get_params().perform_organ_specific_task: respire(delta)
+	if get_params().perform_organ_specific_task: respiration_rate_manager()
 
 func respiration_rate_manager() -> void:
 	if respiration_rate < signal_params.physiological_target_rate: # FIXME: This would be better if not hardcoded
