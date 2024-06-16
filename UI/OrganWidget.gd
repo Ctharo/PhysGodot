@@ -8,6 +8,9 @@ func _init(organ: Organ) -> void:
 	self.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	self.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
+	var capillaries := organ.get_capillaries()
+	assert(capillaries)
+
 	# Organ name
 	var organ_info := RichTextLabel.new()
 	organ_info.name = "OrganNameLabel"
@@ -47,7 +50,6 @@ func _init(organ: Organ) -> void:
 
 		# Get concentrations and check conditions
 		var tissue_concentration := organ.get_concentration(gas)
-		var capillaries := organ.get_capillaries()
 		var vessel_concentration := capillaries.get_concentration(gas)
 
 		gas_info.append_text("Tissue: [color=" + get_concentration_color_string(gas, organ) + "]%s[/color] \n" % Helpers.as_percent(tissue_concentration, 2))

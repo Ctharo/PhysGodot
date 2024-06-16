@@ -159,12 +159,12 @@ func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
 ## Responsible for directing the exchange of moles of gas between this class and child capillaries: [Vessel] based on concentration differences
 func exchange_gases(delta: float) -> void:
 	log_event("Exchanging gases with capillaries")
-	
+
 	# Exchange gases with capillaries
 	var capillaries: Vessels = self.get_capillaries()
 	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
 	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
-	
+
 	log_event("Finished exchanging gases with capillaries")
 
 ## Responsible for exchanging of moles of gas between this class and arg capillaries

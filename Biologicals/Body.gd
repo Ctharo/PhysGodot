@@ -146,13 +146,13 @@ func _on_heart_beat(stroke_volume: float) -> void:
 	for organ: Organ in organs:
 		var organ_capillaries: Vessels = organ.get_capillaries()
 		assert(organ_capillaries)
-		
+
 		# Calculate initial concentrations
 		var initial_organ_o2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
 		var initial_organ_co2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
 		var initial_pulm_o2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
 		var initial_pulm_co2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
-		
+
 		# Calculate gas removal based on organ capillaries
 		var organ_o2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN) * stroke_volume
 		var organ_co2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) * stroke_volume
@@ -168,7 +168,7 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		# Update moles in pulmonary capillaries
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
-		
+
 		# Calculate final concentrations
 		var final_organ_o2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
 		var final_organ_co2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
