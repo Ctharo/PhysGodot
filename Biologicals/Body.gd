@@ -141,10 +141,18 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		return
 
 	var pulmonary_capillaries: Vessels = get_lungs().alveoli.get_capillaries()
+	assert(pulmonary_capillaries)
 
 	for organ: Organ in organs:
 		var organ_capillaries: Vessels = organ.get_capillaries()
-
+		assert(organ_capillaries)
+		
+		# Calculate initial concentrations
+		var initial_organ_o2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
+		var initial_organ_co2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+		var initial_pulm_o2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
+		var initial_pulm_co2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+		
 		# Calculate gas removal based on organ capillaries
 		var organ_o2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN) * stroke_volume
 		var organ_co2_moles_removed: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE) * stroke_volume
@@ -160,6 +168,25 @@ func _on_heart_beat(stroke_volume: float) -> void:
 		# Update moles in pulmonary capillaries
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.OXYGEN, pulmonary_capillaries.get_moles(GlobalTypes.Gases.OXYGEN) + organ_o2_moles_removed - pulm_o2_moles_added)
 		pulmonary_capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, pulmonary_capillaries.get_moles(GlobalTypes.Gases.CARBON_DIOXIDE) + organ_co2_moles_removed - pulm_co2_moles_added)
+		
+		# Calculate final concentrations
+		var final_organ_o2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
+		var final_organ_co2_concentration: float = organ_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+		var final_pulm_o2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.OXYGEN)
+		var final_pulm_co2_concentration: float = pulmonary_capillaries.get_concentration(GlobalTypes.Gases.CARBON_DIOXIDE)
+
+		# Ensure final concentrations are different from initial concentrations
+		if initial_organ_o2_concentration == final_organ_o2_concentration:
+			printerr("Organ O2 concentration did not change after heartbeat")
+
+		if initial_organ_co2_concentration == final_organ_co2_concentration:
+			printerr("Organ CO2 concentration did not change after heartbeat")
+
+		if initial_pulm_o2_concentration == final_pulm_o2_concentration:
+			printerr("Pulmonary O2 concentration did not change after heartbeat")
+
+		if initial_pulm_co2_concentration == final_pulm_co2_concentration:
+			printerr("Pulmonary CO2 concentration did not change after heartbeat")
 
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 		Logger.log_event(message, self, verbosity)

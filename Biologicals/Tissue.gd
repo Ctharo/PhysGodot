@@ -48,7 +48,7 @@ var dead: bool
 		return get_cached_value("is_hypercapnic", Tissue.calculate_is_hypercapnic.bind(self), false, 5.0)
 
 #region Set by OrganStats
-var params: TissueParams ## Stores values of normal ranges, physical data, etc.
+var _params: TissueParams ## Stores values of normal ranges, physical data, etc.
 var status: Status ## Stores current status of tissue
 #endregion
 
@@ -59,14 +59,14 @@ var last_oxygen_sufficient: float
 var last_carbon_dioxide_sufficient: float
 var mass: float :
 	get:
-		if params:
-			return params.mass
+		if get_params():
+			return get_params().mass
 		else:
 			return 0.0
 
 func _init(params: TissueParams) -> void:
 	vessels = Vessels.new()
-	self.params = params
+	self._params = params
 	self.status = Status.new(params)
 	self.data = Data.new(self)
 	_init_vessels(params.blood_volume)
@@ -118,16 +118,19 @@ func _init_vessels(total_blood_volume: float) -> void:
 	capillaries.deliver_to = Vessels.new([vein] as Array[Vessel])
 	artery.deliver_to = Vessels.new([capillaries] as Array[Vessel])
 
+func get_params() -> TissueParams:
+	return _params
+
 ## Responsible for removing health if certain conditions are met. Called from [method _physics_process].
 func health_check(delta: float) -> void:
 	if self.is_hypoxic:
-		if Time.get_ticks_msec() - last_oxygen_sufficient > params.hypoxia_health_buffer * 1000:
-			health -= delta * params.hypoxia_sensitivity * params.health_loss_factor * 0.01
+		if Time.get_ticks_msec() - last_oxygen_sufficient > get_params().hypoxia_health_buffer * 1000:
+			health -= delta * get_params().hypoxia_sensitivity * get_params().health_loss_factor * 0.01
 	else:
 		last_oxygen_sufficient = Time.get_ticks_msec()
 	if self.is_hypercapnic:
-		if Time.get_ticks_msec() - last_carbon_dioxide_sufficient > params.hypercapnea_health_buffer * 1000:
-			health -= delta * params.hypercapnea_sensitivity * params.health_loss_factor * 0.01
+		if Time.get_ticks_msec() - last_carbon_dioxide_sufficient > get_params().hypercapnea_health_buffer * 1000:
+			health -= delta * get_params().hypercapnea_sensitivity * get_params().health_loss_factor * 0.01
 	else:
 		last_carbon_dioxide_sufficient = Time.get_ticks_msec()
 
@@ -155,12 +158,14 @@ func set_concentration(gas: GlobalTypes.Gases, concentration: float) -> void:
 
 ## Responsible for directing the exchange of moles of gas between this class and child capillaries: [Vessel] based on concentration differences
 func exchange_gases(delta: float) -> void:
-	Logger.log_debug("Exchanging gases with capillaries", self)
+	log_event("Exchanging gases with capillaries")
+	
 	# Exchange gases with capillaries
 	var capillaries: Vessels = self.get_capillaries()
 	exchange_gas_with_capillaries(GlobalTypes.Gases.OXYGEN, capillaries, delta)
 	exchange_gas_with_capillaries(GlobalTypes.Gases.CARBON_DIOXIDE, capillaries, delta)
-	Logger.log_debug("Finished exchanging gases with capillaries", self)
+	
+	log_event("Finished exchanging gases with capillaries")
 
 ## Responsible for exchanging of moles of gas between this class and arg capillaries
 func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels, delta: float) -> void:
@@ -175,12 +180,12 @@ func exchange_gas_with_capillaries(gas: GlobalTypes.Gases, capillaries: Vessels,
 	var recipient: Object = capillaries if capillaries.get_concentration(gas) < self.get_concentration(gas) else self
 	assert(donor and recipient)
 	var delta_concentration: float = donor.get_concentration(gas) - recipient.get_concentration(gas)
-	var potential_moles: float = delta_concentration * mass * params.vascularity_factor * delta
+	var potential_moles: float = delta_concentration * mass * get_params().vascularity_factor * delta
 	var moles: float = min(potential_moles, donor.get_moles(gas))
 	# Calculate the actual amount of moles that can be exchanged
 	if is_zero_approx(moles):
 		return
-	Logger.log_verbose("%s is sending %s moles of %s to %s" % [donor.name, Helpers.to_sci_notation(moles), Gases.get_string(gas), recipient.name], self)
+	log_event("%s is sending %s moles of %s to %s" % [donor.name, Helpers.to_sci_notation(moles), Gases.get_string(gas), recipient.name])
 	donor.exchange_gas(gas, -moles)
 	recipient.exchange_gas(gas, moles)
 
@@ -207,11 +212,14 @@ func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 func aerobic_respiration(delta: float) -> void:
 	var oxygen_moles: float = get_moles(GlobalTypes.Gases.OXYGEN)
 
-	var oxygen_needed: float = min(0.001 * params.metabolism_factor * params.oxygen_consumption_factor * delta, oxygen_moles)
-	var carbon_dioxide_produced: float = 5e-5 * params.metabolism_factor * params.carbon_dioxide_production_factor * delta
+	var oxygen_needed: float = min(0.001 * get_params().metabolism_factor * get_params().oxygen_consumption_factor * delta, oxygen_moles)
+	var carbon_dioxide_produced: float = 5e-5 * get_params().metabolism_factor * get_params().carbon_dioxide_production_factor * delta
 
 	exchange_gas(GlobalTypes.Gases.OXYGEN, -oxygen_needed)
 	exchange_gas(GlobalTypes.Gases.CARBON_DIOXIDE, carbon_dioxide_produced)
+
+	log_event("Consumed %s moles of oxygen" % Helpers.to_sci_notation(oxygen_needed))
+	log_event("Produced %s moles of carbon dioxide" % Helpers.to_sci_notation(carbon_dioxide_produced))
 
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 	Logger.log_event(message, self, verbosity)
@@ -223,11 +231,11 @@ func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.V
 
 ## Checks if tissue has too high of CO2 concentration
 static func calculate_is_hypercapnic(tissue: Tissue) -> bool:
-	return Tissue.calculate_concentration(tissue, GlobalTypes.Gases.CARBON_DIOXIDE) > tissue.params.max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
+	return Tissue.calculate_concentration(tissue, GlobalTypes.Gases.CARBON_DIOXIDE) > tissue.get_params().max_concentration[GlobalTypes.Gases.CARBON_DIOXIDE]
 
 ## Checks if tissue has too low of O2 concentration
 static func calculate_is_hypoxic(tissue: Tissue) -> bool:
-	return Tissue.calculate_concentration(tissue, GlobalTypes.Gases.OXYGEN) < tissue.params.min_concentration[GlobalTypes.Gases.OXYGEN]
+	return Tissue.calculate_concentration(tissue, GlobalTypes.Gases.OXYGEN) < tissue.get_params().min_concentration[GlobalTypes.Gases.OXYGEN]
 
 ## Returns concentration of a [Gas] within a [Tissue]
 static func calculate_concentration(tissue: Tissue, gas: GlobalTypes.Gases) -> float:

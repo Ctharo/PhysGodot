@@ -1,5 +1,5 @@
 extends Node
-class_name Receptor
+class_name _Receptor
 
 var bound_signals: Dictionary = {}  # Stores signals and their binding times
 var max_signals: int = 1000  # Maximum number of signals that can bind at once

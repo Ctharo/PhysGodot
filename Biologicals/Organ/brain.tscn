@@ -1,9 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bb0dhwqmtnpm4"]
+[gd_scene load_steps=2 format=3 uid="uid://bb0dhwqmtnpm4"]
 
 [ext_resource type="Script" path="res://Biologicals/Organ/Brain.gd" id="1_ntejk"]
-[ext_resource type="Resource" uid="uid://dp8c20mk1infd" path="res://Resources/Params/TissueParams/BrainParams.tres" id="2_463x7"]
 
 [node name="Brain" type="Node"]
 script = ExtResource("1_ntejk")
 organ_type = "GlobalTypes.Organs.BRAIN"
-params = ExtResource("2_463x7")
