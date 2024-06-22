@@ -98,9 +98,7 @@ func send_signal(to_organ: GlobalTypes.Organs, sig: GlobalTypes.PhysioSignal) ->
 		GlobalTypes.Organs.HEART:
 			get_heart().receive_signal(sig)
 
-## Should move Blood throughout body
-func move_blood(_delta: float) -> void:
-	pass
+
 
 ## Signal response
 func _on_organ_bad_chemistry(organ: Organ, gas: GlobalTypes.Gases) -> void:
@@ -134,6 +132,10 @@ func on_died() -> void:
 	log_event("%s has died" % name, Logger.Verbosity.IMPORTANT)
 	dead = true
 
+## Should move Blood throughout body
+func move_blood(_delta: float) -> void:
+	pass
+
 ## Simulates the effects of a heart beat in moving around gases through blood.
 func _on_heart_beat(stroke_volume: float) -> void:
 	if stroke_volume <= 0:
@@ -143,7 +145,7 @@ func _on_heart_beat(stroke_volume: float) -> void:
 	var pulmonary_capillaries: Vessels = get_lungs().alveoli.get_capillaries()
 	assert(pulmonary_capillaries)
 
-	for organ: Organ in organs:
+	for organ: Organ in organs: # TODO: This should use a similar system to the doner/recipient used in [method Organ.exchange_gas_with_capillaries]
 		var organ_capillaries: Vessels = organ.get_capillaries()
 		assert(organ_capillaries)
 
