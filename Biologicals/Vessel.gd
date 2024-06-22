@@ -28,10 +28,13 @@ var is_filled: bool = false
 func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 	self.type = _vessel_type
 	self.max_volume = max_volume
+	fill_with_blood()
 
 ## Instantiates [Blood] with [member Blood.volume] equal to [member max_volume]
 func fill_with_blood()-> void:
-	assert(!is_filled, "Method should not be called twice")
+	if is_filled: 
+		return
+	assert(!is_filled, "Blood should only be initialized once")
 	var b: Blood = Blood.new(max_volume)
 	blood = b
 	blood.name = name + "'s Blood"

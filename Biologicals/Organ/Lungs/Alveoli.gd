@@ -19,7 +19,6 @@ func _init_vessels() -> void:
 	add_child(capillaries)
 	capillaries.max_volume = 2.0
 	vessels = Vessels.new([capillaries] as Array[Vessel])
-	vessels.fill_vessels_with_blood()
 	
 	capillaries.set_moles(GlobalTypes.Gases.OXYGEN, 0.0 * capillaries.volume)
 	capillaries.set_moles(GlobalTypes.Gases.CARBON_DIOXIDE, 0.10 * capillaries.volume)

@@ -112,7 +112,6 @@ func _init_vessels(total_blood_volume: float) -> void:
 	add_child(artery)
 
 	vessels = Vessels.new([capillaries, vein, artery] as Array[Vessel])
-	vessels.fill_vessels_with_blood()
 	
 	vessels.name = "%s's Vessels" % name
 
