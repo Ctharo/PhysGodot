@@ -56,13 +56,16 @@ func _ready() -> void:
 	# Create Vessels
 	log_event("Creating central vessels")
 	var aorta := Vessel.new(GlobalTypes.Vessels.AORTA)
+	aorta.name = "Aorta"
 	add_child(aorta)
 
 	var pulmonary_artery := Vessel.new(GlobalTypes.Vessels.PULMONARY_ARTERY)
+	pulmonary_artery.name = "Pulmonary Artery"
 	add_child(pulmonary_artery)
 
 	# Connect major Body vessels
 	var pulmonary_vein := Vessel.new(GlobalTypes.Vessels.PULMONARY_VEIN)
+	pulmonary_vein.name = "Pulmonary Vein"
 	pulmonary_vein.deliver_to = Vessels.new([aorta] as Array[Vessel])
 	add_child(pulmonary_vein)
 
@@ -73,6 +76,7 @@ func _ready() -> void:
 
 	var vena_cava := Vessel.new(GlobalTypes.Vessels.VENA_CAVA)
 	vena_cava.deliver_to = Vessels.new([pulmonary_artery] as Array[Vessel])
+	vena_cava.name = "Vena Cava"
 	add_child(vena_cava)
 
 	vessels = Vessels.new([aorta, pulmonary_artery, pulmonary_vein, vena_cava] as Array[Vessel])
