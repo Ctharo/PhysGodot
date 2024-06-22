@@ -18,6 +18,8 @@ var type: GlobalTypes.Vessels
 ## Stores the [Blood] that this vessel is currently holding
 var blood: Blood
 
+var is_filled: bool = false
+
 ## The [Vessels] collection that this vessel delivers [Blood] to
 @export var deliver_to: Vessels :
 	set(value):
@@ -29,9 +31,11 @@ func _init(_vessel_type: GlobalTypes.Vessels, max_volume: float = 1.0) -> void:
 
 ## Instantiates [Blood] with [member Blood.volume] equal to [member max_volume]
 func fill_with_blood()-> void:
+	assert(!is_filled, "Method should not be called twice")
 	var b: Blood = Blood.new(max_volume)
 	blood = b
 	blood.name = name + "'s Blood"
+	is_filled = true
 
 ## TODO: Currently does nothing
 func send_blood_to_vessel() -> void:
@@ -51,4 +55,5 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 
 ## Sets total moles of a gas in the blood of this vessel
 func set_moles(gas: GlobalTypes.Gases, moles: float) -> void:
+	assert(blood, "Blood should be present")
 	self.blood.set_moles(gas, moles)

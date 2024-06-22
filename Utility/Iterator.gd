@@ -7,10 +7,10 @@ var name: String
 ## Generic container class for managing instances of type [T]
 var elements: Array:
 	set(value):
-		elements = value as Array
+		elements = value 
 		end = elements.size()
 	get:
-		return elements as Array
+		return elements
 
 const START: int = 0
 var current: int

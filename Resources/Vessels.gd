@@ -2,13 +2,16 @@ class_name Vessels
 extends Iterator
 ## Iterable collection of Vessel instances with helpful methods
 
+var is_filled: bool = false
+
 func _init(v: Array[Vessel] = [] as Array[Vessel]) -> void:
 	super._init(v)
-	fill_vessels_with_blood()
 
 func fill_vessels_with_blood() -> void:
+	assert(!is_filled, "Method should only be called once")
 	for vessel: Vessel in elements as Array[Vessel]:
 		vessel.fill_with_blood()
+	is_filled = true
 
 # FIXME: Doesn't appear to be working?
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
