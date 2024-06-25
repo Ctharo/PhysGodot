@@ -1,6 +1,7 @@
 class_name Heart
 extends Organ
 
+# TODO: Oxygen consumption and CO2 production should be effected by heart beat effort
 signal heart_beated
 
 ## Heart rate in beats per second - clamped between 0 and 4 (0 - 240 bpm)
