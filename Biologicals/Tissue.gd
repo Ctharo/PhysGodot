@@ -78,8 +78,6 @@ func _init(params: TissueParams) -> void:
 	add_child(_timer)
 
 func _physics_process(delta: float) -> void:
-	# TODO: Should be responsible to run physiological processes
-	# (i.e., cellular respiration, acid-base chemistry, intercellular exchanges etc)
 	if dead: return
 	timer += delta
 	if timer > TIMER_INTERVAL:
