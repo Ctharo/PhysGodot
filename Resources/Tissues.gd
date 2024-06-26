@@ -2,9 +2,20 @@ class_name Tissues
 extends Iterator
 ## Iterable class that contains Tissue instances and helpful methods.
 ##
-## No methods should use or rely on cached values, only pure calculations here
+## No methods should use or rely on cached values, only pure calculations here (except mass, which 
+## doesn't change regularly)
 var _is_mass_dirty: bool = true
 var _mass: float
+var mass: float :
+	get:
+		if not _is_mass_dirty:
+			return _mass
+		var total: float = 0.0
+		for tissue: Tissue in elements as Array[Tissue]:
+			total += tissue.mass
+		_mass = total
+		_is_mass_dirty = false
+		return _mass
 		
 func _init(t: Array[Tissue] = [] as Array[Tissue]) -> void:
 	super._init(t)
@@ -15,27 +26,14 @@ func get_moles(gas: GlobalTypes.Gases) -> float:
 	for tissue: Tissue in elements as Array[Tissue]:
 		moles += tissue.get_moles(gas)
 	return moles
-
-#TODO: Cache this value
-## Returns sum of [member Tissue.mass] from [member tissues]
-func total_mass() -> float:
-	if not _is_mass_dirty:
-		return _mass
-	var total: float = 0.0
-	for tissue: Tissue in elements as Array[Tissue]:
-		total += tissue.mass
-	_mass = total
-	_is_mass_dirty = false
-	return total
 	
-func add(tissue: Variant):
+func add(tissue: Variant) -> void:
 	_is_mass_dirty = true
 	super.add(tissue)
 
 ## Returns float of sum of moles of provided [param gas] divided by [method total_mass] return value.
 func get_concentration(gas: GlobalTypes.Gases) -> float:
 	#Benchmarker.increment_call_count("get_concentration")
-	var mass: float = total_mass()
 	if mass == 0.0:
 		return 0.0
 	return get_moles(gas)/mass

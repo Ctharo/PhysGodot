@@ -7,7 +7,7 @@ extends Iterator
 @export var oxygen_params: GasParams = preload("res://Resources/Params/GasParams/OxygenParams.tres") as GasParams
 @export var carbon_dioxide_params: GasParams = preload("res://Resources/Params/GasParams/CarbonDioxideParams.tres") as GasParams
 
-# TODO: Change Gases initial moles to be an initial concentration
+
 func _init(g: Array[Gas] = []) -> void:
 	super._init(g)
 	_init_gases()
@@ -25,6 +25,7 @@ func set_moles(gas_type: GlobalTypes.Gases, moles: float = 0.0) -> void:
 			gas.moles = moles
 			return
 	printerr("Cannot set moles for gas: Gas not found")
+
 
 func get_moles(gas_type: GlobalTypes.Gases) -> float:
 	for gas: Gas in elements:

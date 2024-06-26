@@ -7,7 +7,6 @@ var is_filled: bool = false
 func _init(v: Array[Vessel] = [] as Array[Vessel]) -> void:
 	super._init(v)
 
-# FIXME: Doesn't appear to be working?
 func get_vessels_by_type(vessel_type: GlobalTypes.Vessels) -> Vessels:
 	var array: Array[Vessel] = elements.filter(func(vessel: Vessel) -> bool: return vessel.type == vessel_type) as Array[Vessel]
 	var vessels := Vessels.new(array)
