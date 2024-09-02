@@ -77,6 +77,7 @@ func _add_tissue(params: TissueParams) -> void:
 	if not tissues:
 		var a: Array[Tissue] = []
 		tissues = Tissues.new(a)
+	assert(tissues)
 	var tissue: Tissue = Tissue.new(params)
 	assert(tissue)
 	tissue.name = self.name + " Tissue %s" % (tissues.size() + 1)

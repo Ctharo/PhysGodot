@@ -1,6 +1,7 @@
 class_name Heart
 extends Organ
 
+# TODO: Oxygen consumption and CO2 production should be effected by heart beat effort
 signal heart_beated
 
 ## Heart rate in beats per second - clamped between 0 and 4 (0 - 240 bpm)
@@ -59,7 +60,6 @@ func receive_signal(direction: GlobalTypes.PhysioSignal) -> void:
 		GlobalTypes.PhysioSignal.DECREASE_RATE:
 			chemical_receptor.receive_negative_signal()
 
-## TODO: Should occur between beats, and if HR is too fast then it will be incomplete and affect... SV?
 func chamber_refill(time_to_refill: float) -> float:
 	var fraction_filled: float = min(1.0, time_to_refill/TIME_TO_FILL_CHAMBERS)
 	return fraction_filled
