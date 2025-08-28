@@ -53,5 +53,3 @@ func hypoxia_management(delta: float) -> void:
 			if organ.is_hypoxic: # FIXME: This relies on possibly delayed value? Plus we have a hypoxia timer convoluting the process
 				parent.send_signal(GlobalTypes.Organs.HEART, GlobalTypes.PhysioSignal.INCREASE_RATE)
 		hypoxia_timer = 0.0
-
-

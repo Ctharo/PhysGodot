@@ -56,4 +56,3 @@ func receive_signal(direction: GlobalTypes.PhysioSignal) -> void:
 
 func _change_respiration_rate(value: float) -> void:
 	respiration_rate += value
-

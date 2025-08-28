@@ -48,4 +48,3 @@ static func to_sci_notation(num: float, sig_figs: int = 3) -> String:
 	# Determine the coefficient with the specified significant figures
 	var coeff: float = round(num / pow(10.0, _exp) * pow(10.0, sig_figs - 1)) / pow(10.0, sig_figs - 1)
 	return "%.*fe%d" % [sig_figs - 1, coeff, _exp]
-

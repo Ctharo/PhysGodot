@@ -46,4 +46,3 @@ func check(gas: Gas) -> int:
 		result = 0
 	return result
 	
-

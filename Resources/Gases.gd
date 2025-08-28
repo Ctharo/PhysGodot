@@ -35,4 +35,3 @@ func get_moles(gas_type: GlobalTypes.Gases) -> float:
 
 static func get_string(gas: GlobalTypes.Gases) -> String:
 	return GlobalTypes.Gases.keys()[gas]
-

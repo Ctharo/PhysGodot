@@ -144,5 +144,3 @@ func _lungs_setup(organ: Lungs) -> void:
 		gas_info.append_text("[Alveoli]: %s \n" % Helpers.as_percent(organ.alveoli.get_concentration(gas), 2))
 		gas_info.append_text("[Pulmonary Capillaries]: %s" % Helpers.as_percent(organ.alveoli.get_capillaries().get_concentration(gas),2))
 		add_child(gas_info)
-
-

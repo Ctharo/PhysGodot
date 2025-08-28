@@ -196,4 +196,3 @@ func _on_heart_beat(stroke_volume: float) -> void:
 
 func log_event(message: String, verbosity: Logger.Verbosity = Logger.Verbosity.VERBOSE) -> void:
 		Logger.log_event(message, self, verbosity)
-

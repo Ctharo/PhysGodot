@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="TissueParams" load_steps=2 format=3 uid="uid://bqg6n160ms0fo"]
 
-[ext_resource type="Script" path="res://Resources/Params/TissueParams/TissueParams.gd" id="1_ke2tl"]
+[ext_resource type="Script" uid="uid://cdy454uhi2iih" path="res://Resources/Params/TissueParams/TissueParams.gd" id="1_ke2tl"]
 
 [resource]
 script = ExtResource("1_ke2tl")

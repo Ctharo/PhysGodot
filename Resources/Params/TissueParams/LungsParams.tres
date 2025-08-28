@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="TissueParams" load_steps=2 format=3 uid="uid://b360qgb6xnuqu"]
 
-[ext_resource type="Script" path="res://Resources/Params/TissueParams/TissueParams.gd" id="1_eh6w7"]
+[ext_resource type="Script" uid="uid://cdy454uhi2iih" path="res://Resources/Params/TissueParams/TissueParams.gd" id="1_eh6w7"]
 
 [resource]
 script = ExtResource("1_eh6w7")
@@ -25,5 +25,3 @@ tissue_count = 1
 health_loss_factor = 1.0
 perform_organ_specific_task = true
 blood_volume = 1.0
-physiological_rate_increase_factor = 0.005
-physiological_rate_decrease_factor = 0.005

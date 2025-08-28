@@ -60,5 +60,3 @@ extends Resource
 
 ## Amount of [Blood] that can be contained within all [Vessel]s in the [Tissues]
 @export var blood_volume: float = 1.0
-
-

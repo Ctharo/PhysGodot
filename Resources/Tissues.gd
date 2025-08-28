@@ -86,4 +86,3 @@ func any_hypoxic() -> bool:
 
 func any_hypercapnic() -> bool:
 	return elements.any(func(tissue: Tissue) -> bool: return tissue.is_hypercapnic)
-

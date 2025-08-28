@@ -7,6 +7,8 @@ extends Node
 var receptors: Array = []
 var signal_counts: Dictionary = {}  # Total count of different types of signals
 
+const UPDATE_INTERVAL: float = 0.5
+
 # Method to add a receptor to the cell
 func add_receptor(receptor: Receptor) -> void:
 	receptors.append(receptor)
@@ -26,9 +28,9 @@ func _compare_receptors(a: Receptor, b: Receptor) -> int:
 	return affinity_b - affinity_a
 
 # Method to update receptors and degrade signals
-func update_signals() -> void:
+func update_signals(delta: float) -> void:
 	for receptor: Receptor in receptors:
-		receptor.update_signals()
+		receptor.update_signals(delta)
 		for _signal: ChemicalSignal in receptor.bound_signals.keys():
 			signal_counts[_signal.type] = max(0, signal_counts.get(_signal.type, 0) - 1)
 
@@ -43,4 +45,4 @@ func _ready() -> void:
 
 # Timer timeout callback function
 func _on_timer_timeout() -> void:
-	update_signals()
+	update_signals(UPDATE_INTERVAL)

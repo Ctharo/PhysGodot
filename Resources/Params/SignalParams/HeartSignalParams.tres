@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="SignalParams" load_steps=2 format=3 uid="uid://dreem376ktlah"]
 
-[ext_resource type="Script" path="res://Resources/Params/SignalParams/SignalParams.gd" id="1_3p2lm"]
+[ext_resource type="Script" uid="uid://b3s8pu7q437ir" path="res://Resources/Params/SignalParams/SignalParams.gd" id="1_3p2lm"]
 
 [resource]
 script = ExtResource("1_3p2lm")

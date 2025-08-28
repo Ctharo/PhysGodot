@@ -143,4 +143,3 @@ func _is_hypoxic() -> bool:
 
 func _is_hypercapnic() -> bool:
 	return tissues.any_hypercapnic()
-
