@@ -20,7 +20,7 @@ func _ready():
 	console_container.add_theme_constant_override("separation", 10)
 
 # Main function to receive messages - connect this to your signal
-func receive_message(origin_entity: String, message: String):
+func receive_message(origin_entity: String, message: String) -> void:
 	# Create console for entity if it doesn't exist
 	if not entity_consoles.has(origin_entity):
 		_create_entity_console(origin_entity)
@@ -29,13 +29,13 @@ func receive_message(origin_entity: String, message: String):
 	_add_message_to_console(origin_entity, message)
 
 # Creates a new console panel for an entity
-func _create_entity_console(entity_name: String):
+func _create_entity_console(entity_name: String) -> void:
 	# Main panel container
-	var panel_container = PanelContainer.new()
+	var panel_container := PanelContainer.new()
 	panel_container.custom_minimum_size = Vector2(400, 200)
 	
 	# VBox to organize title and content
-	var vbox = VBoxContainer.new()
+	var vbox := VBoxContainer.new()
 	panel_container.add_child(vbox)
 	
 	# Title label
@@ -47,13 +47,13 @@ func _create_entity_console(entity_name: String):
 	vbox.add_child(title_label)
 	
 	# Scroll container for messages
-	var scroll_container = ScrollContainer.new()
+	var scroll_container := ScrollContainer.new()
 	scroll_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll_container.custom_minimum_size.y = 150
 	vbox.add_child(scroll_container)
 	
 	# Rich text label for messages
-	var rich_text_label = RichTextLabel.new()
+	var rich_text_label := RichTextLabel.new()
 	rich_text_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rich_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	rich_text_label.bbcode_enabled = true
@@ -75,15 +75,15 @@ func _create_entity_console(entity_name: String):
 	console_created.emit(entity_name)
 
 # Adds a message to a specific entity's console
-func _add_message_to_console(entity_name: String, message: String):
+func _add_message_to_console(entity_name: String, message: String) -> void:
 	if not entity_consoles.has(entity_name):
 		return
 	
 	var rich_text: RichTextLabel = entity_consoles[entity_name]["rich_text"]
-	var timestamp = Time.get_datetime_string_from_system().split(" ")[1] # Get time only
+	var timestamp := Time.get_datetime_string_from_system().split(" ")[1] # Get time only
 	
 	# Format message with timestamp and color
-	var formatted_message = "[color=gray][%s][/color] %s\n" % [timestamp, message]
+	var formatted_message := "[color=gray][%s][/color] %s\n" % [timestamp, message]
 	
 	# Append message
 	rich_text.append_text(formatted_message)
@@ -94,22 +94,22 @@ func _add_message_to_console(entity_name: String, message: String):
 	call_deferred("_scroll_to_bottom", scroll)
 
 # Helper function to scroll to bottom
-func _scroll_to_bottom(scroll_container: ScrollContainer):
-	var v_scroll = scroll_container.get_v_scroll_bar()
+func _scroll_to_bottom(scroll_container: ScrollContainer) -> void:
+	var v_scroll := scroll_container.get_v_scroll_bar()
 	v_scroll.value = v_scroll.max_value
 
 # Public function to clear a specific entity's console
-func clear_entity_console(entity_name: String):
+func clear_entity_console(entity_name: String) -> void:
 	if entity_consoles.has(entity_name):
 		entity_consoles[entity_name]["rich_text"].clear()
 
 # Public function to clear all consoles
-func clear_all_consoles():
+func clear_all_consoles() -> void:
 	for entity_name in entity_consoles.keys():
 		clear_entity_console(entity_name)
 
 # Public function to remove an entity's console entirely
-func remove_entity_console(entity_name: String):
+func remove_entity_console(entity_name: String) -> void:
 	if entity_consoles.has(entity_name):
 		entity_consoles[entity_name]["panel"].queue_free()
 		entity_consoles.erase(entity_name)
